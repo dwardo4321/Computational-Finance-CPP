@@ -23,7 +23,7 @@ void demo1(){
     }
 }
 
-/*In C++, a **`switch` statement** is a control structure used to execute one block of code out of several
+/*In C++ (cpp), a **`switch` statement** is a control structure used to execute one block of code out of several
  options based on the value of a single variable or expression. It provides a cleaner and more efficient alternative
  to using multiple `if-else` statements when comparing the same variable against different constant values.
  Each possible value is handled by a **`case`**, and when a match is found, the corresponding block runs until a
