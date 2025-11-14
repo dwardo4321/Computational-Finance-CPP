@@ -44,7 +44,7 @@ int main()
 
     double approx = 0.0;
     for (int i = 0; i < N; ++i) {
-        approx += weights[i] * std::exp(nodes[i]);    // approx E[e^X]
+        approx += weights[i] * std::exp(1.245 * nodes[i]);    // approx E[e^(1.245X)]
     }
     double exact = std::exp(mu + 0.5 * sigma2);
 
