@@ -16,6 +16,7 @@ void demo2(){
 
     std::cout << "Enter number of rows: ";
     std::cin >> rows;
+    
     do{
     std::cout << "Enter number of columns: ";
     std::cin >> columns;

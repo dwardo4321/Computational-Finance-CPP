@@ -1,5 +1,16 @@
 #include <iostream>
 
+/*
+  The 'break' and 'continue' statements control loop execution flow in C++. 
+  'break' immediately terminates the entire loop and moves execution to the 
+  first statement after the loop—useful when a stopping condition is met early, 
+  such as finding a value in a dataset or exiting a Monte Carlo simulation loop.
+  'continue' skips the rest of the current iteration and jumps to the next one,
+  often used to ignore invalid data points, skip unwanted states in a Markov
+  chain simulation, or bypass exceptional conditions during numerical loops.
+ */
+
+
 int i;
 
 void demo1(){
