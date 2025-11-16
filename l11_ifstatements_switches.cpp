@@ -22,6 +22,13 @@ void demo1(){
         //std::cin >> age;
     }
 }
+/*
+&& -> (and) if both statements are true
+|| -> (or) if one of the statements is true
+!  -> (not) reverses the statement
+*/
+
+
 
 /*In C++ (cpp), a **`switch` statement** is a control structure used to execute one block of code out of several
  options based on the value of a single variable or expression. It provides a cleaner and more efficient alternative
