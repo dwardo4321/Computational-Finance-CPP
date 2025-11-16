@@ -2,11 +2,11 @@
 using std::cout;
 
 /*
-So getline() is used when you want a full sentence, whole
- line, or anything with spaces.
+ So getline() is used when you want a full sentence, whole
+ line, or anything with spaces...
 */
 
-void demo1(){
+void whileloop(){
 std::string name;
     
     while(name.empty()){
@@ -16,7 +16,7 @@ std::string name;
     std::cout << "She's special isnt she?" << std::endl;
 }
 
-void demo2(){
+void dowhileloop(){
     double num;
 
     do{
@@ -28,7 +28,7 @@ void demo2(){
 }
 
 /*
-void demo3(){
+void infiniteloop(){
 std::string name;
     
     while(1 == 1){
@@ -39,8 +39,8 @@ std::string name;
 */
 
 int main(){
-    demo1();
-    demo2();
-    //demo3();
+    whileloop();
+    dowhileloop();
+    //infiniteloop();
     return 0;
 }
