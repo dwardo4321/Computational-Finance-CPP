@@ -10,10 +10,10 @@ void whileloop(){
 std::string name;
     
     while(name.empty()){
-        cout << "Enter her name: ";
+        cout << "Enter your name: ";
         std::getline(std::cin, name);
     }
-    std::cout << "She's special isnt she?" << std::endl;
+    std::cout << "You're destined for great things" << std::endl;
 }
 
 void dowhileloop(){

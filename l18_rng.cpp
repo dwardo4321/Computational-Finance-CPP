@@ -19,6 +19,10 @@ std::vector<double> demo1(){
         rng.push_back(num);
     }
     return rng;
+//int a = 5;
+//int b = 15;
+//unsigned int raw = gen();
+//int x = a + (raw % (b - a + 1));  // x in [5, 15]
 }
 
 int main(){
