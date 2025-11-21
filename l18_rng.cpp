@@ -2,16 +2,18 @@
 #include <cmath>
 #include <ctime>
 #include <vector>
+#include <random>
 
+std::mt19937_64 gen(static_cast<unsigned>(std::time(nullptr)));
 
 std::vector<double> demo1(){
     std::vector<double> rng;
     double num;
     int i;
-    for(i = 0; i <= 1000; i++){
+    for(i = 1; i <= 1000; i++){
         do{
-            int sign = (rand() % 2) * 2 - 1;  
-            num = sign * exp(rand() % 11);
+            int sign = (gen() % 2) * 2 - 1;  
+            num = sign * exp(gen() % 11);
         }
         while(num <= -50000 || num >= 50000);
         rng.push_back(num);
@@ -20,7 +22,6 @@ std::vector<double> demo1(){
 }
 
 int main(){
-    srand(time(nullptr));
     std::vector<double> result = demo1();   // <-- Store it
 
     // Print it
