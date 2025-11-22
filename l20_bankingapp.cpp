@@ -4,7 +4,7 @@
 void showBalance(double balance){
     std::cout << "------------------------------------\n";
     std::cout << "Your balance is $" << std::setprecision(2) << std::fixed << balance << "\n";
-    std::cout << "------------------------------------\n";
+    //std::cout << "------------------------------------\n";
 }
 
 double deposit(){
@@ -26,6 +26,8 @@ double withdraw(double balance){
     do{
     std::cout << "Enter amount do be withdrawn: $";
     std::cin >> withdrawal;
+    std::cin.clear();
+    fflush(stdin);
     if (withdrawal < 0)
     {
         std::cout << "------------------------------------\n";
@@ -46,6 +48,7 @@ int main(){
     int choice = 0;
 
     do{ 
+        std::cout << "*******************************\n";
         std::cout << "1. Show balance\n";
         std::cout << "2. Deposit money\n";
         std::cout << "3. Withdraw money\n";
@@ -53,6 +56,9 @@ int main(){
         std::cout << "*******************************\n";
         std::cout << "Enter your choice: ";
         std::cin >> choice;
+
+        std::cin.clear();
+        fflush(stdin);
         
         switch (choice)
         {
@@ -69,7 +75,7 @@ int main(){
                 break;  
             default:std::cout << "------------------------------------\n"; 
                     std::cout << "Invalid choice. \n";}
-                    std::cout << "------------------------------------\n";        
+                    //std::cout << "------------------------------------\n";        
     } while(choice != 4);
     return 0;
 }
