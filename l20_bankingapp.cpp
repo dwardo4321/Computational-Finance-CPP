@@ -26,8 +26,7 @@ double withdraw(double balance){
     do{
     std::cout << "Enter amount do be withdrawn: $";
     std::cin >> withdrawal;
-    std::cin.clear();
-    fflush(stdin);
+    
     if (withdrawal < 0)
     {
         std::cout << "------------------------------------\n";
