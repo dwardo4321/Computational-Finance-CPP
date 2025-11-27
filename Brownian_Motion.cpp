@@ -1,0 +1,171 @@
+#include <iostream>
+#include <random>
+#include <cmath>
+#include <numbers>
+#include <vector>
+#include <iomanip>
+
+// If you want a different sequence each run
+     std::random_device rd;
+     std::mt19937_64 gen1(rd());   
+     std::mt19937_64 gen2(rd()); 
+// Else
+//std::mt19937_64 gen();
+
+double MC_integration(int N){ //----------------------------------------------------------
+    // Monte Carlo integration
+    double uniform_vector[N] = {};
+
+    for (int i = 0; i < N; i++){
+        uniform_vector[i] = gen1()/static_cast<double>(gen1.max());
+        // std::cout << "uniform_vector[" << i+1 << "] = " << uniform_vector[i] << '\n';     
+    }
+    
+    // Vector of g(U)
+    double func_values = 0;
+
+    for(int j = 0; j < N; j++){
+        func_values += exp(uniform_vector[j]);      
+    }
+
+    double MC_approx = func_values/N;
+    return MC_approx;
+}
+
+//---------------------------------------------------------------------------------------
+
+struct Norm4 {
+    std::vector<double> X;
+    std::vector<double> Y;
+    std::vector<double> std_norm1;
+    std::vector<double> std_norm2;
+};
+
+Norm4 Standard_Norm(int N){ 
+    
+    Norm4 out;
+
+    // Uniform RV;
+    // Way 1 (Improvised)
+    std::vector<double> uniform_vector1;
+    for (int i = 0; i < N; i++){
+        uniform_vector1.push_back(gen1()/static_cast<double>(gen1.max()));
+        // std::cout << "uniform_vector[" << i+1 << "] = " << uniform_vector[i] << '\n';     
+    }
+
+    // Way 2
+    std::uniform_real_distribution<double> uniform(0, 1);
+    std::vector<double> uniform_vector2;
+    uniform_vector2.reserve(N);
+    for (int i = 0; i < N; i++){
+        uniform_vector2.push_back(uniform(gen1));
+        // std::cout << "uniform_vector[" << i+1 << "] = " << uniform_vector[i] << '\n';     
+    }
+
+    // Standarn Normal RV;
+    // Way 1 (Box–Muller)
+    std::vector<double> X, Y;
+    out.X.reserve(N), out.Y.reserve(N);
+    for(int i = 0; i < N; i++){
+        out.X.push_back(sqrt(-2*log(uniform_vector1[i])) * cos(2*M_PI*uniform_vector1[i]));
+        out.Y.push_back(sqrt(-2*log(uniform_vector2[i])) * sin(2*M_PI*uniform_vector2[i]));
+    }
+    
+    // Way 2
+    std::normal_distribution<double> Std_Norm_RNG(0, 1);
+    std::vector<double> std_norm1, std_norm2;
+    out.std_norm1.reserve(N); 
+    out.std_norm2.reserve(N); 
+    for(int i = 0; i < N; i++){
+        out.std_norm1.push_back(Std_Norm_RNG(gen1));
+        out.std_norm2.push_back(Std_Norm_RNG(gen2));
+    }
+
+    /*
+        Array: fixed-size, low-level, no methods, can decay to pointer. (Way 1)
+        Vector: resizable, safe, high-level, has methods, manages memory for you. (Way 2)
+    */
+
+    // return {std_norm1, std_norm2};
+    // return {X, Y};
+    return {out};
+}
+
+double MC_option_price(double K, double r, double v, double S_0, int T, int Nit){ //----------------------------------------------------------
+
+    std::normal_distribution<double> Std_Norm_RNG(0, 1);
+    
+    std::vector<double> S_T;
+    std::vector<double> PV;
+    std::vector<double> normalrv;
+    double total_PV = 0;
+    S_T.reserve(Nit);
+    PV.reserve(Nit);
+    normalrv.reserve(Nit);
+
+    for(int i = 0; i < Nit; i++){
+        normalrv.push_back(Std_Norm_RNG(gen1));
+    }
+    
+    
+    for (int i = 0; i < Nit; i++){
+        S_T.push_back(S_0 * exp(((r - 0.5*(pow(v, 2))) * T) + v*static_cast<double>(sqrt(T))*normalrv[i]));
+        S_T[i] - K > 0?  PV.push_back((S_T[i]-K) * exp(-r*T)):  PV.push_back(0);        
+    }
+    
+    for (int i = 0; i < Nit; i++){
+        total_PV  += PV[i];    
+    } 
+    
+    double sample_mean;
+    sample_mean = total_PV/Nit;
+
+    return sample_mean;
+}
+
+
+//----------------------------------------------------------
+//----------------------------------------------------------
+//----------------------------------------------------------
+//----------------------------------------------------------
+
+int main(){
+    int N[] = {10, 100, 1000, 10000, 100000};
+    auto [X, Y, std_norm1, std_norm2] = Standard_Norm(N[0]);
+
+    for (int i = 0; i < sizeof(N)/sizeof(N[0]); i++){
+        MC_integration(N[i]);
+        std::cout << "The MC approximate for " << N[i] << " uniform RVs is " << MC_integration(N[i]) << '\n';
+    }
+
+    std::cout << "--------------------------------------------------------\n";
+    std::cout << "----------Standard Normal Random Variables--------------\n";
+
+    for (int j = 0; j < 5; j++){
+        std::cout << std::setprecision(4) << std::fixed << X[j] << "   ;   " << Y[j] << "   ;   " << std_norm1[j] << "   ;   " << std_norm2[j] << "\n";
+    }
+    
+    std::cout << "--------------------------------------------------------\n";
+
+    double K, r, v, S_0;
+    int T, Nit;
+
+    std::cout << "Enter Strike Price K: ";
+    std::cin >> K;
+    std::cout << "Enter rate r: ";
+    std::cin >> r;
+    std::cout << "Enter volatility v: ";
+    std::cin >> v;
+    std::cout << "Enter Price today S_0: ";
+    std::cin >> S_0;
+    std::cout << "Enter maturity T: ";
+    std::cin >> T;
+    std::cout << "Enter number of simulations Nit: ";
+    std::cin >> Nit; 
+
+    double calc;
+    calc = MC_option_price(K, r, v, S_0, T, Nit);
+    std::cout << "£" <<std::setprecision(2) << std::fixed << calc;
+
+    return 0;
+}
