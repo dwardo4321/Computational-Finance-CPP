@@ -103,7 +103,119 @@ Norm4 Standard_Norm(int N){
 
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
-//----------------------------------[PART 2: MULTIVARIATE GBM PRICE]---------------------------------------------
+//--------------------------------[PART 2: RNG FOR STANDARD NORMAL RVs]------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+
+/*
+#include <Eigen/Dense>
+#include <random>
+#include <cmath>
+
+// Simulate one draw of terminal prices S_T for d assets under GBM,
+// using the multivariate normal for log-returns.
+Eigen::VectorXd simulate_terminal_prices(
+    const Eigen::VectorXd& S0,      // initial prices S_0 (size d)
+    const Eigen::VectorXd& r,       // rates r_i (size d)
+    const Eigen::VectorXd& v,       // vols v_i (size d)
+    double T,                       // horizon
+    const Eigen::MatrixXd& R,       // correlation matrix (d x d)
+    std::mt19937_64& gen            // RNG
+)
+{
+    const int d = S0.size();
+
+    // 1) Mean vector mu_i = (r_i - 0.5 * v_i^2) * T
+    Eigen::VectorXd mu(d);
+    for (int i = 0; i < d; ++i) {
+        mu(i) = (r(i) - 0.5 * v(i) * v(i)) * T;
+    }
+
+    // 2) Covariance matrix Sigma_ij = rho_ij * v_i * v_j * T
+    Eigen::MatrixXd Sigma(d, d);
+    for (int i = 0; i < d; ++i) {
+        for (int j = 0; j < d; ++j) {
+            Sigma(i, j) = R(i, j) * v(i) * v(j) * T;
+        }
+    }
+
+    // 3) Cholesky: Sigma = L L^T
+    Eigen::LLT<Eigen::MatrixXd> llt(Sigma);
+    Eigen::MatrixXd L = llt.matrixL();
+
+    // 4) Generate Z ~ N(0, I_d)
+    std::normal_distribution<double> nd(0.0, 1.0);
+    Eigen::VectorXd Z(d);
+    for (int i = 0; i < d; ++i) {
+        Z(i) = nd(gen);
+    }
+
+    // 5) X = mu + L Z (log-returns)
+    Eigen::VectorXd X = mu + L * Z;
+
+    // 6) Map to prices: S_T = S_0 * exp(X)
+    Eigen::VectorXd ST(d);
+    for (int i = 0; i < d; ++i) {
+        ST(i) = S0(i) * std::exp(X(i));
+    }
+
+    return ST;
+}
+*/
+
+Eigen::MatrixXd simulate_terminal_prices(
+    Eigen::VectorXd r,
+    Eigen::VectorXd v,
+    Eigen::MatrixXd Corr;
+    int T
+){
+    Eigen::VectorXd mu;
+    Eigen::MatrixXd Cov(r.size(), r.size());
+
+    for(int i = 0; i < v.size(); i++)
+    {
+        mu(i) = (r(i) - 0.5 * pow(v(i), 2)) * T; 
+    };
+
+    for (int j = 0; j < v.size(); j++)
+        {
+            for(int k = 0; k < v.size(); k++)
+                {
+                    Cov(j, k) = Corr(j, k) * v(j) * v(k); 
+                };
+        };
+
+    // 3) Cholesky: Cov = L L^T
+    Eigen::LLT<Eigen::MatrixXd> llt(Cov);
+    Eigen::MatrixXd L = llt.matrixL();
+
+    std::normal_distribution stdnorm(0, 1);
+
+
+    
+
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//-----------------[PART 2: Multivariate terminal prices at a single time T with GBM ]---------------------------
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 
@@ -267,6 +379,7 @@ int main(){
     std::cout << "£" <<std::setprecision(2) << std::fixed << calc.sample_mean << " with a variance of " << calc.var_estimatorb << " and s.e " << calc.se << '\n';
     std::cout << "The 95% CI: [" << calc.ci_lower << " : " << calc.ci_upper << "]" << '\n';
     */
+
     int d, N_i;
     std::cout << "Enter number of assets (d): ";
     std::cin >> d;
