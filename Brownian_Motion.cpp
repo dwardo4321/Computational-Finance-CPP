@@ -4,6 +4,7 @@
 #include <numbers>
 #include <vector>
 #include <iomanip>
+#include <Eigen/Dense>
 
 // If you want a different sequence each run
      std::random_device rd;
@@ -12,7 +13,13 @@
 // Else
 //std::mt19937_64 gen();
 
-double MC_integration(int N){ //----------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//-------------------------[PART 1: MONTE CARLO INTEGRATION (exponential func)]----------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+
+double MC_integration(int N){ 
     // Monte Carlo integration
     double uniform_vector[N] = {};
 
@@ -31,9 +38,11 @@ double MC_integration(int N){ //------------------------------------------------
     double MC_approx = func_values/N;
     return MC_approx;
 }
-
-//---------------------------------------------------------------------------------------
-
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//--------------------------------[PART 2: RNG FOR STANDARD NORMAL RVs]------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
 struct Norm4 {
     std::vector<double> X;
     std::vector<double> Y;
@@ -65,10 +74,11 @@ Norm4 Standard_Norm(int N){
     // Standarn Normal RV;
     // Way 1 (Box–Muller)
     std::vector<double> X, Y;
+    constexpr double PI = 3.14159265358979323846;
     out.X.reserve(N), out.Y.reserve(N);
     for(int i = 0; i < N; i++){
-        out.X.push_back(sqrt(-2*log(uniform_vector1[i])) * cos(2*M_PI*uniform_vector1[i]));
-        out.Y.push_back(sqrt(-2*log(uniform_vector2[i])) * sin(2*M_PI*uniform_vector2[i]));
+        out.X.push_back(sqrt(-2*log(uniform_vector1[i])) * cos(2*PI*uniform_vector2[i]));
+        out.Y.push_back(sqrt(-2*log(uniform_vector1[i])) * sin(2*PI*uniform_vector2[i]));
     }
     
     // Way 2
@@ -91,16 +101,50 @@ Norm4 Standard_Norm(int N){
     return {out};
 }
 
-double MC_option_price(double K, double r, double v, double S_0, int T, int Nit){ //----------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//------------------------------------[PART 2: RNG FOR NORMAL RVs]-----------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
 
+
+
+
+
+
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//-------------------------[PART 3: MC OPTION PRICING WITH VARIANCE REDUCTION]-----------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+
+struct four_out
+{
+    double sample_mean;
+    double se;
+    double var_estimatorb;
+    double ci_lower;
+    double ci_upper;
+};
+
+
+four_out MC_option_price(double K, double r, double v, double S_0, int T, int Nit){ 
+
+    four_out out{};
     std::normal_distribution<double> Std_Norm_RNG(0, 1);
     
     std::vector<double> S_T;
+    std::vector<double> S_T_vd;  // for variance reduction
     std::vector<double> PV;
+    std::vector<double> PV_norm;  
+    std::vector<double> PV_vd;    // for variance reduction
     std::vector<double> normalrv;
     double total_PV = 0;
     S_T.reserve(Nit);
+    S_T_vd.reserve(Nit);  // for variance reduction
     PV.reserve(Nit);
+    PV_norm.reserve(Nit);
+    PV_vd.reserve(Nit);  // for variance reduction
     normalrv.reserve(Nit);
 
     for(int i = 0; i < Nit; i++){
@@ -109,25 +153,44 @@ double MC_option_price(double K, double r, double v, double S_0, int T, int Nit)
     
     
     for (int i = 0; i < Nit; i++){
-        S_T.push_back(S_0 * exp(((r - 0.5*(pow(v, 2))) * T) + v*static_cast<double>(sqrt(T))*normalrv[i]));
-        S_T[i] - K > 0?  PV.push_back((S_T[i]-K) * exp(-r*T)):  PV.push_back(0);        
+        S_T.push_back(S_0 * exp(((r - 0.5*(pow(v, 2))) * T) + v*static_cast<double>(sqrt(T))*normalrv[i]));   //GBM
+        S_T_vd.push_back(S_0 * exp(((r - 0.5*(pow(v, 2))) * T) + v*static_cast<double>(sqrt(T))*-normalrv[i]));  // for variance reduction
+
+        S_T[i] - K > 0?  PV_norm.push_back((S_T[i]-K) * exp(-r*T)):  PV_norm.push_back(0);  // Discounted payoff vector
+        S_T_vd[i] - K > 0?  PV_vd.push_back((S_T_vd[i]-K) * exp(-r*T)):  PV_vd.push_back(0);  // for variance reduction
+
+        PV.push_back(0.5 * (PV_norm[i] + PV_vd[i]));  // for variance reduction
     }
     
+
     for (int i = 0; i < Nit; i++){
         total_PV  += PV[i];    
     } 
+    double sample_mean = total_PV/Nit;
+    out.sample_mean = sample_mean;  // Price estimate (Mean price)
     
-    double sample_mean;
-    sample_mean = total_PV/Nit;
 
-    return sample_mean;
+    double diffs = 0, var_payoff, se, var_estimatorb;
+    for(int j = 0; j < Nit; j++){
+        diffs += pow((PV[j] - sample_mean), 2);
+    }      
+    var_payoff = diffs/static_cast<double>(Nit-1); // variance of pay off 
+    
+    var_estimatorb = var_payoff/static_cast<double>(Nit); // variance of price estimator
+    se = sqrt(var_payoff/static_cast<double>(Nit));  //standard error  of price estimator
+
+    out.se = se;
+    out.var_estimatorb = var_estimatorb;
+    out.ci_lower = sample_mean - 1.96 * se;   // Price lower
+    out.ci_upper = sample_mean + 1.96 * se;   // Price upper
+    return out;
 }
 
-
-//----------------------------------------------------------
-//----------------------------------------------------------
-//----------------------------------------------------------
-//----------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------[PART 4: MAIN FUNCTION]-------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------
 
 int main(){
     int N[] = {10, 100, 1000, 10000, 100000};
@@ -163,9 +226,9 @@ int main(){
     std::cout << "Enter number of simulations Nit: ";
     std::cin >> Nit; 
 
-    double calc;
-    calc = MC_option_price(K, r, v, S_0, T, Nit);
-    std::cout << "£" <<std::setprecision(2) << std::fixed << calc;
+    four_out calc = MC_option_price(K, r, v, S_0, T, Nit);
+    std::cout << "£" <<std::setprecision(2) << std::fixed << calc.sample_mean << " with a variance of " << calc.var_estimatorb << " and s.e " << calc.se << '\n';
+    std::cout << "The 95% CI: [" << calc.ci_lower << " : " << calc.ci_upper << "]";
 
     return 0;
 }
