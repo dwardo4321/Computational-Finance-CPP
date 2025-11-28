@@ -1,12 +1,11 @@
-# Build artifacts
-build/
-cmake-build*/
+# Ignore Eigen directory completely
+/eigen/
 
-# Compiled objects
-*.o
-*.obj
+# Ignore build outputs
 *.exe
-*.out
+*.obj
+*.o
+*.log
 
-# VS Code settings (optional)
-.vscode/
+# Ignore VS Code config
+/.vscode/
