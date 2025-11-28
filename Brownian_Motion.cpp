@@ -103,11 +103,48 @@ Norm4 Standard_Norm(int N){
 
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
-//------------------------------------[PART 2: RNG FOR NORMAL RVs]-----------------------------------------------
+//----------------------------------[PART 2: MULTIVARIATE GBM PRICE]---------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 
+Eigen::MatrixXd Price_gen(int d, int N_i){   
 
+    // Generate prices using GBM
+    
+    // Eigen::MatrixXd M; completely empty matrix 0x0
+    Eigen::MatrixXd Matri(N_i, 0);   // N_i rows, 0 columns
+    
+
+    std::normal_distribution<double> standard_norm(0, 1);
+
+    while(Matri.cols() < d){ 
+        Eigen::MatrixXd S_t(N_i, 1);
+        double K, r, v, S_0;
+        int T;
+
+        std::cout << "--------------------------------------------------------\n";
+        std::cout << "Enter Strike Price K: ";
+        std::cin >> K;
+        std::cout << "Enter rate r: ";
+        std::cin >> r;
+        std::cout << "Enter volatility v: ";
+        std::cin >> v;
+        std::cout << "Enter Price today S_0: ";
+        std::cin >> S_0;
+        std::cout << "Enter maturity T: ";
+        std::cin >> T;
+        
+            for(int i = 0; i < N_i; i++)
+                {
+                    S_t(i) = S_0 * exp(((r - 0.5*(pow(v, 2))) * T) + v*static_cast<double>(sqrt(T))*standard_norm(gen1));   //GBM
+                }
+        Matri.conservativeResize(N_i, Matri.cols() + 1);
+        Matri.col(Matri.cols() - 1) = S_t;         
+    };
+
+    return Matri;
+
+}
 
 
 
@@ -209,7 +246,7 @@ int main(){
     }
     
     std::cout << "--------------------------------------------------------\n";
-
+    /*
     double K, r, v, S_0;
     int T, Nit;
 
@@ -228,7 +265,14 @@ int main(){
 
     four_out calc = MC_option_price(K, r, v, S_0, T, Nit);
     std::cout << "£" <<std::setprecision(2) << std::fixed << calc.sample_mean << " with a variance of " << calc.var_estimatorb << " and s.e " << calc.se << '\n';
-    std::cout << "The 95% CI: [" << calc.ci_lower << " : " << calc.ci_upper << "]";
+    std::cout << "The 95% CI: [" << calc.ci_lower << " : " << calc.ci_upper << "]" << '\n';
+    */
+    int d, N_i;
+    std::cout << "Enter number of assets (d): ";
+    std::cin >> d;
+    std::cout << "Enter simulations per asset (N_i): ";
+    std::cin >> N_i;
+    std::cout << Price_gen(d, N_i);
 
     return 0;
 }
