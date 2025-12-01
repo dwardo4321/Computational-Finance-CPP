@@ -80,6 +80,7 @@ Norm4 Standard_Norm(int N){
     constexpr double PI = 3.14159265358979323846;
     out.X.reserve(N), out.Y.reserve(N);
     for(int i = 0; i < N; i++){
+        
         out.X.push_back(sqrt(-2*log(uniform_vector1[i])) * cos(2*PI*uniform_vector2[i]));
         out.Y.push_back(sqrt(-2*log(uniform_vector1[i])) * sin(2*PI*uniform_vector2[i]));
     }
@@ -396,23 +397,121 @@ void write_paths_to_csv(
 //--------------------------------[PART 8: Simulating Brownian Bridge]-------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
-Eigen::VectorXd brownian_bridge(int N_steps, double T, std::mt19937_64 &rng){
 
-    Eigen::VectorXd WSamples();
 
-    int N_bisections = log2(N_steps);
+   /*
+    Brownian Bridge uses recursive bisection of time intervals.
+    We start with the endpoints W(0) and W(T), then repeatedly fill in
+    midpoints: T/2, T/4 & 3T/4, T/8 & 3T/8 & 5T/8 & 7T/8, etc.
 
-    if (fmod(N_bisections, 1) == 0)
-    {
-        /* code */
+    After each bisection step, the number of intervals doubles:
+        1 → 2 → 4 → 8 → … → N_steps.
+
+    Therefore, if we want exactly N_steps time intervals (typically chosen
+    as a power of 2), we need:
+
+        N_bisections = log2(N_steps)
+
+    This tells us how many times we must split intervals in half until the
+    full time grid is constructed. Using powers of 2 makes the Brownian
+    bridge algorithm simple and efficient.
+    */
+
+    //return W_Samples;
+
+Eigen::VectorXd brownian_bridge(int N_bisections, double T)
+{
+    // Total number of time steps is 2^N_bisections
+    int N_steps  = 1 << N_bisections;     // 2^N_bisections
+    int N_points = N_steps + 1;           // indices 0..N_steps
+
+    Eigen::VectorXd W_Samples(N_points);
+
+    std::cout << "N_bisections = " << N_bisections
+              << ", N_steps = " << N_steps
+              << ", N_points = " << N_points << "\n";
+
+    // 1) Set endpoints
+    W_Samples(0) = 0.0;
+
+    std::normal_distribution<double> nd_T(0.0, std::sqrt(T));
+    W_Samples(N_steps) = nd_T(gen1);
+
+    std::cout << "W(0) = " << W_Samples(0) << "\n";
+    std::cout << "W(T) = W(" << T << ") = " << W_Samples(N_steps) << "\n\n";
+
+    // Interval struct
+    struct Interval {
+        int i;
+        int j;
+    };
+
+    // Stack of intervals to process
+    std::vector<Interval> stack;
+    stack.push_back({0, N_steps});
+
+    // Standard normal for bridge increments
+    std::normal_distribution<double> nd_std(0.0, 1.0);
+
+    // 2) Bisection loop
+    while (!stack.empty()) {
+        Interval interval = stack.back();
+        stack.pop_back();
+
+        int i = interval.i;
+        int j = interval.j;
+
+        // If there's no space for a midpoint, skip
+        if (j - i <= 1) {
+            continue;
+        }
+
+        int m = (i + j) / 2;  // midpoint index
+
+        // Times corresponding to these indices
+        double t_i = (double)i / (double)N_steps * T;
+        double t_j = (double)j / (double)N_steps * T;
+        double t_m = (double)m / (double)N_steps * T;
+
+        // Brownian bridge conditional mean and variance
+        double mean = ((t_j - t_m) / (t_j - t_i)) * W_Samples(i)
+                    + ((t_m - t_i) / (t_j - t_i)) * W_Samples(j);
+
+        double var  = (t_m - t_i) * (t_j - t_m) / (t_j - t_i);
+
+        double Z = nd_std(gen1);
+        double Wm = mean + std::sqrt(var) * Z;
+        W_Samples(m) = Wm;
+
+        // ---- DEBUG PRINTS HERE ----
+        std::cout << "Interval [" << i << ", " << j << "]"
+                  << "  -> midpoint index m = " << m << "\n";
+        std::cout << "  t_i = " << t_i << ", t_m = " << t_m
+                  << ", t_j = " << t_j << "\n";
+        std::cout << "  W(" << t_i << ") = " << W_Samples(i)
+                  << ", W(" << t_j << ") = " << W_Samples(j) << "\n";
+        std::cout << "  mean = " << mean
+                  << ", var = " << var << "\n";
+        std::cout << "  Draw Z = " << Z
+                  << "  ->  W(" << t_m << ") = " << Wm << "\n\n";
+
+        // Push the two subintervals for further splitting
+        stack.push_back({i, m});
+        stack.push_back({m, j});
     }
-    
 
+    std::cout << "Final Brownian path values:\n";
+    for (int k = 0; k <= N_steps; ++k) {
+        double t = (double)k / (double)N_steps * T;
+        std::cout << "  k = " << k
+                  << ", t = " << t
+                  << ", W(t) = " << W_Samples(k) << "\n";
+    }
 
-
-
-
+    return W_Samples;
 }
+
+
 
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
@@ -527,7 +626,7 @@ int main(){
     Eigen::MatrixXd paths = Path_generator(S_0, mu, sigma, Time, N_steps, N_paths);
 
     // Write to CSV (absolute path so you KNOW where it goes)
-    std::string out_file = "C:/Users/Staff/Downloads/cpp_output/gbm_paths_1.csv";
+    std::string out_file = "C:/Users/tc5608f/Downloads/cpp_output/gbm_paths_1.csv";
     std::cout << "Main CWD is: " << fs::current_path() << "\n";
     write_paths_to_csv(out_file, paths, Time);
 
@@ -545,6 +644,13 @@ int main(){
         plt.show()
     */
 
+ 
+    int N_bisections = 3;  // for example
+    double Tt = 1.0;
+
+    Eigen::VectorXd path = brownian_bridge(N_bisections, Tt);
+
+    
 
 
 
