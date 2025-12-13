@@ -7,7 +7,7 @@
       "command": "C:/msys64/mingw64/bin/g++.exe",
       "args": [
         "-std=c++17",
-        "-I", "C:/libs/eigen",
+        "-I", "C:/Users/Staff/Downloads/C++ Projects Home/eigen/eigen-5.0.0/eigen-5.0.0",
         "-fdiagnostics-color=always",
         "-g",
         "${file}",
