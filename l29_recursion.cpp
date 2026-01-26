@@ -14,13 +14,30 @@ void walk(int steps){
     }
 }
 
+long long factorial(int num){
+    long long result = 1;
+
+    for(int i = 1; i <= num; i++){
+        result = result * i;
+    }
+    
+    return result;
+}
+
+long long factorial_rec(int num){
+    if(num > 1){
+        return num * factorial_rec(num - 1);        
+    } else {
+        return 1;
+    }
+}
+
 int main(){
 
-    walk(10);
-    
-
+    walk(5);
+    std::cout << factorial(17) << '\n';
+    std::cout << factorial_rec(16) << '\n';
+    std::cout << sizeof(int) << '\n';
+    std::cout << sizeof(long long) << '\n';
     return 0;
-
-
-
 }
