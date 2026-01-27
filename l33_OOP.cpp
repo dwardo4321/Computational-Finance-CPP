@@ -20,9 +20,9 @@ class Human{
 
     // class attributes
     public:
-        std::string name;
-        std::string occupation;
-        int age;
+        std::string name = "Darrel";
+        std::string occupation = "Aerospace Engineer";
+        int age = 22;
 
     // methods (function belonging to a class, things an object can perform)
     void eat(){
