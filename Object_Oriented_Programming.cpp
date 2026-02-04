@@ -11,12 +11,18 @@ class abstractemployee{
 // Encapsulation
 // Access modifiers: private (default), public, protected
 class employee:abstractemployee{
-    private:
+    protected:
         std::string Name;
+    
+    private:
         std::string Company;
         int Age;
 
     public:
+        /* std::string Name;
+        std::string Company;
+        int Age; */
+
         // Method ****************************************
         void intro(){
             std::cout << "Name - " << Name << '\n';
@@ -58,6 +64,9 @@ class employee:abstractemployee{
             else 
                 std::cout << Name << ", sorry, no promotion! \n";
         }
+        virtual void Work(){
+            std::cout << Name << " is checking email, task backlog... \n";
+        }
 };
 
 // Inheritance
@@ -73,6 +82,9 @@ class developer: public employee{  // employee is the base class
         void fixbug(){
             std::cout << getName() << " is fixing bugs in " << Favprogramminglang << '\n';
         }
+        void Work(){
+            std::cout << Name << " is writing code in " << Favprogramminglang << '\n';
+        }
 };
 
 class teacher: public employee{
@@ -85,7 +97,13 @@ class teacher: public employee{
         void preparelesson(){
             std::cout << getName() << " is preparing for a " <<  Subject << " lesson! \n";
         }
+        void Work(){
+            std::cout << Name << " is teaching " << Subject << '\n';
+        }
 };
+
+// Polymorphism
+
 
 
 int main(){
@@ -114,7 +132,11 @@ int main(){
     dev_1.askforpromotion();
     teach_1.askforpromotion();
     teach_1.preparelesson();
+    employee *e1 = &dev_1;
+    employee *e2 = &teach_1;
 
-
+    e1->Work();  
+    e2->Work();
+    
     return 0;
 }
