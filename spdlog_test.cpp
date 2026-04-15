@@ -8,3 +8,8 @@ int main() {
 
     return 0;
 }
+
+/*
+C:/msys64/ucrt64/bin/g++.exe -std=c++20 -g spdlog_test.cpp -o spdlog_test.exe -lspdlog -lfmt
+.\spdlog_test.exe
+*/

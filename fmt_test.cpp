@@ -10,3 +10,8 @@ int main() {
 
     return 0;
 }
+
+/*
+C:/msys64/ucrt64/bin/g++.exe -std=c++20 -g fmt_test.cpp -o fmt_test.exe -lfmt
+.\fmt_test.exe
+*/

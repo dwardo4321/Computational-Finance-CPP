@@ -21,3 +21,8 @@ int main() {
 
     return 0;
 }
+
+/*
+C:/msys64/ucrt64/bin/g++.exe -std=c++20 -g quantlib_test.cpp -o quantlib_test.exe -lQuantLib
+.\quantlib_test.exe
+*/
