@@ -1,11 +1,14 @@
-# Ignore Eigen directory completely
-/eigen/
-
-# Ignore build outputs
+build/
+cmake-build-*/
 *.exe
 *.obj
 *.o
-*.log
+*.pdb
 
-# Ignore VS Code config
-/.vscode/
+!.vscode/
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/c_cpp_properties.json
+
+!Eigen/
+!Eigen/**
