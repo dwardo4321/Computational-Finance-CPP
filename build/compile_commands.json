@@ -1,20 +1,20 @@
 [
 {
-  "directory": "C:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/Brownian_Motion.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\Brownian_Motion.dir\\Brownian_Motion.cpp.obj -c \"C:\\Users\\Staff\\Downloads\\C++ Projects Home\\Computational-Finance-CPP\\Brownian_Motion.cpp\"",
-  "file": "C:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP/Brownian_Motion.cpp",
-  "output": "CMakeFiles/Brownian_Motion.dir/Brownian_Motion.cpp.obj"
+  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\Brownian_Motion.dir\\Brownian_Motion.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\Brownian_Motion.cpp",
+  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/Brownian_Motion.cpp",
+  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/Brownian_Motion.dir/Brownian_Motion.cpp.obj"
 },
 {
-  "directory": "C:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/Object_Oriented_Programming.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\Object_Oriented_Programming.dir\\Object_Oriented_Programming.cpp.obj -c \"C:\\Users\\Staff\\Downloads\\C++ Projects Home\\Computational-Finance-CPP\\Object_Oriented_Programming.cpp\"",
-  "file": "C:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP/Object_Oriented_Programming.cpp",
-  "output": "CMakeFiles/Object_Oriented_Programming.dir/Object_Oriented_Programming.cpp.obj"
+  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\Object_Oriented_Programming.dir\\Object_Oriented_Programming.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\Object_Oriented_Programming.cpp",
+  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/Object_Oriented_Programming.cpp",
+  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/Object_Oriented_Programming.dir/Object_Oriented_Programming.cpp.obj"
 },
 {
-  "directory": "C:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\mingw64\\bin\\g++.exe  @CMakeFiles/eigen_test.dir/includes_CXX.rsp -g -std=c++17 -o CMakeFiles\\eigen_test.dir\\eigen_test.cpp.obj -c \"C:\\Users\\Staff\\Downloads\\C++ Projects Home\\Computational-Finance-CPP\\eigen_test.cpp\"",
-  "file": "C:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP/eigen_test.cpp",
-  "output": "CMakeFiles/eigen_test.dir/eigen_test.cpp.obj"
+  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\eigen_test.dir\\eigen_test.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\eigen_test.cpp",
+  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/eigen_test.cpp",
+  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/eigen_test.dir/eigen_test.cpp.obj"
 }
 ]

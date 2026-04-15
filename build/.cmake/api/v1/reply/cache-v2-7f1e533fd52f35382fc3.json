@@ -15,7 +15,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/addr2line.exe"
+			"value" : "C:/msys64/ucrt64/bin/addr2line.exe"
 		},
 		{
 			"name" : "CMAKE_AR",
@@ -31,7 +31,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/ar.exe"
+			"value" : "C:/msys64/ucrt64/bin/ar.exe"
 		},
 		{
 			"name" : "CMAKE_BUILD_TYPE",
@@ -55,7 +55,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "c:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP/build"
+			"value" : "c:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -79,7 +79,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "3"
+			"value" : "2"
 		},
 		{
 			"name" : "CMAKE_CACHE_PATCH_VERSION",
@@ -91,23 +91,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "1"
-		},
-		{
-			"name" : "CMAKE_COLOR_MAKEFILE",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Enable/Disable color output during build."
-				}
-			],
-			"type" : "BOOL",
-			"value" : "ON"
+			"value" : "2"
 		},
 		{
 			"name" : "CMAKE_COMMAND",
@@ -159,7 +143,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/g++.exe"
+			"value" : "C:/msys64/ucrt64/bin/g++.exe"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER_AR",
@@ -175,7 +159,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/gcc-ar.exe"
+			"value" : "C:/msys64/ucrt64/bin/gcc-ar.exe"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER_RANLIB",
@@ -191,7 +175,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/gcc-ranlib.exe"
+			"value" : "C:/msys64/ucrt64/bin/gcc-ranlib.exe"
 		},
 		{
 			"name" : "CMAKE_CXX_FLAGS",
@@ -299,7 +283,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/gcc.exe"
+			"value" : "C:/msys64/ucrt64/bin/gcc.exe"
 		},
 		{
 			"name" : "CMAKE_DLLTOOL",
@@ -315,7 +299,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/dlltool.exe"
+			"value" : "C:/msys64/ucrt64/bin/dlltool.exe"
 		},
 		{
 			"name" : "CMAKE_EDIT_COMMAND",
@@ -422,6 +406,22 @@
 			"value" : ""
 		},
 		{
+			"name" : "CMAKE_EXPORT_BUILD_DATABASE",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "Enable/Disable output of build database during the build."
+				}
+			],
+			"type" : "BOOL",
+			"value" : ""
+		},
+		{
 			"name" : "CMAKE_EXPORT_COMPILE_COMMANDS",
 			"properties" : 
 			[
@@ -455,7 +455,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP/build/CMakeFiles/pkgRedirects"
+			"value" : "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -467,7 +467,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "MinGW Makefiles"
+			"value" : "Ninja"
 		},
 		{
 			"name" : "CMAKE_GENERATOR_INSTANCE",
@@ -527,7 +527,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP"
+			"value" : "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -555,7 +555,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/ld.exe"
+			"value" : "C:/msys64/ucrt64/bin/ld.exe"
 		},
 		{
 			"name" : "CMAKE_LIST_FILE_NAME",
@@ -579,11 +579,11 @@
 				},
 				{
 					"name" : "HELPSTRING",
-					"value" : "Path to a program."
+					"value" : "Program used to build from build.ninja files."
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/mingw32-make.exe"
+			"value" : "C:/Users/Tapson/AppData/Local/Microsoft/WinGet/Packages/Ninja-build.Ninja_Microsoft.Winget.Source_8wekyb3d8bbwe/ninja.exe"
 		},
 		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS",
@@ -679,7 +679,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/nm.exe"
+			"value" : "C:/msys64/ucrt64/bin/nm.exe"
 		},
 		{
 			"name" : "CMAKE_NUMBER_OF_MAKEFILES",
@@ -707,7 +707,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/objcopy.exe"
+			"value" : "C:/msys64/ucrt64/bin/objcopy.exe"
 		},
 		{
 			"name" : "CMAKE_OBJDUMP",
@@ -723,7 +723,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/objdump.exe"
+			"value" : "C:/msys64/ucrt64/bin/objdump.exe"
 		},
 		{
 			"name" : "CMAKE_PLATFORM_INFO_INITIALIZED",
@@ -811,7 +811,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/ranlib.exe"
+			"value" : "C:/msys64/ucrt64/bin/ranlib.exe"
 		},
 		{
 			"name" : "CMAKE_RC_COMPILER",
@@ -827,7 +827,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/windres.exe"
+			"value" : "C:/msys64/ucrt64/bin/windres.exe"
 		},
 		{
 			"name" : "CMAKE_RC_COMPILER_WORKS",
@@ -935,7 +935,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/readelf.exe"
+			"value" : "C:/msys64/ucrt64/bin/readelf.exe"
 		},
 		{
 			"name" : "CMAKE_ROOT",
@@ -947,7 +947,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "C:/Program Files/CMake/share/cmake-4.3"
+			"value" : "C:/Program Files/CMake/share/cmake-4.2"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -1155,7 +1155,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "C:/msys64/mingw64/bin/strip.exe"
+			"value" : "C:/msys64/ucrt64/bin/strip.exe"
 		},
 		{
 			"name" : "CMAKE_TAPI",
@@ -1199,7 +1199,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP/build"
+			"value" : "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build"
 		},
 		{
 			"name" : "ComputationalFinanceCPP_IS_TOP_LEVEL",
@@ -1223,7 +1223,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "C:/Users/Staff/Downloads/C++ Projects Home/Computational-Finance-CPP"
+			"value" : "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP"
 		}
 	],
 	"kind" : "cache",
