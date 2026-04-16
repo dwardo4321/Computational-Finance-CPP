@@ -41,6 +41,44 @@ include CMakeFiles/rules.ninja
 
 cmake_ninja_workdir = C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/
 # =============================================================================
+# Object build statements for EXECUTABLE target Asset_Option_Price
+
+
+#############################################
+# Order-only phony target for Asset_Option_Price
+
+build cmake_object_order_depends_target_Asset_Option_Price: phony || .
+
+build CMakeFiles/Asset_Option_Price.dir/Asset_Option_Price.cpp.obj: CXX_COMPILER__Asset_Option_Price_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/Asset_Option_Price.cpp || cmake_object_order_depends_target_Asset_Option_Price
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\Asset_Option_Price.dir\Asset_Option_Price.cpp.obj.d
+  FLAGS = -g -std=c++17
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP
+  OBJECT_DIR = CMakeFiles\Asset_Option_Price.dir
+  OBJECT_FILE_DIR = CMakeFiles\Asset_Option_Price.dir
+  TARGET_SUPPORT_DIR = CMakeFiles\Asset_Option_Price.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target Asset_Option_Price
+
+
+#############################################
+# Link the executable bin\Asset_Option_Price.exe
+
+build bin/Asset_Option_Price.exe: CXX_EXECUTABLE_LINKER__Asset_Option_Price_Debug CMakeFiles/Asset_Option_Price.dir/Asset_Option_Price.cpp.obj
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\Asset_Option_Price.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bin\Asset_Option_Price.exe
+  TARGET_IMPLIB = libAsset_Option_Price.dll.a
+  TARGET_PDB = Asset_Option_Price.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\Asset_Option_Price.dir
+
+# =============================================================================
 # Object build statements for EXECUTABLE target Brownian_Motion
 
 
@@ -117,6 +155,120 @@ build bin/Object_Oriented_Programming.exe: CXX_EXECUTABLE_LINKER__Object_Oriente
   TARGET_SUPPORT_DIR = CMakeFiles\Object_Oriented_Programming.dir
 
 # =============================================================================
+# Object build statements for EXECUTABLE target boost_test
+
+
+#############################################
+# Order-only phony target for boost_test
+
+build cmake_object_order_depends_target_boost_test: phony || .
+
+build CMakeFiles/boost_test.dir/boost_test.cpp.obj: CXX_COMPILER__boost_test_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/boost_test.cpp || cmake_object_order_depends_target_boost_test
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\boost_test.dir\boost_test.cpp.obj.d
+  FLAGS = -g -std=c++17
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP
+  OBJECT_DIR = CMakeFiles\boost_test.dir
+  OBJECT_FILE_DIR = CMakeFiles\boost_test.dir
+  TARGET_SUPPORT_DIR = CMakeFiles\boost_test.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target boost_test
+
+
+#############################################
+# Link the executable bin\boost_test.exe
+
+build bin/boost_test.exe: CXX_EXECUTABLE_LINKER__boost_test_Debug CMakeFiles/boost_test.dir/boost_test.cpp.obj
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\boost_test.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bin\boost_test.exe
+  TARGET_IMPLIB = libboost_test.dll.a
+  TARGET_PDB = boost_test.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\boost_test.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target catch2_test
+
+
+#############################################
+# Order-only phony target for catch2_test
+
+build cmake_object_order_depends_target_catch2_test: phony || .
+
+build CMakeFiles/catch2_test.dir/catch2_test.cpp.obj: CXX_COMPILER__catch2_test_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/catch2_test.cpp || cmake_object_order_depends_target_catch2_test
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\catch2_test.dir\catch2_test.cpp.obj.d
+  FLAGS = -g -std=c++17
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP
+  OBJECT_DIR = CMakeFiles\catch2_test.dir
+  OBJECT_FILE_DIR = CMakeFiles\catch2_test.dir
+  TARGET_SUPPORT_DIR = CMakeFiles\catch2_test.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target catch2_test
+
+
+#############################################
+# Link the executable bin\catch2_test.exe
+
+build bin/catch2_test.exe: CXX_EXECUTABLE_LINKER__catch2_test_Debug CMakeFiles/catch2_test.dir/catch2_test.cpp.obj
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\catch2_test.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bin\catch2_test.exe
+  TARGET_IMPLIB = libcatch2_test.dll.a
+  TARGET_PDB = catch2_test.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\catch2_test.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target dummy_file
+
+
+#############################################
+# Order-only phony target for dummy_file
+
+build cmake_object_order_depends_target_dummy_file: phony || .
+
+build CMakeFiles/dummy_file.dir/dummy_file.cpp.obj: CXX_COMPILER__dummy_file_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/dummy_file.cpp || cmake_object_order_depends_target_dummy_file
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\dummy_file.dir\dummy_file.cpp.obj.d
+  FLAGS = -g -std=c++17
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP
+  OBJECT_DIR = CMakeFiles\dummy_file.dir
+  OBJECT_FILE_DIR = CMakeFiles\dummy_file.dir
+  TARGET_SUPPORT_DIR = CMakeFiles\dummy_file.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target dummy_file
+
+
+#############################################
+# Link the executable bin\dummy_file.exe
+
+build bin/dummy_file.exe: CXX_EXECUTABLE_LINKER__dummy_file_Debug CMakeFiles/dummy_file.dir/dummy_file.cpp.obj
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\dummy_file.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bin\dummy_file.exe
+  TARGET_IMPLIB = libdummy_file.dll.a
+  TARGET_PDB = dummy_file.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\dummy_file.dir
+
+# =============================================================================
 # Object build statements for EXECUTABLE target eigen_test
 
 
@@ -154,6 +306,158 @@ build bin/eigen_test.exe: CXX_EXECUTABLE_LINKER__eigen_test_Debug CMakeFiles/eig
   TARGET_PDB = eigen_test.exe.dbg
   TARGET_SUPPORT_DIR = CMakeFiles\eigen_test.dir
 
+# =============================================================================
+# Object build statements for EXECUTABLE target fmt_test
+
+
+#############################################
+# Order-only phony target for fmt_test
+
+build cmake_object_order_depends_target_fmt_test: phony || .
+
+build CMakeFiles/fmt_test.dir/fmt_test.cpp.obj: CXX_COMPILER__fmt_test_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/fmt_test.cpp || cmake_object_order_depends_target_fmt_test
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\fmt_test.dir\fmt_test.cpp.obj.d
+  FLAGS = -g -std=c++17
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP
+  OBJECT_DIR = CMakeFiles\fmt_test.dir
+  OBJECT_FILE_DIR = CMakeFiles\fmt_test.dir
+  TARGET_SUPPORT_DIR = CMakeFiles\fmt_test.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target fmt_test
+
+
+#############################################
+# Link the executable bin\fmt_test.exe
+
+build bin/fmt_test.exe: CXX_EXECUTABLE_LINKER__fmt_test_Debug CMakeFiles/fmt_test.dir/fmt_test.cpp.obj
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\fmt_test.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bin\fmt_test.exe
+  TARGET_IMPLIB = libfmt_test.dll.a
+  TARGET_PDB = fmt_test.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\fmt_test.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target json_test
+
+
+#############################################
+# Order-only phony target for json_test
+
+build cmake_object_order_depends_target_json_test: phony || .
+
+build CMakeFiles/json_test.dir/json_test.cpp.obj: CXX_COMPILER__json_test_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/json_test.cpp || cmake_object_order_depends_target_json_test
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\json_test.dir\json_test.cpp.obj.d
+  FLAGS = -g -std=c++17
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP
+  OBJECT_DIR = CMakeFiles\json_test.dir
+  OBJECT_FILE_DIR = CMakeFiles\json_test.dir
+  TARGET_SUPPORT_DIR = CMakeFiles\json_test.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target json_test
+
+
+#############################################
+# Link the executable bin\json_test.exe
+
+build bin/json_test.exe: CXX_EXECUTABLE_LINKER__json_test_Debug CMakeFiles/json_test.dir/json_test.cpp.obj
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\json_test.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bin\json_test.exe
+  TARGET_IMPLIB = libjson_test.dll.a
+  TARGET_PDB = json_test.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\json_test.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target quantlib_test
+
+
+#############################################
+# Order-only phony target for quantlib_test
+
+build cmake_object_order_depends_target_quantlib_test: phony || .
+
+build CMakeFiles/quantlib_test.dir/quantlib_test.cpp.obj: CXX_COMPILER__quantlib_test_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/quantlib_test.cpp || cmake_object_order_depends_target_quantlib_test
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\quantlib_test.dir\quantlib_test.cpp.obj.d
+  FLAGS = -g -std=c++17
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP
+  OBJECT_DIR = CMakeFiles\quantlib_test.dir
+  OBJECT_FILE_DIR = CMakeFiles\quantlib_test.dir
+  TARGET_SUPPORT_DIR = CMakeFiles\quantlib_test.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target quantlib_test
+
+
+#############################################
+# Link the executable bin\quantlib_test.exe
+
+build bin/quantlib_test.exe: CXX_EXECUTABLE_LINKER__quantlib_test_Debug CMakeFiles/quantlib_test.dir/quantlib_test.cpp.obj
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\quantlib_test.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bin\quantlib_test.exe
+  TARGET_IMPLIB = libquantlib_test.dll.a
+  TARGET_PDB = quantlib_test.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\quantlib_test.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target spdlog_test
+
+
+#############################################
+# Order-only phony target for spdlog_test
+
+build cmake_object_order_depends_target_spdlog_test: phony || .
+
+build CMakeFiles/spdlog_test.dir/spdlog_test.cpp.obj: CXX_COMPILER__spdlog_test_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/spdlog_test.cpp || cmake_object_order_depends_target_spdlog_test
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\spdlog_test.dir\spdlog_test.cpp.obj.d
+  FLAGS = -g -std=c++17
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP
+  OBJECT_DIR = CMakeFiles\spdlog_test.dir
+  OBJECT_FILE_DIR = CMakeFiles\spdlog_test.dir
+  TARGET_SUPPORT_DIR = CMakeFiles\spdlog_test.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target spdlog_test
+
+
+#############################################
+# Link the executable bin\spdlog_test.exe
+
+build bin/spdlog_test.exe: CXX_EXECUTABLE_LINKER__spdlog_test_Debug CMakeFiles/spdlog_test.dir/spdlog_test.cpp.obj
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\spdlog_test.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bin\spdlog_test.exe
+  TARGET_IMPLIB = libspdlog_test.dll.a
+  TARGET_PDB = spdlog_test.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\spdlog_test.dir
+
 
 #############################################
 # Utility command for edit_cache
@@ -181,6 +485,10 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 # =============================================================================
 # Target aliases.
 
+build Asset_Option_Price: phony bin/Asset_Option_Price.exe
+
+build Asset_Option_Price.exe: phony bin/Asset_Option_Price.exe
+
 build Brownian_Motion: phony bin/Brownian_Motion.exe
 
 build Brownian_Motion.exe: phony bin/Brownian_Motion.exe
@@ -189,9 +497,37 @@ build Object_Oriented_Programming: phony bin/Object_Oriented_Programming.exe
 
 build Object_Oriented_Programming.exe: phony bin/Object_Oriented_Programming.exe
 
+build boost_test: phony bin/boost_test.exe
+
+build boost_test.exe: phony bin/boost_test.exe
+
+build catch2_test: phony bin/catch2_test.exe
+
+build catch2_test.exe: phony bin/catch2_test.exe
+
+build dummy_file: phony bin/dummy_file.exe
+
+build dummy_file.exe: phony bin/dummy_file.exe
+
 build eigen_test: phony bin/eigen_test.exe
 
 build eigen_test.exe: phony bin/eigen_test.exe
+
+build fmt_test: phony bin/fmt_test.exe
+
+build fmt_test.exe: phony bin/fmt_test.exe
+
+build json_test: phony bin/json_test.exe
+
+build json_test.exe: phony bin/json_test.exe
+
+build quantlib_test: phony bin/quantlib_test.exe
+
+build quantlib_test.exe: phony bin/quantlib_test.exe
+
+build spdlog_test: phony bin/spdlog_test.exe
+
+build spdlog_test.exe: phony bin/spdlog_test.exe
 
 # =============================================================================
 # Folder targets.
@@ -201,7 +537,7 @@ build eigen_test.exe: phony bin/eigen_test.exe
 #############################################
 # Folder: C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build
 
-build all: phony bin/Brownian_Motion.exe bin/Object_Oriented_Programming.exe bin/eigen_test.exe
+build all: phony bin/Asset_Option_Price.exe bin/Brownian_Motion.exe bin/Object_Oriented_Programming.exe bin/boost_test.exe bin/catch2_test.exe bin/dummy_file.exe bin/eigen_test.exe bin/fmt_test.exe bin/json_test.exe bin/quantlib_test.exe bin/spdlog_test.exe
 
 # =============================================================================
 # Built-in targets

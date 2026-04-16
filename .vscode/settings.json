@@ -1,3 +1,4 @@
 {
-    "cmake.buildBeforeRun": true
+    "cmake.buildBeforeRun": true,
+    "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": false
 }

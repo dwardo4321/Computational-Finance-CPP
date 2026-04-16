@@ -193,48 +193,6 @@ Eigen::MatrixXd simulate_terminal_prices(
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 
-Eigen::MatrixXd Price_gen(int d, int N_i){   
-
-    // Generate prices using GBM
-    
-    // Eigen::MatrixXd M; completely empty matrix 0x0
-    Eigen::MatrixXd Matri(N_i, 0);   // N_i rows, 0 columns
-    
-
-    std::normal_distribution<double> standard_norm(0, 1);
-
-    while(Matri.cols() < d){ 
-        Eigen::MatrixXd S_t(N_i, 1);
-        double K, r, v, S_0;
-        int T;
-
-        std::cout << "--------------------------------------------------------\n";
-        std::cout << "Enter Strike Price K: ";
-        std::cin >> K;
-        std::cout << "Enter rate r: ";
-        std::cin >> r;
-        std::cout << "Enter volatility v: ";
-        std::cin >> v;
-        std::cout << "Enter Price today S_0: ";
-        std::cin >> S_0;
-        std::cout << "Enter maturity T: ";
-        std::cin >> T;
-        
-            for(int i = 0; i < N_i; i++)
-                {
-                    S_t(i) = S_0 * exp(((r - 0.5*(pow(v, 2))) * T) + v*static_cast<double>(sqrt(T))*standard_norm(gen1));   //GBM
-                }
-        Matri.conservativeResize(N_i, Matri.cols() + 1);
-        Matri.col(Matri.cols() - 1) = S_t;         
-    };
-
-    return Matri;
-
-}
-
-
-
-
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 //-------------------------[PART 5: MC option pricing with variance reduction]-----------------------------------
@@ -589,24 +547,24 @@ int main(){
     std::cout << "-----------mapping normal RVs to prices-----------------\n";
    
     Eigen::MatrixXd Corr(5, 5);
-    Corr << 0.5;
-        /*1.00, 0.40, 0.35, 0.30, 0.25,
+    Corr <<
+        1.00, 0.40, 0.35, 0.30, 0.25,
         0.40, 1.00, 0.32, 0.28, 0.30,
         0.35, 0.32, 1.00, 0.38, 0.33,
         0.30, 0.28, 0.38, 1.00, 0.36,
-        0.25, 0.30, 0.33, 0.36, 1.00;*/
+        0.25, 0.30, 0.33, 0.36, 1.00;
 
     // Rates (per year) for 5 assets
-    Eigen::VectorXd r(1);
-    r << 0.03;//, 0.025, 0.04, 0.035, 0.02;
+    Eigen::VectorXd r(5);
+    r << 0.03, 0.025, 0.04, 0.035, 0.02;
 
     // Volatilities (per sqrt(year)) for 5 assets
-    Eigen::VectorXd v(1);
-    v << 0.15;//, 0.20, 0.18, 0.22, 0.17;
+    Eigen::VectorXd v(5);
+    v << 0.15, 0.20, 0.18, 0.22, 0.17;
 
     // Initial prices for 5 assets
-    Eigen::VectorXd S0(1);
-    S0 << 100.0;//, 120.0, 95.0, 140.0, 80.0;
+    Eigen::VectorXd S0(5);
+    S0 << 100.0, 120.0, 95.0, 140.0, 80.0;
 
     int T;
     T = 10;
