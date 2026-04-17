@@ -135,58 +135,6 @@ Norm4 Standard_Norm(int N){
 //--------------------------------------[And mapping to prices]--------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 
-Eigen::MatrixXd simulate_terminal_prices(
-    Eigen::VectorXd r,
-    Eigen::VectorXd v,
-    Eigen::MatrixXd Corr,
-    int T,
-    Eigen::VectorXd S0
-    )
-{
-    Eigen::MatrixXd mu(r.size(), 1);
-    Eigen::MatrixXd Cov(r.size(), r.size());
-
-    // 1) Mean vector mu_i = (r_i - 0.5 * v_i^2) * T
-    for(int i = 0; i < v.size(); i++)
-    {
-        mu(i) = (r(i) - 0.5 * pow(v(i), 2)) * T; 
-    };
-
-    // 2) Covariance matrix Cov_ij = Corr_ij * v_i * v_j
-    for (int j = 0; j < v.size(); j++)
-        {
-            for(int k = 0; k < v.size(); k++)
-                {
-                    Cov(j, k) = Corr(j, k) * v(j) * v(k) * T; 
-                };
-        };
-
-    // 3) Cholesky: Cov = L L^T
-    Eigen::LLT<Eigen::MatrixXd> llt(Cov);
-    Eigen::MatrixXd L = llt.matrixL();
-
-    // 4) Generate Z ~ N(0, I_d)   
-    std::normal_distribution<double> standard_norm(0, 1);
-    Eigen::MatrixXd Z(r.size(), 1);
-    for (int i = 0; i < r.size(); i++)
-    {
-        Z(i) = standard_norm(gen1);
-    }
-    
-    // Generate 
-    Eigen::MatrixXd X;
-    X = mu + L * Z;
-    
-    // 6) Map to prices: S_T = S_0 * exp(X)
-    Eigen::MatrixXd ST(r.size(), 1);
-    for (int i = 0; i < r.size(); ++i) {
-        ST(i) = S0(i) * std::exp(X(i));
-    }
-
-    return ST;
-
-}
-
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 //-----------------[PART 4: Multivariate terminal prices at a single time T with GBM ]---------------------------
