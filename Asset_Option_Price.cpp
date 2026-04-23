@@ -5,13 +5,15 @@
 #include <vector>
 #include <random>
 #include <optional>
+#include <string>
+#include <sstream>
 
 std::random_device rd;
 std::mt19937_64 gen1(rd()); 
 
 class Asset_Option_Pricing{
     
-    public:
+    private:
 
         Eigen::MatrixXd Brownian_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix){
             
@@ -57,13 +59,44 @@ class Asset_Option_Pricing{
 
             return paths; 
         }
-    
+
+        std::pair <Eigen::MatrixXd, Eigen::MatrixXd> GBM_price_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix){ 
+            // Pass-by-Reference (additional matrix prices_paths_variance_reduction)
+            Eigen::MatrixXd brownian_paths(discretisation_brownian_motion, dimensions);
+            brownian_paths = Brownian_path_generator(correlation_matrix);
+            
+            Eigen::MatrixXd prices_paths(discretisation_brownian_motion, dimensions);
+            Eigen::MatrixXd prices_paths_variance_reduction(discretisation_brownian_motion, dimensions);
+            
+            prices_paths.row(0) = price_today.transpose();
+            prices_paths_variance_reduction.row(0) = price_today.transpose();
+
+            //Eigen::VectorXd time_steps = Eigen::VectorXd::LinSpaced(discretisation_brownian_motion, 0, Time);
+
+            double delta_time = static_cast<double>(Time) / (discretisation_brownian_motion - 1);
+
+            for (int i = 0; i < dimensions; i++){  
+
+                for (int j = 1; j < discretisation_brownian_motion; j++){ 
+
+                    double delta_BM = brownian_paths(j, i) - brownian_paths(j - 1, i);
+
+                    double X = volatility(i) * delta_BM + (rate(i) - 0.5*pow(volatility(i), 2)) * delta_time;
+                    double X_vd = volatility(i) * -delta_BM + (rate(i) - 0.5*pow(volatility(i), 2)) * delta_time;
+
+                    prices_paths(j, i) = prices_paths(j - 1, i) * exp(X);   
+                    prices_paths_variance_reduction(j, i) = prices_paths_variance_reduction(j - 1, i) * exp(X_vd);               
+                }
+            }
+            return {prices_paths, prices_paths_variance_reduction};
+        };
+        
     public:
     
         Eigen::VectorXd strike;     
         Eigen::VectorXd rate;         // fixed rate
         Eigen::VectorXd volatility;   // fixed volatility
-        Eigen::VectorXd price_today; 
+        Eigen::VectorXd price_today;
         double Time;                  // time duration
         int dimensions;               // number of assets
         int discretisation_brownian_motion; // number of steps            
@@ -95,51 +128,124 @@ class Asset_Option_Pricing{
                 {
                     if (rate_constr.size() != strike_constr.size() ||
                         volatility_constr.size() != strike_constr.size() ||
-                        price_today_constr.size() != strike_constr.size())
-                        {
-                        throw std::runtime_error("All input vectors must have the same size.");
+                        price_today_constr.size() != strike_constr.size()){
+                            throw std::runtime_error("All input vectors must have the same size.");
                         }
 
-                    if (discretisation_brownian_motion_constr < 2)
-                        {
+                    if (discretisation_brownian_motion_constr < 2){
                             throw std::runtime_error("There should be more than 2 steps");
                         }
                     
-                    if (Time_constr < 0)
-                        {
+                    if (Time_constr < 0){
                             throw std::runtime_error("Time should be greater than 0");
                         }
                 }
                 
 
         // Class Method 1 -------------------------------------------------------------------------------------------
-        Eigen::MatrixXd GBM_price_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix)
-        {
-            Eigen::MatrixXd brownian_paths(discretisation_brownian_motion, dimensions);
-            brownian_paths = Brownian_path_generator(correlation_matrix);
-            
-            Eigen::MatrixXd prices_paths(discretisation_brownian_motion, dimensions);
-            prices_paths.row(0) = price_today.transpose();
+        Eigen::MatrixXd GBM_price_path(std::optional<Eigen::MatrixXd> correlation_matrix){
+            Eigen::MatrixXd out(discretisation_brownian_motion, dimensions);
+            if(correlation_matrix.has_value()){
+                auto[A, B] = GBM_price_path_generator(correlation_matrix.value());
+                return A;
+            }else{
+                auto[A, B] = GBM_price_path_generator(std::nullopt);
+                return A;
+            }    
+        }
 
-            //Eigen::VectorXd time_steps = Eigen::VectorXd::LinSpaced(discretisation_brownian_motion, 0, Time);
-
-            double delta_time = static_cast<double>(Time) / (discretisation_brownian_motion - 1);
-
-            for (int i = 0; i < dimensions; i++)
-            {   
-                for (int j = 1; j < discretisation_brownian_motion; j++)
-                {
-                    double delta_BM = brownian_paths(j, i) - brownian_paths(j - 1, i);
-                    double X = volatility(i) * delta_BM + (rate(i) - 0.5*pow(volatility(i), 2)) * delta_time;
-                    prices_paths(j, i) = prices_paths(j - 1, i) * exp(X);                
-                }
-            }
-            return prices_paths;
-        };
-    
         // Class Method 2 -------------------------------------------------------------------------------------------
-        
-    };
+        struct Option_output
+        {
+            Eigen::VectorXd sample_mean;
+            Eigen::VectorXd sample_variance;
+            Eigen::VectorXd sample_standard_error;
+            std::string confidence_intervals;
+        };
+
+        Option_output Monte_Carlo_option_pricer(int number_of_iterations , std::optional<bool> variance_reduction, std::optional<Eigen::MatrixXd> correlation_matrix){
+            Option_output output{};
+            
+            Eigen::MatrixXd prices(number_of_iterations, dimensions);
+            Eigen::MatrixXd prices_variance_reduction(number_of_iterations, dimensions);
+
+            Eigen::MatrixXd pay_off(number_of_iterations, dimensions);
+            Eigen::MatrixXd pay_off_variance_reduction(number_of_iterations, dimensions);  
+
+            Eigen::MatrixXd discounted_pay_off(number_of_iterations, dimensions);
+                   
+                if (correlation_matrix.has_value()){
+                    for (int i = 0; i < number_of_iterations; i++){
+                        
+                        auto[A, B] = GBM_price_path_generator(correlation_matrix.value());
+                        prices.row(i) = A(Eigen::last, Eigen::all);
+                        prices_variance_reduction.row(i) = B(Eigen::last, Eigen::all);
+                        
+                            for (int j = 0; j < dimensions; j++){ 
+                                prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
+                                prices_variance_reduction(i, j) - strike(j) > 0? pay_off_variance_reduction(i, j) = (prices_variance_reduction(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off_variance_reduction(i, j) = 0; 
+                                discounted_pay_off(i, j) = 0.5 * (pay_off(i, j) + pay_off_variance_reduction(i, j));
+                            }  
+                    }    
+                }
+                else{
+                    for (int i = 0; i < number_of_iterations; i++){
+                        
+                        auto[A, B] = GBM_price_path_generator(std::nullopt);
+                        prices.row(i) = A(Eigen::last, Eigen::all);
+                        prices_variance_reduction.row(i) = B(Eigen::last, Eigen::all);
+                        
+                            for (int j = 0; j < dimensions; j++){ 
+                                prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
+                                prices_variance_reduction(i, j) - strike(j) > 0? pay_off_variance_reduction(i, j) = (prices_variance_reduction(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off_variance_reduction(i, j) = 0; 
+                                discounted_pay_off(i, j) = 0.5 * (pay_off(i, j) + pay_off_variance_reduction(i, j));
+                            }
+                    }
+                }
+            
+            Eigen::VectorXd sample_mean(dimensions); sample_mean.setZero();
+            Eigen::VectorXd sample_variance(dimensions); sample_variance.setZero();
+            Eigen::VectorXd sample_standard_error(dimensions); sample_standard_error.setZero();
+            Eigen::VectorXd ci_lower_bound(dimensions); ci_lower_bound.setZero();
+            Eigen::VectorXd ci_upper_bound(dimensions); ci_upper_bound.setZero();
+            
+            
+            // SAMPLE MEAN ------------------------------------------------------------------------------------
+            for (int j = 0; j < dimensions; j++){
+                for (int i = 0; i < number_of_iterations; i++){
+                    sample_mean(j) += discounted_pay_off(i, j);    
+                }
+                sample_mean(j) = sample_mean(j) / static_cast<double>(number_of_iterations);
+            }
+            output.sample_mean = sample_mean;  
+            
+            // SAMPLE VARIANCE --------------------------------------------------------------------------------
+            for (int j = 0; j < dimensions; j++){
+                for (int i = 0; i < number_of_iterations; i++){
+                    sample_variance(j) += pow((discounted_pay_off(i, j) - sample_mean(j)), 2);    
+                }
+                sample_variance(j) = sample_variance(j) / static_cast<double>(number_of_iterations - 1);
+            }
+            output.sample_variance = sample_variance;
+            
+            // STANDARD ERROR ------------------------------------------------------------------------------------
+            for (int i = 0; i < dimensions; i++){
+                sample_standard_error(i) = sqrt(sample_variance(i) / static_cast<double>(number_of_iterations));
+            }
+            output.sample_standard_error = sample_standard_error;
+
+            // CONFIDENCE INTERVALS -----------------------------------------------------------------------------
+            std::stringstream confidence_intervals;
+
+            for(int i = 0; i < dimensions; i++){
+                ci_lower_bound(i) = sample_mean(i) - 1.96 * sample_standard_error(i);   
+                ci_upper_bound(i) = sample_mean(i) + 1.96 * sample_standard_error(i);
+                confidence_intervals << "[" << ci_lower_bound(i) << ": " << ci_upper_bound(i) << "]\n";
+            }
+            output.confidence_intervals = confidence_intervals.str();
+            return output;
+        }
+};
 
 int main(){
 
@@ -165,7 +271,8 @@ int main(){
                    0.10, 0.15, 0.50, 1.00, 0.55,
                    0.25, 0.30, 0.45, 0.55, 1.00;
     Asset_Option_Pricing asset_4 = Asset_Option_Pricing(strike, rate, volatility, price_today, 2, 500);
-    std::cout << asset_4.GBM_price_path_generator(correlation) << '\n';
+    std::cout << asset_4.Monte_Carlo_option_pricer(1000, {}, correlation).confidence_intervals << '\n';
+    //std::cout << asset_4.GBM_price_path(correlation) << '\n';
 
     return 0;
     }
