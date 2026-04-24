@@ -15,50 +15,13 @@ class Asset_Option_Pricing{
     
     private:
 
-        Eigen::MatrixXd Brownian_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix){
-            
-            Eigen::MatrixXd paths(discretisation_brownian_motion, dimensions);
-            paths.row(0).setZero();
-
-            double delta_time = static_cast<double>(Time) / (discretisation_brownian_motion - 1);
-            
-            // Generate Z ~ N(0, I_(nxn))   
-            std::normal_distribution<double> standard_norm(0, 1);
-            Eigen::MatrixXd standard_normal_rv(discretisation_brownian_motion, dimensions);
-            for (int i = 0; i < dimensions; i++)
-            {
-                for(int j = 0; j < discretisation_brownian_motion; j++)
-                {
-                    standard_normal_rv(j, i) = standard_norm(gen1);
-                }                 
-            }
-
-            if(correlation_matrix.has_value()){
-
-                // Cholesky Decomposition
-                Eigen::LLT<Eigen::MatrixXd> llt(correlation_matrix.value());
-                Eigen::MatrixXd lower_triangular = llt.matrixL();
-                
-                // dW(t), and BM (Brownian Motion) 
-                Eigen::VectorXd delta_BM;
-            
-                for(int i = 1; i < discretisation_brownian_motion; i++)
-                {
-                    delta_BM = sqrt(delta_time) * standard_normal_rv.row(i) * lower_triangular.transpose();
-                    paths.row(i) = paths.row(i - 1) + delta_BM.transpose();
-                }
-
-            } 
-            else
-            {
-                for(int i = 1; i < discretisation_brownian_motion; i++)
-                {
-                    paths.row(i) = paths.row(i - 1) + standard_normal_rv.row(i) * sqrt(delta_time);
-                }
-            }
-
-            return paths; 
-        }
+        Eigen::VectorXd strike;     
+        Eigen::VectorXd rate;         // fixed rate
+        Eigen::VectorXd volatility;   // fixed volatility
+        Eigen::VectorXd price_today;
+        double Time;                  // time duration
+        int dimensions;               // number of assets
+        int discretisation_brownian_motion; // number of steps 
 
         std::pair <Eigen::MatrixXd, Eigen::MatrixXd> GBM_price_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix){ 
             // Pass-by-Reference (additional matrix prices_paths_variance_reduction)
@@ -89,60 +52,136 @@ class Asset_Option_Pricing{
                 }
             }
             return {prices_paths, prices_paths_variance_reduction};
-        };
+        }
         
+        Eigen::MatrixXd discounted_pay_off_calculator(int number_of_iterations, bool variance_reduction, std::optional<Eigen::MatrixXd> correlation_matrix){
+
+            Eigen::MatrixXd prices(number_of_iterations, dimensions);
+            Eigen::MatrixXd prices_variance_reduction(number_of_iterations, dimensions);
+
+            Eigen::MatrixXd pay_off(number_of_iterations, dimensions);
+            Eigen::MatrixXd pay_off_variance_reduction(number_of_iterations, dimensions);  
+
+            Eigen::MatrixXd discounted_pay_off(number_of_iterations, dimensions);
+
+            if(variance_reduction){
+                for (int i = 0; i < number_of_iterations; i++){
+                                
+                                auto[A, B] = GBM_price_path_generator(correlation_matrix);
+                                prices.row(i) = A(Eigen::last, Eigen::all);
+                                prices_variance_reduction.row(i) = B(Eigen::last, Eigen::all);
+                                
+                                    for (int j = 0; j < dimensions; j++){ 
+                                        prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
+                                        prices_variance_reduction(i, j) - strike(j) > 0? pay_off_variance_reduction(i, j) = (prices_variance_reduction(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off_variance_reduction(i, j) = 0; 
+                                        discounted_pay_off(i, j) = 0.5 * (pay_off(i, j) + pay_off_variance_reduction(i, j));
+                                    }
+                            }
+            }else{
+                for (int i = 0; i < number_of_iterations; i++){
+                            
+                            auto[A, B] = GBM_price_path_generator(correlation_matrix);
+                            prices.row(i) = A(Eigen::last, Eigen::all);
+                            
+                                for (int j = 0; j < dimensions; j++){ 
+                                    prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
+                                    discounted_pay_off(i, j) = pay_off(i, j);
+                                }  
+                        } 
+            }
+            return discounted_pay_off;
+        }
+
     public:
+
+        // Constructor 1: default constructor (homogeneous multi-assets)--------------------------------------------------------------------------------------------
+        Asset_Option_Pricing(double strike_constr,
+                            double rate_constr,
+                            double volatility_constr,
+                            double price_today_constr,
+                            double Time_constr,
+                            int dimensions_constr,
+                            int discretisation_brownian_motion_constr):
+
+        strike(Eigen::VectorXd::Constant(dimensions_constr, strike_constr)), rate(Eigen::VectorXd::Constant(dimensions_constr, rate_constr)),
+        volatility(Eigen::VectorXd::Constant(dimensions_constr, volatility_constr)), price_today(Eigen::VectorXd::Constant(dimensions_constr, price_today_constr)),
+        Time(Time_constr), dimensions(dimensions_constr), discretisation_brownian_motion(discretisation_brownian_motion_constr) {}
     
-        Eigen::VectorXd strike;     
-        Eigen::VectorXd rate;         // fixed rate
-        Eigen::VectorXd volatility;   // fixed volatility
-        Eigen::VectorXd price_today;
-        double Time;                  // time duration
-        int dimensions;               // number of assets
-        int discretisation_brownian_motion; // number of steps            
+        // Constructor 2: member initializer list (heterogeneous multi-assets) --------------------------------------------------------------------------------------------
+        Asset_Option_Pricing(const Eigen::VectorXd& strike_constr,
+                            const Eigen::VectorXd& rate_constr,
+                            const Eigen::VectorXd& volatility_constr,
+                            const Eigen::VectorXd& price_today_constr,
+                            double Time_constr,
+                            //int dimensions_constr,
+                            int discretisation_brownian_motion_constr):
 
-            // Constructor 1: default constructor (homogeneous multi-assets)--------------------------------------------------------------------------------------------
-            Asset_Option_Pricing(double strike_constr,
-                                 double rate_constr,
-                                 double volatility_constr,
-                                 double price_today_constr,
-                                 double Time_constr,
-                                 int dimensions_constr,
-                                 int discretisation_brownian_motion_constr):
-
-                strike(Eigen::VectorXd::Constant(dimensions_constr, strike_constr)), rate(Eigen::VectorXd::Constant(dimensions_constr, rate_constr)),
-                volatility(Eigen::VectorXd::Constant(dimensions_constr, volatility_constr)), price_today(Eigen::VectorXd::Constant(dimensions_constr, price_today_constr)),
-                Time(Time_constr), dimensions(dimensions_constr), discretisation_brownian_motion(discretisation_brownian_motion_constr) {}
-            
-            // Constructor 2: member initializer list (heterogeneous multi-assets) --------------------------------------------------------------------------------------------
-            Asset_Option_Pricing(const Eigen::VectorXd& strike_constr,
-                                 const Eigen::VectorXd& rate_constr,
-                                 const Eigen::VectorXd& volatility_constr,
-                                 const Eigen::VectorXd& price_today_constr,
-                                 double Time_constr,
-                                 //int dimensions_constr,
-                                 int discretisation_brownian_motion_constr):
-
-                strike(strike_constr), rate(rate_constr), volatility(volatility_constr), price_today(price_today_constr),
-                Time(Time_constr), dimensions(static_cast<int>(strike_constr.size())), discretisation_brownian_motion(discretisation_brownian_motion_constr) 
-                {
-                    if (rate_constr.size() != strike_constr.size() ||
-                        volatility_constr.size() != strike_constr.size() ||
-                        price_today_constr.size() != strike_constr.size()){
-                            throw std::runtime_error("All input vectors must have the same size.");
-                        }
-
-                    if (discretisation_brownian_motion_constr < 2){
-                            throw std::runtime_error("There should be more than 2 steps");
-                        }
-                    
-                    if (Time_constr < 0){
-                            throw std::runtime_error("Time should be greater than 0");
-                        }
+        strike(strike_constr), rate(rate_constr), volatility(volatility_constr), price_today(price_today_constr),
+        Time(Time_constr), dimensions(static_cast<int>(strike_constr.size())), discretisation_brownian_motion(discretisation_brownian_motion_constr) 
+        {
+            if (rate_constr.size() != strike_constr.size() ||
+                volatility_constr.size() != strike_constr.size() ||
+                price_today_constr.size() != strike_constr.size()){
+                    throw std::runtime_error("All input vectors must have the same size.");
                 }
+
+            if (discretisation_brownian_motion_constr < 2){
+                    throw std::runtime_error("There should be more than 2 steps");
+                }
+            
+            if (Time_constr < 0){
+                    throw std::runtime_error("Time should be greater than 0");
+                }
+        }
                 
 
         // Class Method 1 -------------------------------------------------------------------------------------------
+        Eigen::MatrixXd Brownian_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix){
+            
+            Eigen::MatrixXd paths(discretisation_brownian_motion, dimensions);
+            paths.row(0).setZero();
+
+            double delta_time = static_cast<double>(Time) / (discretisation_brownian_motion - 1);
+            
+            // Generate Z ~ N(0, I_(nxn))   
+            std::normal_distribution<double> standard_norm(0, 1);
+            Eigen::MatrixXd standard_normal_rv(discretisation_brownian_motion, dimensions);
+            for (int i = 0; i < dimensions; i++)
+            {
+                for(int j = 0; j < discretisation_brownian_motion; j++)
+                {
+                    standard_normal_rv(j, i) = standard_norm(gen1);
+                }                 
+            }
+
+            if(correlation_matrix.has_value()){
+
+                // Cholesky Decomposition
+                Eigen::LLT<Eigen::MatrixXd> llt(correlation_matrix.value());
+                Eigen::MatrixXd lower_triangular = llt.matrixL();
+                
+                // dW(t), and BM (Brownian Motion) 
+                Eigen::VectorXd delta_BM;
+            
+                for(int i = 1; i < discretisation_brownian_motion; i++)
+                {
+                    delta_BM = sqrt(delta_time) * (lower_triangular * standard_normal_rv.row(i).transpose());
+                    paths.row(i) = paths.row(i - 1) + delta_BM.transpose();
+                }
+
+            } 
+            else
+            {
+                for(int i = 1; i < discretisation_brownian_motion; i++)
+                {
+                    paths.row(i) = paths.row(i - 1) + standard_normal_rv.row(i) * sqrt(delta_time);
+                }
+            }
+
+            return paths; 
+        }
+        
+        // Class Method 2 -------------------------------------------------------------------------------------------
         Eigen::MatrixXd GBM_price_path(std::optional<Eigen::MatrixXd> correlation_matrix){
             Eigen::MatrixXd out(discretisation_brownian_motion, dimensions);
             if(correlation_matrix.has_value()){
@@ -154,7 +193,7 @@ class Asset_Option_Pricing{
             }    
         }
 
-        // Class Method 2 -------------------------------------------------------------------------------------------
+        // Class Method 3 -------------------------------------------------------------------------------------------
         struct Option_output
         {
             Eigen::VectorXd sample_mean;
@@ -163,43 +202,22 @@ class Asset_Option_Pricing{
             std::string confidence_intervals;
         };
 
-        Option_output Monte_Carlo_option_pricer(int number_of_iterations , std::optional<bool> variance_reduction, std::optional<Eigen::MatrixXd> correlation_matrix){
+        Option_output Monte_Carlo_option_pricer(int number_of_iterations , bool variance_reduction, std::optional<Eigen::MatrixXd> correlation_matrix){
             Option_output output{};
-            
-            Eigen::MatrixXd prices(number_of_iterations, dimensions);
-            Eigen::MatrixXd prices_variance_reduction(number_of_iterations, dimensions);
 
-            Eigen::MatrixXd pay_off(number_of_iterations, dimensions);
-            Eigen::MatrixXd pay_off_variance_reduction(number_of_iterations, dimensions);  
-
-            Eigen::MatrixXd discounted_pay_off(number_of_iterations, dimensions);
+                Eigen::MatrixXd discounted_pay_off(number_of_iterations, dimensions);
                    
-                if (correlation_matrix.has_value()){
-                    for (int i = 0; i < number_of_iterations; i++){
-                        
-                        auto[A, B] = GBM_price_path_generator(correlation_matrix.value());
-                        prices.row(i) = A(Eigen::last, Eigen::all);
-                        prices_variance_reduction.row(i) = B(Eigen::last, Eigen::all);
-                        
-                            for (int j = 0; j < dimensions; j++){ 
-                                prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
-                                prices_variance_reduction(i, j) - strike(j) > 0? pay_off_variance_reduction(i, j) = (prices_variance_reduction(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off_variance_reduction(i, j) = 0; 
-                                discounted_pay_off(i, j) = 0.5 * (pay_off(i, j) + pay_off_variance_reduction(i, j));
-                            }  
-                    }    
-                }
-                else{
-                    for (int i = 0; i < number_of_iterations; i++){
-                        
-                        auto[A, B] = GBM_price_path_generator(std::nullopt);
-                        prices.row(i) = A(Eigen::last, Eigen::all);
-                        prices_variance_reduction.row(i) = B(Eigen::last, Eigen::all);
-                        
-                            for (int j = 0; j < dimensions; j++){ 
-                                prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
-                                prices_variance_reduction(i, j) - strike(j) > 0? pay_off_variance_reduction(i, j) = (prices_variance_reduction(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off_variance_reduction(i, j) = 0; 
-                                discounted_pay_off(i, j) = 0.5 * (pay_off(i, j) + pay_off_variance_reduction(i, j));
-                            }
+                if (variance_reduction){
+                    if (correlation_matrix.has_value()){
+                        discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, true, correlation_matrix.value());    
+                    }else{
+                        discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, true, std::nullopt);
+                    }
+                }else{
+                    if (correlation_matrix.has_value()){
+                        discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, false, correlation_matrix.value());     
+                    }else{
+                        discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, false, std::nullopt);
                     }
                 }
             
@@ -211,12 +229,7 @@ class Asset_Option_Pricing{
             
             
             // SAMPLE MEAN ------------------------------------------------------------------------------------
-            for (int j = 0; j < dimensions; j++){
-                for (int i = 0; i < number_of_iterations; i++){
-                    sample_mean(j) += discounted_pay_off(i, j);    
-                }
-                sample_mean(j) = sample_mean(j) / static_cast<double>(number_of_iterations);
-            }
+            sample_mean = discounted_pay_off.colwise().mean();
             output.sample_mean = sample_mean;  
             
             // SAMPLE VARIANCE --------------------------------------------------------------------------------
@@ -270,9 +283,9 @@ int main(){
                    0.20, 0.40, 1.00, 0.50, 0.45,
                    0.10, 0.15, 0.50, 1.00, 0.55,
                    0.25, 0.30, 0.45, 0.55, 1.00;
-    Asset_Option_Pricing asset_4 = Asset_Option_Pricing(strike, rate, volatility, price_today, 2, 500);
-    std::cout << asset_4.Monte_Carlo_option_pricer(1000, {}, correlation).confidence_intervals << '\n';
-    //std::cout << asset_4.GBM_price_path(correlation) << '\n';
-
+    Asset_Option_Pricing asset_4 = Asset_Option_Pricing(strike, rate, volatility, price_today, 2, 1000);
+    std::cout << asset_4.Monte_Carlo_option_pricer(1000, true, correlation).confidence_intervals << '\n';
+    std::cout << asset_4.Monte_Carlo_option_pricer(1000, false, correlation).confidence_intervals << '\n';
+    std::cout << asset_4 << '\n';
     return 0;
-    }
+    }                                                                                                                                                                                           

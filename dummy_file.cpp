@@ -134,121 +134,21 @@ Norm4 Standard_Norm(int N){
 //--------------------------------[PART 3: RNG FOR STANDARD NORMAL RVs]------------------------------------------
 //--------------------------------------[And mapping to prices]--------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
-
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 //-----------------[PART 4: Multivariate terminal prices at a single time T with GBM ]---------------------------
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
-
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 //-------------------------[PART 5: MC option pricing with variance reduction]-----------------------------------
 //----------------------------------------[Antithetic Method]----------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
-
-struct four_out
-{
-    double sample_mean;
-    double se;
-    double var_estimatorb;
-    double ci_lower;
-    double ci_upper;
-};
-
-
-four_out MC_option_price(double K, double r, double v, double S_0, int T, int Nit){ 
-
-    four_out out{};
-    std::normal_distribution<double> Std_Norm_RNG(0, 1);
-    
-    std::vector<double> S_T;
-    std::vector<double> S_T_vd;  // for variance reduction
-    std::vector<double> PV;
-    std::vector<double> PV_norm;  
-    std::vector<double> PV_vd;    // for variance reduction
-    std::vector<double> normalrv;
-    double total_PV = 0;
-    S_T.reserve(Nit);
-    S_T_vd.reserve(Nit);  // for variance reduction
-    PV.reserve(Nit);
-    PV_norm.reserve(Nit);
-    PV_vd.reserve(Nit);  // for variance reduction
-    normalrv.reserve(Nit);
-
-    for(int i = 0; i < Nit; i++){
-        normalrv.push_back(Std_Norm_RNG(gen1));
-    }
-    
-    
-    for (int i = 0; i < Nit; i++){
-        S_T.push_back(S_0 * exp(((r - 0.5*(pow(v, 2))) * T) + v*static_cast<double>(sqrt(T))*normalrv[i]));   //GBM
-        S_T_vd.push_back(S_0 * exp(((r - 0.5*(pow(v, 2))) * T) + v*static_cast<double>(sqrt(T))*-normalrv[i]));  // for variance reduction
-
-        S_T[i] - K > 0?  PV_norm.push_back((S_T[i]-K) * exp(-r*T)):  PV_norm.push_back(0);  // Discounted payoff vector
-        S_T_vd[i] - K > 0?  PV_vd.push_back((S_T_vd[i]-K) * exp(-r*T)):  PV_vd.push_back(0);  // for variance reduction
-
-        PV.push_back(0.5 * (PV_norm[i] + PV_vd[i]));  // for variance reduction
-    }
-    
-
-    for (int i = 0; i < Nit; i++){
-        total_PV  += PV[i];    
-    } 
-    double sample_mean = total_PV/Nit;
-    out.sample_mean = sample_mean;  // Price estimate (Mean price)
-    
-
-    double diffs = 0, var_payoff, se, var_estimatorb;
-    for(int j = 0; j < Nit; j++){
-        diffs += pow((PV[j] - sample_mean), 2);
-    }      
-    var_payoff = diffs/static_cast<double>(Nit-1); // variance of pay off 
-    
-    var_estimatorb = var_payoff/static_cast<double>(Nit); // variance of price estimator
-    se = sqrt(var_payoff/static_cast<double>(Nit));  //standard error  of price estimator
-
-    out.se = se;
-    out.var_estimatorb = var_estimatorb;
-    out.ci_lower = sample_mean - 1.96 * se;   // Price lower
-    out.ci_upper = sample_mean + 1.96 * se;   // Price upper
-    return out;
-}
-
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 //------------------------------[PART 6: Generating Sample Paths for GBM]----------------------------------------
 //--------------------------------------[Euler–Maruyama scheme]--------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
-
-Eigen::MatrixXd Path_generator(double S_0, double mu, double sigma, int T, int N_steps, int N_paths){
-
-    double dt = T / static_cast<double> (N_steps);
-    double v = mu - 0.5 * pow(sigma, 2);
-    double nudt = v * dt;
-    double sidt = sigma * pow(dt, 0.5); 
-    
-    Eigen::MatrixXd S_step_path(N_steps, N_paths);
-    std::normal_distribution<double> snrv(0, 1);
-
-    for (int j = 0; j < N_paths; j++)
-    {   
-        for (int i = 0; i < N_steps; i++)
-        {
-            if (i == 0)
-            {
-                S_step_path(i, j) = S_0 * exp(nudt + sidt * snrv(gen1));
-            }else{
-                S_step_path(i, j) = S_step_path(i-1, j) * exp(nudt + sidt * snrv(gen1));
-            }                 
-        }
-    
-    }
-    
-    return S_step_path;
-
-} 
-
 //---------------------------------------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------------------------------------
 //------------------------------[PART 7: CSV export for generated paths]-----------------------------------------
