@@ -4,17 +4,6 @@
 # ROOT_CPP at CMakeLists.txt:13 (file)
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/*.cpp")
 set(OLD_GLOB
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/Asset_Option_Price.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/Brownian_Motion.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/Object_Oriented_Programming.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/boost_test.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/catch2_test.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/dummy_file.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/eigen_test.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/fmt_test.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/json_test.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/quantlib_test.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/spdlog_test.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")

@@ -1,68 +1,14 @@
 [
 {
   "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\Asset_Option_Price.dir\\Asset_Option_Price.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\Asset_Option_Price.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/Asset_Option_Price.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/Asset_Option_Price.dir/Asset_Option_Price.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3 -g -std=c++20 -o CMakeFiles\\main.dir\\app\\main.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\app\\main.cpp",
+  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/app/main.cpp",
+  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/main.dir/app/main.cpp.obj"
 },
 {
   "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\Brownian_Motion.dir\\Brownian_Motion.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\Brownian_Motion.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/Brownian_Motion.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/Brownian_Motion.dir/Brownian_Motion.cpp.obj"
-},
-{
-  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\Object_Oriented_Programming.dir\\Object_Oriented_Programming.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\Object_Oriented_Programming.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/Object_Oriented_Programming.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/Object_Oriented_Programming.dir/Object_Oriented_Programming.cpp.obj"
-},
-{
-  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\boost_test.dir\\boost_test.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\boost_test.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/boost_test.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/boost_test.dir/boost_test.cpp.obj"
-},
-{
-  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\catch2_test.dir\\catch2_test.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\catch2_test.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/catch2_test.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/catch2_test.dir/catch2_test.cpp.obj"
-},
-{
-  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\dummy_file.dir\\dummy_file.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\dummy_file.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/dummy_file.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/dummy_file.dir/dummy_file.cpp.obj"
-},
-{
-  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\eigen_test.dir\\eigen_test.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\eigen_test.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/eigen_test.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/eigen_test.dir/eigen_test.cpp.obj"
-},
-{
-  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\fmt_test.dir\\fmt_test.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\fmt_test.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/fmt_test.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/fmt_test.dir/fmt_test.cpp.obj"
-},
-{
-  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\json_test.dir\\json_test.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\json_test.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/json_test.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/json_test.dir/json_test.cpp.obj"
-},
-{
-  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\quantlib_test.dir\\quantlib_test.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\quantlib_test.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/quantlib_test.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/quantlib_test.dir/quantlib_test.cpp.obj"
-},
-{
-  "directory": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build",
-  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP -g -std=c++17 -o CMakeFiles\\spdlog_test.dir\\spdlog_test.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\spdlog_test.cpp",
-  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/spdlog_test.cpp",
-  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/spdlog_test.dir/spdlog_test.cpp.obj"
+  "command": "C:\\msys64\\ucrt64\\bin\\g++.exe -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3 -g -std=c++20 -o CMakeFiles\\main.dir\\src\\Asset_Option_Price.cpp.obj -c C:\\Users\\Tapson\\Downloads\\cpp_projects\\Computational-Finance-CPP\\src\\Asset_Option_Price.cpp",
+  "file": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/Asset_Option_Price.cpp",
+  "output": "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/main.dir/src/Asset_Option_Price.cpp.obj"
 }
 ]
