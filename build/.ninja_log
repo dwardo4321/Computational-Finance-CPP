@@ -6,10 +6,12 @@
 142	7184	7979845431934349	CMakeFiles/Brownian_Motion.dir/Brownian_Motion.cpp.obj	ecbf15768082407e
 6643	7903	7979845496950732	bin/eigen_test.exe	1e3404226ab77ce
 7185	7996	7979845502369872	bin/Brownian_Motion.exe	8b9495bd0af91265
-513	4465	8003041767606461	build.ninja	c796d6c350952a9d
-513	4465	8003041767157654	C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/cmake_install.cmake	c796d6c350952a9d
+513	4465	8004181843647757	build.ninja	c796d6c350952a9d
+513	4465	8004181841302147	C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/cmake_install.cmake	c796d6c350952a9d
 2001	7654	7980806152117286	CMakeFiles/catch2_test.dir/catch2_test.cpp.obj	1acd85e76b789aa6
 1980	26882	7980806151907854	CMakeFiles/boost_test.dir/boost_test.cpp.obj	1ac784a19b939aea
 32	16632	7987757037852140	CMakeFiles/main.dir/src/Asset_Option_Price.cpp.obj	467b3e3a99946ac2
 27	9651	7987757037782313	CMakeFiles/main.dir/app/main.cpp.obj	71417d4cfd3c748a
 16632	17892	7987757203834179	bin/main.exe	9394aa6e623b7f36
+1577	174415	8004183411429506	CMakeFiles/main.dir/src/Asset_Option_Price.cpp.obj	467b3e3a99946ac2
+174416	192259	8004185139841669	bin/main.exe	9394aa6e623b7f36

@@ -12,7 +12,7 @@
 
 
 namespace{std::random_device rd;
-std::mt19937_64 gen1(rd());} 
+          std::mt19937_64 gen1(rd());} 
 
 std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Asset_Option_Price::GBM_price_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix){ 
     // Pass-by-Reference (additional matrix prices_paths_variance_reduction)
