@@ -1,3 +1,5 @@
 C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/main.dir
+C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/test_asset_option_price.dir
+C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/test_delta_hedging_engine.dir
 C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/edit_cache.dir
 C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/rebuild_cache.dir

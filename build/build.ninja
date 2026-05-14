@@ -18,7 +18,7 @@
 #############################################
 # Minimal version of Ninja required by this file
 
-ninja_required_version = 1.5
+ninja_required_version = 1.8
 
 
 #############################################
@@ -67,6 +67,24 @@ build CMakeFiles/main.dir/src/Asset_Option_Price.cpp.obj: CXX_COMPILER__main_uns
   OBJECT_FILE_DIR = CMakeFiles\main.dir\src
   TARGET_SUPPORT_DIR = CMakeFiles\main.dir
 
+build CMakeFiles/main.dir/src/Delta_Hedging_Engine.cpp.obj: CXX_COMPILER__main_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/Delta_Hedging_Engine.cpp || cmake_object_order_depends_target_main
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\main.dir\src\Delta_Hedging_Engine.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\main.dir
+  OBJECT_FILE_DIR = CMakeFiles\main.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\main.dir
+
+build CMakeFiles/main.dir/src/utilities.cpp.obj: CXX_COMPILER__main_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/utilities.cpp || cmake_object_order_depends_target_main
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\main.dir\src\utilities.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\main.dir
+  OBJECT_FILE_DIR = CMakeFiles\main.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\main.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target main
@@ -75,7 +93,7 @@ build CMakeFiles/main.dir/src/Asset_Option_Price.cpp.obj: CXX_COMPILER__main_uns
 #############################################
 # Link the executable bin\main.exe
 
-build bin/main.exe: CXX_EXECUTABLE_LINKER__main_Debug CMakeFiles/main.dir/app/main.cpp.obj CMakeFiles/main.dir/src/Asset_Option_Price.cpp.obj
+build bin/main.exe: CXX_EXECUTABLE_LINKER__main_Debug CMakeFiles/main.dir/app/main.cpp.obj CMakeFiles/main.dir/src/Asset_Option_Price.cpp.obj CMakeFiles/main.dir/src/Delta_Hedging_Engine.cpp.obj CMakeFiles/main.dir/src/utilities.cpp.obj
   CONFIG = Debug
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
@@ -86,6 +104,136 @@ build bin/main.exe: CXX_EXECUTABLE_LINKER__main_Debug CMakeFiles/main.dir/app/ma
   TARGET_IMPLIB = libmain.dll.a
   TARGET_PDB = main.exe.dbg
   TARGET_SUPPORT_DIR = CMakeFiles\main.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target test_asset_option_price
+
+
+#############################################
+# Order-only phony target for test_asset_option_price
+
+build cmake_object_order_depends_target_test_asset_option_price: phony || .
+
+build CMakeFiles/test_asset_option_price.dir/app/test_asset_option_price.cpp.obj: CXX_COMPILER__test_asset_option_price_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/app/test_asset_option_price.cpp || cmake_object_order_depends_target_test_asset_option_price
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\test_asset_option_price.dir\app\test_asset_option_price.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\test_asset_option_price.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_asset_option_price.dir\app
+  TARGET_SUPPORT_DIR = CMakeFiles\test_asset_option_price.dir
+
+build CMakeFiles/test_asset_option_price.dir/src/Asset_Option_Price.cpp.obj: CXX_COMPILER__test_asset_option_price_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/Asset_Option_Price.cpp || cmake_object_order_depends_target_test_asset_option_price
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\test_asset_option_price.dir\src\Asset_Option_Price.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\test_asset_option_price.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_asset_option_price.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\test_asset_option_price.dir
+
+build CMakeFiles/test_asset_option_price.dir/src/Delta_Hedging_Engine.cpp.obj: CXX_COMPILER__test_asset_option_price_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/Delta_Hedging_Engine.cpp || cmake_object_order_depends_target_test_asset_option_price
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\test_asset_option_price.dir\src\Delta_Hedging_Engine.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\test_asset_option_price.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_asset_option_price.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\test_asset_option_price.dir
+
+build CMakeFiles/test_asset_option_price.dir/src/utilities.cpp.obj: CXX_COMPILER__test_asset_option_price_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/utilities.cpp || cmake_object_order_depends_target_test_asset_option_price
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\test_asset_option_price.dir\src\utilities.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\test_asset_option_price.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_asset_option_price.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\test_asset_option_price.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_asset_option_price
+
+
+#############################################
+# Link the executable bin\test_asset_option_price.exe
+
+build bin/test_asset_option_price.exe: CXX_EXECUTABLE_LINKER__test_asset_option_price_Debug CMakeFiles/test_asset_option_price.dir/app/test_asset_option_price.cpp.obj CMakeFiles/test_asset_option_price.dir/src/Asset_Option_Price.cpp.obj CMakeFiles/test_asset_option_price.dir/src/Delta_Hedging_Engine.cpp.obj CMakeFiles/test_asset_option_price.dir/src/utilities.cpp.obj
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\test_asset_option_price.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bin\test_asset_option_price.exe
+  TARGET_IMPLIB = libtest_asset_option_price.dll.a
+  TARGET_PDB = test_asset_option_price.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\test_asset_option_price.dir
+
+# =============================================================================
+# Object build statements for EXECUTABLE target test_delta_hedging_engine
+
+
+#############################################
+# Order-only phony target for test_delta_hedging_engine
+
+build cmake_object_order_depends_target_test_delta_hedging_engine: phony || .
+
+build CMakeFiles/test_delta_hedging_engine.dir/app/test_delta_hedging_engine.cpp.obj: CXX_COMPILER__test_delta_hedging_engine_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/app/test_delta_hedging_engine.cpp || cmake_object_order_depends_target_test_delta_hedging_engine
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\test_delta_hedging_engine.dir\app\test_delta_hedging_engine.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\test_delta_hedging_engine.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_delta_hedging_engine.dir\app
+  TARGET_SUPPORT_DIR = CMakeFiles\test_delta_hedging_engine.dir
+
+build CMakeFiles/test_delta_hedging_engine.dir/src/Asset_Option_Price.cpp.obj: CXX_COMPILER__test_delta_hedging_engine_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/Asset_Option_Price.cpp || cmake_object_order_depends_target_test_delta_hedging_engine
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\test_delta_hedging_engine.dir\src\Asset_Option_Price.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\test_delta_hedging_engine.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_delta_hedging_engine.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\test_delta_hedging_engine.dir
+
+build CMakeFiles/test_delta_hedging_engine.dir/src/Delta_Hedging_Engine.cpp.obj: CXX_COMPILER__test_delta_hedging_engine_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/Delta_Hedging_Engine.cpp || cmake_object_order_depends_target_test_delta_hedging_engine
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\test_delta_hedging_engine.dir\src\Delta_Hedging_Engine.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\test_delta_hedging_engine.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_delta_hedging_engine.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\test_delta_hedging_engine.dir
+
+build CMakeFiles/test_delta_hedging_engine.dir/src/utilities.cpp.obj: CXX_COMPILER__test_delta_hedging_engine_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/utilities.cpp || cmake_object_order_depends_target_test_delta_hedging_engine
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\test_delta_hedging_engine.dir\src\utilities.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\test_delta_hedging_engine.dir
+  OBJECT_FILE_DIR = CMakeFiles\test_delta_hedging_engine.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\test_delta_hedging_engine.dir
+
+
+# =============================================================================
+# Link build statements for EXECUTABLE target test_delta_hedging_engine
+
+
+#############################################
+# Link the executable bin\test_delta_hedging_engine.exe
+
+build bin/test_delta_hedging_engine.exe: CXX_EXECUTABLE_LINKER__test_delta_hedging_engine_Debug CMakeFiles/test_delta_hedging_engine.dir/app/test_delta_hedging_engine.cpp.obj CMakeFiles/test_delta_hedging_engine.dir/src/Asset_Option_Price.cpp.obj CMakeFiles/test_delta_hedging_engine.dir/src/Delta_Hedging_Engine.cpp.obj CMakeFiles/test_delta_hedging_engine.dir/src/utilities.cpp.obj
+  CONFIG = Debug
+  FLAGS = -g
+  LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
+  OBJECT_DIR = CMakeFiles\test_delta_hedging_engine.dir
+  POST_BUILD = cd .
+  PRE_LINK = cd .
+  TARGET_FILE = bin\test_delta_hedging_engine.exe
+  TARGET_IMPLIB = libtest_delta_hedging_engine.dll.a
+  TARGET_PDB = test_delta_hedging_engine.exe.dbg
+  TARGET_SUPPORT_DIR = CMakeFiles\test_delta_hedging_engine.dir
 
 
 #############################################
@@ -118,6 +266,14 @@ build main: phony bin/main.exe
 
 build main.exe: phony bin/main.exe
 
+build test_asset_option_price: phony bin/test_asset_option_price.exe
+
+build test_asset_option_price.exe: phony bin/test_asset_option_price.exe
+
+build test_delta_hedging_engine: phony bin/test_delta_hedging_engine.exe
+
+build test_delta_hedging_engine.exe: phony bin/test_delta_hedging_engine.exe
+
 # =============================================================================
 # Folder targets.
 
@@ -126,23 +282,37 @@ build main.exe: phony bin/main.exe
 #############################################
 # Folder: C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build
 
-build all: phony bin/main.exe
+build all: phony bin/main.exe bin/test_asset_option_price.exe bin/test_delta_hedging_engine.exe
 
 # =============================================================================
 # Built-in targets
 
 
 #############################################
+# Phony target to force glob verification run.
+
+build C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/VerifyGlobs.cmake_force: phony
+
+
+#############################################
+# Re-run CMake to check if globbed directories changed.
+
+build C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/cmake.verify_globs: VERIFY_GLOBS | C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/VerifyGlobs.cmake_force
+  pool = console
+  restat = 1
+
+
+#############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/cmake_install.cmake: RERUN_CMAKE | C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeRCInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Internal/CMakeCXXLinkerInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Linker/GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Linker/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/Windows-GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/Windows-GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-Initialize.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/WindowsPaths.cmake C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/CMakeLists.txt CMakeCache.txt CMakeFiles/4.2.2/CMakeCXXCompiler.cmake CMakeFiles/4.2.2/CMakeRCCompiler.cmake CMakeFiles/4.2.2/CMakeSystem.cmake
+build build.ninja C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/cmake_install.cmake: RERUN_CMAKE C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/cmake.verify_globs | C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/VerifyGlobs.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeRCInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Internal/CMakeCXXLinkerInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Linker/GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Linker/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/Windows-GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/Windows-GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-Initialize.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/WindowsPaths.cmake C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/CMakeLists.txt CMakeCache.txt CMakeFiles/4.2.2/CMakeCXXCompiler.cmake CMakeFiles/4.2.2/CMakeRCCompiler.cmake CMakeFiles/4.2.2/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeRCInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Internal/CMakeCXXLinkerInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Linker/GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Linker/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/Windows-GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/Windows-GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-Initialize.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/WindowsPaths.cmake C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/CMakeLists.txt CMakeCache.txt CMakeFiles/4.2.2/CMakeCXXCompiler.cmake CMakeFiles/4.2.2/CMakeRCCompiler.cmake CMakeFiles/4.2.2/CMakeSystem.cmake: phony
+build C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/build/CMakeFiles/VerifyGlobs.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeCXXInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeCommonLanguageInclude.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeGenericSystem.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeInitializeConfigs.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeLanguageInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeRCInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeSystemSpecificInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/CMakeSystemSpecificInitialize.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/CMakeCommonCompilerMacros.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Compiler/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Internal/CMakeCXXLinkerInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Internal/CMakeCommonLinkerInformation.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Linker/GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Linker/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/Windows-GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Linker/Windows-GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU-CXX-ABI.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU-CXX.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-GNU.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-Initialize.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows-windres.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/Windows.cmake C$:/Program$ Files/CMake/share/cmake-4.2/Modules/Platform/WindowsPaths.cmake C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/CMakeLists.txt CMakeCache.txt CMakeFiles/4.2.2/CMakeCXXCompiler.cmake CMakeFiles/4.2.2/CMakeRCCompiler.cmake CMakeFiles/4.2.2/CMakeSystem.cmake: phony
 
 
 #############################################

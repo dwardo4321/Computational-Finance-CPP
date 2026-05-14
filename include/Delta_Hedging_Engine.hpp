@@ -1,28 +1,29 @@
+#pragma once
+
 #include <iostream>
-#include <string>
-#include <Vector>
 #include <Eigen/Dense>
 #include <optional>
 
-class Delta_Hedging_Engine_Time_Dep_Vol{
+class Delta_Hedging_Engine{
     
     private:
 
         double strike;     
         double rate;         // fixed rate
-        double volatility_realised;   // volatility
+        double volatility_realised;   // asset volatility
+        double volatility_implied;   // option volatility
         double price_today;
         double Time;                  // time duration
-        int dimensions;               // number of assets
         int discretisation; // number of steps 
-
-        std::pair <Eigen::MatrixXd, Eigen::MatrixXd> GBM_price_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix);
-
-        Eigen::MatrixXd Brownian_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix);
 
     public:
 
-        Eigen::MatrixXd DHE_Time_Dependent_Volatility();
+        // Constructor
+        Delta_Hedging_Engine(double strike_constr, double rate_constr, double volatility_realised_constr,   
+                            double volatility_implied_constr, double price_today_constr, double Time_constr, int discretisation_constr);
+
+        // Method 1
+        Eigen::MatrixXd DHE_Time_Dependent_Volatility(bool call, double long_run_implied_vol = 0.25, double mean_reversion_rate = 0.75);
 
 };
 

@@ -2,11 +2,32 @@
 
 #include <iostream>
 #include <Eigen/Dense>
+#include <boost/math/distributions.hpp>
 #include <optional>
+#include <random>
 
+namespace{std::random_device rd;
+          std::mt19937_64 gen(rd());
+        }
+namespace stats{
+
+    double normal_cdf(double x){
+        static const boost::math::normal_distribution<double> norm_dist(0, 1);
+        return boost::math::cdf(norm_dist, x);
+    }
+
+    double normal_pdf(double x){
+        static const boost::math::normal_distribution<double> normal_dist(0, 1);
+        return boost::math::pdf(normal_dist, x);
+    }
+}
+
+// Constructor --------------------------------------------------------------
+utility::utility()
+{}
 
 // Method 1 -----------------------------------------------------------------
-Eigen::MatrixXd  utilities::Brownian_path_generator(int discretisation_brownian_motion, double Time, std::optional<Eigen::MatrixXd> correlation_matrix){
+Eigen::MatrixXd  Brownian_path_generator(int discretisation_brownian_motion, int dimensions, double Time, std::optional<Eigen::MatrixXd> correlation_matrix){
     
     Eigen::MatrixXd paths(discretisation_brownian_motion, dimensions);
     paths.row(0).setZero();
@@ -20,7 +41,7 @@ Eigen::MatrixXd  utilities::Brownian_path_generator(int discretisation_brownian_
     {
         for(int j = 0; j < discretisation_brownian_motion; j++)
         {
-            standard_normal_rv(j, i) = standard_norm(gen1);
+            standard_normal_rv(j, i) = standard_norm(gen);
         }                 
     }
 
@@ -52,7 +73,7 @@ Eigen::MatrixXd  utilities::Brownian_path_generator(int discretisation_brownian_
 };
 
 // Method 2 -----------------------------------------------------------------
-std::pair <Eigen::MatrixXd, Eigen::MatrixXd> utilities::GBM_price_path_generator(Eigen::VectorXd strike,     
+std::pair <Eigen::MatrixXd, Eigen::MatrixXd> GBM_price_path_generator(Eigen::VectorXd strike,     
                                                                                  Eigen::VectorXd rate,         // fixed rate
                                                                                  Eigen::VectorXd volatility,   // fixed volatility
                                                                                  Eigen::VectorXd price_today,
@@ -63,7 +84,7 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> utilities::GBM_price_path_generator
     
     // Pass-by-Reference (additional matrix prices_paths_variance_reduction)
     Eigen::MatrixXd brownian_paths(discretisation_brownian_motion, dimensions);
-    brownian_paths = Brownian_path_generator(correlation_matrix);
+    brownian_paths = Brownian_path_generator(discretisation_brownian_motion, dimensions, Time, correlation_matrix);
     
     Eigen::MatrixXd prices_paths(discretisation_brownian_motion, dimensions);
     Eigen::MatrixXd prices_paths_variance_reduction(discretisation_brownian_motion, dimensions);
@@ -90,3 +111,4 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> utilities::GBM_price_path_generator
     }
     return {prices_paths, prices_paths_variance_reduction};
 }
+
