@@ -5,8 +5,6 @@
 file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/app/*.cpp")
 set(OLD_GLOB
   "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/app/main.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/app/test_asset_option_price.cpp"
-  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/app/test_delta_hedging_engine.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   message("-- GLOB mismatch!")

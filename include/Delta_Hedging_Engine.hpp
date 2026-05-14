@@ -23,7 +23,7 @@ class Delta_Hedging_Engine{
                             double volatility_implied_constr, double price_today_constr, double Time_constr, int discretisation_constr);
 
         // Method 1
-        Eigen::MatrixXd DHE_Time_Dependent_Volatility(bool call, double long_run_implied_vol = 0.25, double mean_reversion_rate = 0.75);
+        Eigen::MatrixXd DHE_Time_Dependent_Volatility(bool call, double long_run_implied_vol = 0.25, double mean_reversion_rate = 0.05);
 
 };
 
