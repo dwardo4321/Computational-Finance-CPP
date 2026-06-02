@@ -76,6 +76,15 @@ build CMakeFiles/main.dir/src/Delta_Hedging_Engine.cpp.obj: CXX_COMPILER__main_u
   OBJECT_FILE_DIR = CMakeFiles\main.dir\src
   TARGET_SUPPORT_DIR = CMakeFiles\main.dir
 
+build CMakeFiles/main.dir/src/Risk_Neutral_MultiDim_Delta_Hedging_Engine.cpp.obj: CXX_COMPILER__main_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/Risk_Neutral_MultiDim_Delta_Hedging_Engine.cpp || cmake_object_order_depends_target_main
+  CONFIG = Debug
+  DEP_FILE = CMakeFiles\main.dir\src\Risk_Neutral_MultiDim_Delta_Hedging_Engine.cpp.obj.d
+  FLAGS = -g -std=c++20
+  INCLUDES = -IC:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/include -IC:/msys64/ucrt64/include/eigen3
+  OBJECT_DIR = CMakeFiles\main.dir
+  OBJECT_FILE_DIR = CMakeFiles\main.dir\src
+  TARGET_SUPPORT_DIR = CMakeFiles\main.dir
+
 build CMakeFiles/main.dir/src/utilities.cpp.obj: CXX_COMPILER__main_unscanned_Debug C$:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/utilities.cpp || cmake_object_order_depends_target_main
   CONFIG = Debug
   DEP_FILE = CMakeFiles\main.dir\src\utilities.cpp.obj.d
@@ -93,7 +102,7 @@ build CMakeFiles/main.dir/src/utilities.cpp.obj: CXX_COMPILER__main_unscanned_De
 #############################################
 # Link the executable bin\main.exe
 
-build bin/main.exe: CXX_EXECUTABLE_LINKER__main_Debug CMakeFiles/main.dir/app/main.cpp.obj CMakeFiles/main.dir/src/Asset_Option_Price.cpp.obj CMakeFiles/main.dir/src/Delta_Hedging_Engine.cpp.obj CMakeFiles/main.dir/src/utilities.cpp.obj
+build bin/main.exe: CXX_EXECUTABLE_LINKER__main_Debug CMakeFiles/main.dir/app/main.cpp.obj CMakeFiles/main.dir/src/Asset_Option_Price.cpp.obj CMakeFiles/main.dir/src/Delta_Hedging_Engine.cpp.obj CMakeFiles/main.dir/src/Risk_Neutral_MultiDim_Delta_Hedging_Engine.cpp.obj CMakeFiles/main.dir/src/utilities.cpp.obj
   CONFIG = Debug
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32

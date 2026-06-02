@@ -22,12 +22,8 @@ namespace stats{
     }
 }
 
-// Constructor --------------------------------------------------------------
-utility::utility()
-{}
-
 // Method 1 -----------------------------------------------------------------
-Eigen::MatrixXd  Brownian_path_generator(int discretisation_brownian_motion, int dimensions, double Time, std::optional<Eigen::MatrixXd> correlation_matrix){
+Eigen::MatrixXd utility::Brownian_path_generator(int discretisation_brownian_motion, int dimensions, double Time, std::optional<Eigen::MatrixXd> correlation_matrix){
     
     Eigen::MatrixXd paths(discretisation_brownian_motion, dimensions);
     paths.row(0).setZero();
@@ -73,7 +69,7 @@ Eigen::MatrixXd  Brownian_path_generator(int discretisation_brownian_motion, int
 };
 
 // Method 2 -----------------------------------------------------------------
-std::pair <Eigen::MatrixXd, Eigen::MatrixXd> GBM_price_path_generator(Eigen::VectorXd strike,     
+std::pair <Eigen::MatrixXd, Eigen::MatrixXd> utility::GBM_price_path_generator(Eigen::VectorXd strike,     
                                                                                  Eigen::VectorXd rate,         // fixed rate
                                                                                  Eigen::VectorXd volatility,   // fixed volatility
                                                                                  Eigen::VectorXd price_today,

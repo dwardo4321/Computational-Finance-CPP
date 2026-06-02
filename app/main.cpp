@@ -1,7 +1,9 @@
 #include <iostream>
 #include <Eigen/Dense>
+#include "utilities.hpp"
 #include "Asset_Option_Price.hpp"
 #include "Delta_Hedging_Engine.hpp"
+#include "Risk_Neutral_MultiDim_Delta_Hedging_Engine.hpp"
 
 int main(){
     
@@ -29,6 +31,7 @@ int main(){
 
     // -------------------------------------------------------------------------
 
+    /*
     double strike = 1000;     
     double rate = 0.225;         // fixed rate
     double volatility_realised = 0.35;   // asset volatility
@@ -41,8 +44,39 @@ int main(){
     std::cout << "----------------------------------------------------------------------------Delta Hedging Engine--------------------------------------------------------------------------------\n";
     std::cout << asset_1.DHE_Time_Dependent_Volatility(true) << '\n';
     std::cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
-    //std::cout << asset_1.DHE_Time_Dependent_Volatility(false) << '\n';
-    std::cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
+    */
 
-    return 0;
+    int D = 3;   // number of Brownian drivers
+    int M = 5;   // number of assets/options
+    
+    Eigen::VectorXd strike(M);
+    strike << 95.0, 100.0, 105.0, 110.0, 115.0;
+
+    Eigen::VectorXd rate(M);
+    rate << 0.05, 0.05, 0.05, 0.05, 0.05;
+
+    Eigen::VectorXd price_today(M);
+    price_today << 100.0, 102.0, 98.0, 105.0, 110.0;
+
+    Eigen::MatrixXd volatility_realised(M, D);
+    volatility_realised <<
+        0.20,  0.05,  0.00,
+        0.10,  0.25,  0.05,
+        0.00,  0.15,  0.30,
+        0.18, -0.05,  0.12,
+        0.07,  0.10,  0.22;
+
+    Eigen::MatrixXd volatility_implied(M, D);
+    volatility_implied <<
+        0.22,  0.06,  0.01,
+        0.11,  0.27,  0.06,
+        0.01,  0.16,  0.32,
+        0.19, -0.04,  0.13,
+        0.08,  0.11,  0.24;
+
+    double Time = 1.0;              
+    int discretisation = 1000;       
+
+    Multidimensional_Risk_Neutral_Engine test_1 = Multidimensional_Risk_Neutral_Engine(strike, rate, price_today, volatility_realised, volatility_implied, Time, discretisation);
+    std::cout << test_1.Risk_Neutral_MultiDim_DHE(true); 
 }                                                                                                                                        

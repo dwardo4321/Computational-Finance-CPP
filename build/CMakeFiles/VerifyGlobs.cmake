@@ -32,6 +32,7 @@ file(GLOB_RECURSE NEW_GLOB LIST_DIRECTORIES false "C:/Users/Tapson/Downloads/cpp
 set(OLD_GLOB
   "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/Asset_Option_Price.cpp"
   "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/Delta_Hedging_Engine.cpp"
+  "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/Risk_Neutral_MultiDim_Delta_Hedging_Engine.cpp"
   "C:/Users/Tapson/Downloads/cpp_projects/Computational-Finance-CPP/src/utilities.cpp"
   )
 if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")

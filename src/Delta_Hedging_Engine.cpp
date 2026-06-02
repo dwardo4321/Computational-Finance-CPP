@@ -17,6 +17,7 @@ namespace{
 // Constructor ---------------------------------------------------------
 Delta_Hedging_Engine::Delta_Hedging_Engine(double strike_constr, double rate_constr, double volatility_realised_constr,   
                                            double volatility_implied_constr, double price_today_constr, double Time_constr, int discretisation_constr):
+                                           
                                            strike(strike_constr), rate(rate_constr), volatility_realised(volatility_realised_constr),
                                            volatility_implied(volatility_implied_constr), price_today(price_today_constr), Time(Time_constr), discretisation(discretisation_constr)
                                            {}                                    
