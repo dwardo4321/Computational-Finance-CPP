@@ -27,7 +27,7 @@ int main(){
     std::cout << asset_4.Monte_Carlo_option_pricer(1000, false, correlation).confidence_intervals << '\n';
     */
 
-    std::cout << "---------------------------- Delta Hedging Engine ----------------------------\n";
+    // -------------------------------------------------------------------------
 
     double strike = 1000;     
     double rate = 0.225;         // fixed rate

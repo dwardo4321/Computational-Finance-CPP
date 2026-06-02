@@ -37,7 +37,7 @@ Eigen::MatrixXd Delta_Hedging_Engine::DHE_Time_Dependent_Volatility(bool call, d
     dynamic_volatility_implied(0) = volatility_implied;
 
     Eigen::VectorXd dynamic_volatility_realised(discretisation);
-    dynamic_volatility_realised.segment(0, 6).setConstant(volatility_realised);
+    dynamic_volatility_realised.segment(0, 51).setConstant(volatility_realised);
 
     Eigen::VectorXd delta(discretisation); 
     delta = Eigen::VectorXd::Zero(discretisation);
@@ -98,17 +98,17 @@ Eigen::MatrixXd Delta_Hedging_Engine::DHE_Time_Dependent_Volatility(bool call, d
         double tau = Time - i * dt;
         
         // Asset price and realised volatility -------------------------------------------
-        if (i < 6){
+        if (i < 51){
 
             stock_price[i] = stock_price[i-1] * std::exp((rate - 0.5 * pow(dynamic_volatility_realised(i), 2)) * dt + dynamic_volatility_realised(i) * (std::sqrt(dt) * standard_norm(gen)));
         
         }else{
 
-            Eigen::ArrayXd log_returns = (stock_price.segment(i-5, 5).array() / stock_price.segment(i-6, 5).array()).log();
+            Eigen::ArrayXd log_returns = (stock_price.segment(i-50, 50).array() / stock_price.segment(i-51, 50).array()).log();
 
-            double var = 0.25 * (log_returns - log_returns.mean()).square().sum();
+            double var = (log_returns - log_returns.mean()).square().sum() / 49;
 
-            dynamic_volatility_realised[i] = std::sqrt(var) / std::sqrt(dt); //Var(log_returns​) ≈ vol^2 * Δt
+            dynamic_volatility_realised[i] = std::sqrt(var / dt); //Var(log_returns​) ≈ vol^2 * Δt
 
             stock_price[i] = stock_price[i-1] * std::exp((rate - 0.5 * pow(dynamic_volatility_realised(i), 2)) * dt + dynamic_volatility_realised[i] * (std::sqrt(dt) * standard_norm(gen)));
         }
