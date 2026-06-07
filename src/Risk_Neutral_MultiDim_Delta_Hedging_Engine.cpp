@@ -44,25 +44,41 @@ Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Brownian_Mot(int discretis
 // Private Method 2 ---------------------------------------------------------
 Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(std::optional<Eigen::MatrixXd> correlation_matrix){
 
-    Eigen::MatrixXd out; 
-
     int M = volatility_realised.rows();
     int D = volatility_realised.cols();
 
-    /*
-    for(int i; i < M; i++){
+    Eigen::MatrixXd brownian_mot = Brownian_Mot(discretisation, Time, std::nullopt);
+    Eigen::MatrixXd price(discretisation, price_today.size());
+    price.row(0) = price_today.transpose();
 
-        M * D;        
+    Eigen::MatrixXd change_in_price = Eigen::MatrixXd::Zero(discretisation, price_today.size());
+
+    Eigen::MatrixXd vol = Eigen::MatrixXd::Zero(discretisation, M);
+
+    double dt = Time / static_cast<double>(discretisation - 1);
+
+    for (int t = 1; t < discretisation; t++){
+
+        for(int j = 0; j < M; j++){
+
+            for (int i = 0; i < D; i++){
+                
+                vol(t, j) += volatility_realised(j, i) * (brownian_mot(t, i) - brownian_mot(t-1, i));
+            } 
+        }
+
+        change_in_price.row(t) = (rate.transpose().array() * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
+        
+        price.row(t) = price.row(t-1) + change_in_price.row(t);
     }
-    */
 
-    return out;
+    return price;
 }
 
 // Public Method 1 ---------------------------------------------------------
 Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(bool call){
     
-    Eigen::MatrixXd out = Brownian_Mot(discretisation, Time, std::nullopt); 
+    Eigen::MatrixXd out = Multidimensional_GBM(std::nullopt);//Brownian_Mot(discretisation, Time, std::nullopt); 
 
     return out; 
 }

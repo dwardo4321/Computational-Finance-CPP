@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream> //csv ouput
 #include <Eigen/Dense>
 #include "utilities.hpp"
 #include "Asset_Option_Price.hpp"
@@ -46,37 +47,39 @@ int main(){
     std::cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
     */
 
-    int D = 3;   // number of Brownian drivers
-    int M = 5;   // number of assets/options
-    
+    int D = 6;   // number of Brownian drivers
+    int M = 2;   // number of assets/options
+
     Eigen::VectorXd strike(M);
-    strike << 95.0, 100.0, 105.0, 110.0, 115.0;
+    strike << 77.0, 123.0;
 
     Eigen::VectorXd rate(M);
-    rate << 0.05, 0.05, 0.05, 0.05, 0.05;
+    rate << 0.03, 0.08;
 
     Eigen::VectorXd price_today(M);
-    price_today << 100.0, 102.0, 98.0, 105.0, 110.0;
+    price_today << 88.0, 144.0;
 
     Eigen::MatrixXd volatility_realised(M, D);
     volatility_realised <<
-        0.20,  0.05,  0.00,
-        0.10,  0.25,  0.05,
-        0.00,  0.15,  0.30,
-        0.18, -0.05,  0.12,
-        0.07,  0.10,  0.22;
+        0.40, -0.10,  0.25,  0.00,  0.18, -0.30,
+        -0.15,  0.35,  0.10, -0.22,  0.05,  0.28;
 
     Eigen::MatrixXd volatility_implied(M, D);
     volatility_implied <<
-        0.22,  0.06,  0.01,
-        0.11,  0.27,  0.06,
-        0.01,  0.16,  0.32,
-        0.19, -0.04,  0.13,
-        0.08,  0.11,  0.24;
+        0.45, -0.08,  0.28,  0.02,  0.20, -0.25,
+        -0.12,  0.38,  0.13, -0.18,  0.07,  0.31;
 
     double Time = 1.0;              
     int discretisation = 1000;       
 
     Multidimensional_Risk_Neutral_Engine test_1 = Multidimensional_Risk_Neutral_Engine(strike, rate, price_today, volatility_realised, volatility_implied, Time, discretisation);
-    std::cout << test_1.Risk_Neutral_MultiDim_DHE(true); 
+    Eigen::MatrixXd output = test_1.Risk_Neutral_MultiDim_DHE(true);
+
+    std::ofstream file("C:/Users/Tapson/Downloads/output.csv");
+    Eigen::IOFormat csv_format(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");
+
+    file << output.format(csv_format);
+    file.close();
+
+    std::cout << output;
 }                                                                                                                                        
