@@ -32,22 +32,16 @@ Multidimensional_Risk_Neutral_Engine::Multidimensional_Risk_Neutral_Engine(Eigen
 
 // Private Method 1 ---------------------------------------------------------                                                                           
 
-Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Brownian_Mot(int discretisation, double Time, std::optional<Eigen::MatrixXd> correlation_matrix){
-
-    int dimensions = volatility_realised.cols();
-
-    Eigen::MatrixXd out = utility::Brownian_path_generator(discretisation, dimensions, Time, std::nullopt);
-
-    return out;
-}
 
 // Private Method 2 ---------------------------------------------------------
 Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(std::optional<Eigen::MatrixXd> correlation_matrix){
 
     int M = volatility_realised.rows();
     int D = volatility_realised.cols();
+    int dimensions = volatility_realised.cols();
 
-    Eigen::MatrixXd brownian_mot = Brownian_Mot(discretisation, Time, std::nullopt);
+    Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, dimensions, Time, std::nullopt);
+
     Eigen::MatrixXd price(discretisation, price_today.size());
     price.row(0) = price_today.transpose();
 

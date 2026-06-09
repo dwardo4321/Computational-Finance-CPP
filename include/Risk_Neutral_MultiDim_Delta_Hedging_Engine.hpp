@@ -20,8 +20,6 @@ class Multidimensional_Risk_Neutral_Engine{
         int discretisation; // number of steps 
 
         Eigen::MatrixXd Multidimensional_GBM(std::optional<Eigen::MatrixXd> correlation_matrix);
-
-        Eigen::MatrixXd Brownian_Mot(int discretisation, double Time, std::optional<Eigen::MatrixXd> correlation_matrix = std::nullopt);
     
     public:
 
