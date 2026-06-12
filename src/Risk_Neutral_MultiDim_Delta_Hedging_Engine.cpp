@@ -42,6 +42,8 @@ Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(std::
 
     Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, dimensions, Time, std::nullopt);
 
+    Eigen::MatrixXd brownian_mot.colwise() += ((rate - risk_free_rate) / volatility_realised);
+    
     Eigen::MatrixXd price(discretisation, price_today.size());
     price.row(0) = price_today.transpose();
 
@@ -61,7 +63,7 @@ Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(std::
             } 
         }
 
-        change_in_price.row(t) = (rate.transpose().array() * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
+        change_in_price.row(t) = (risk_free_rate.transpose().array() * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
         
         price.row(t) = price.row(t-1) + change_in_price.row(t);
     }

@@ -47,27 +47,36 @@ int main(){
     std::cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
     */
 
-    int D = 6;   // number of Brownian drivers
-    int M = 2;   // number of assets/options
+    int D = 4;   // number of Brownian drivers
+    int M = 5;   // number of assets/options
 
     Eigen::VectorXd strike(M);
-    strike << 77.0, 123.0;
+    strike << 90.0, 100.0, 110.0, 120.0, 130.0;
 
     Eigen::VectorXd rate(M);
-    rate << 0.03, 0.08;
+    rate << 0.06, 0.055, 0.05, 0.052, 0.058;
+
+    Eigen::VectorXd risk_free_rate(M);
+    risk_free_rate << 0.04, 0.04, 0.04, 0.04, 0.04;
 
     Eigen::VectorXd price_today(M);
-    price_today << 88.0, 144.0;
+    price_today << 92.0, 104.0, 111.0, 118.0, 137.0;
 
     Eigen::MatrixXd volatility_realised(M, D);
     volatility_realised <<
-        0.40, -0.10,  0.25,  0.00,  0.18, -0.30,
-        -0.15,  0.35,  0.10, -0.22,  0.05,  0.28;
+        0.22,  0.10, -0.05,  0.18,
+        0.15,  0.28,  0.12, -0.04,
+        -0.08,  0.19,  0.31,  0.09,
+        0.27, -0.06,  0.14,  0.25,
+        0.11,  0.23, -0.09,  0.34;
 
     Eigen::MatrixXd volatility_implied(M, D);
     volatility_implied <<
-        0.45, -0.08,  0.28,  0.02,  0.20, -0.25,
-        -0.12,  0.38,  0.13, -0.18,  0.07,  0.31;
+        0.25,  0.12, -0.03,  0.20,
+        0.17,  0.30,  0.15, -0.02,
+        -0.06,  0.21,  0.34,  0.11,
+        0.29, -0.04,  0.17,  0.27,
+        0.13,  0.25, -0.07,  0.37;
 
     double Time = 1.0;              
     int discretisation = 1000;       

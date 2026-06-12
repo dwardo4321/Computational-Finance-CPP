@@ -10,6 +10,7 @@ class Multidimensional_Risk_Neutral_Engine{
 
         Eigen::VectorXd strike;     
         Eigen::VectorXd rate;         // fixed rates
+        Eigen::VectorXd risk_free_rate;
         Eigen::VectorXd price_today;
 
         Eigen::MatrixXd volatility_realised;   // assets volatility
