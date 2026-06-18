@@ -21,10 +21,14 @@ class Multidimensional_Risk_Neutral_Engine{
         int discretisation; // number of steps 
 
         Eigen::MatrixXd Multidimensional_GBM(std::optional<Eigen::MatrixXd> correlation_matrix);
+
+        Eigen::VectorXd z_scores(bool calc);
+
+        double Multidimensional_Risk_Neutral_Engine::Option_Calculation();
     
     public:
 
-        Multidimensional_Risk_Neutral_Engine(Eigen::VectorXd strike_const, Eigen::VectorXd rate_const, Eigen::VectorXd price_today_const,
+        Multidimensional_Risk_Neutral_Engine(Eigen::VectorXd strike_const, Eigen::VectorXd rate_const, Eigen::VectorXd risk_free_rate_const, Eigen::VectorXd price_today_const,
                                              Eigen::MatrixXd volatility_realised_const, Eigen::MatrixXd volatility_implied_const, 
                                              double Time_const, int discretisation_const);
        

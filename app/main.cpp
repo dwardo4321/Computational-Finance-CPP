@@ -81,7 +81,7 @@ int main(){
     double Time = 1.0;              
     int discretisation = 1000;       
 
-    Multidimensional_Risk_Neutral_Engine test_1 = Multidimensional_Risk_Neutral_Engine(strike, rate, price_today, volatility_realised, volatility_implied, Time, discretisation);
+    Multidimensional_Risk_Neutral_Engine test_1 = Multidimensional_Risk_Neutral_Engine(strike, rate, risk_free_rate, price_today, volatility_realised, volatility_implied, Time, discretisation);
     Eigen::MatrixXd output = test_1.Risk_Neutral_MultiDim_DHE(true);
 
     std::ofstream file("C:/Users/Tapson/Downloads/output.csv");
