@@ -7,10 +7,11 @@
 #include <vector>
 #include <random>
 #include <optional>
+#include <functional>
 #include <string>
 #include <sstream>
 
-
+using namespace Eigen::placeholders;
 namespace{std::random_device rd;
           std::mt19937_64 gen1(rd());} 
 
@@ -45,7 +46,8 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Asset_Option_Price::GBM_price_path_
     return {prices_paths, prices_paths_variance_reduction};
 }
         
-Eigen::MatrixXd  Asset_Option_Price::discounted_pay_off_calculator(int number_of_iterations, bool variance_reduction, std::optional<Eigen::MatrixXd> correlation_matrix){
+Eigen::MatrixXd  Asset_Option_Price::discounted_pay_off_calculator(int number_of_iterations, bool variance_reduction, std::optional<Eigen::MatrixXd> correlation_matrix, 
+                                                                   std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){
 
     Eigen::MatrixXd prices(number_of_iterations, dimensions);
     Eigen::MatrixXd prices_variance_reduction(number_of_iterations, dimensions);
@@ -55,12 +57,26 @@ Eigen::MatrixXd  Asset_Option_Price::discounted_pay_off_calculator(int number_of
 
     Eigen::MatrixXd discounted_pay_off(number_of_iterations, dimensions);
 
+    std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > price_generator;
+
+    if (custom_price_generator){ 
+
+        price_generator = custom_price_generator;
+    }else{
+        
+        price_generator = [this](std::optional <Eigen::MatrixXd> correlation_matrix){
+
+            return this -> GBM_price_path_generator(correlation_matrix);
+        };
+    }
+
     if(variance_reduction){
+
         for (int i = 0; i < number_of_iterations; i++){
                         
-                        auto[A, B] = GBM_price_path_generator(correlation_matrix);
-                        prices.row(i) = A(Eigen::last, Eigen::all);
-                        prices_variance_reduction.row(i) = B(Eigen::last, Eigen::all);
+                        auto[A, B] = price_generator(correlation_matrix);
+                        prices.row(i) = A(last, all);
+                        prices_variance_reduction.row(i) = B(last, all);
                         
                             for (int j = 0; j < dimensions; j++){ 
                                 prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
@@ -71,8 +87,8 @@ Eigen::MatrixXd  Asset_Option_Price::discounted_pay_off_calculator(int number_of
     }else{
         for (int i = 0; i < number_of_iterations; i++){
                     
-                    auto[A, B] = GBM_price_path_generator(correlation_matrix);
-                    prices.row(i) = A(Eigen::last, Eigen::all);
+                    auto[A, B] = price_generator(correlation_matrix);
+                    prices.row(i) = A(last, all);
                     
                         for (int j = 0; j < dimensions; j++){ 
                             prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  

@@ -7,6 +7,7 @@
 #include <vector>
 #include <random>
 #include <optional>
+#include <functional>
 #include <string>
 #include <sstream>
 
@@ -24,7 +25,8 @@ class Asset_Option_Price{
 
         std::pair <Eigen::MatrixXd, Eigen::MatrixXd> GBM_price_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix);
         
-        Eigen::MatrixXd discounted_pay_off_calculator(int number_of_iterations, bool variance_reduction, std::optional<Eigen::MatrixXd> correlation_matrix);
+        Eigen::MatrixXd  discounted_pay_off_calculator(int number_of_iterations, bool variance_reduction, std::optional<Eigen::MatrixXd> correlation_matrix, 
+                                                                           std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator = nullptr);
 
     public:
 

@@ -2,6 +2,7 @@
 #include "utilities.hpp"
 
 #include <Eigen/Dense>
+#include <Eigen/Core>
 #include <boost/math/distributions.hpp>
 #include <iostream>
 #include <cmath>
@@ -12,6 +13,7 @@ namespace{
     std::mt19937_64 gen(rd());
 }
 
+using namespace Eigen::placeholders;
 
 // Constructor ---------------------------------------------------------
 Multidimensional_Risk_Neutral_Engine::Multidimensional_Risk_Neutral_Engine(Eigen::VectorXd strike_const, Eigen::VectorXd rate_const, Eigen::VectorXd risk_free_rate_const, Eigen::VectorXd price_today_const,
@@ -32,21 +34,19 @@ Multidimensional_Risk_Neutral_Engine::Multidimensional_Risk_Neutral_Engine(Eigen
 
 
 // Private Method 1 ---------------------------------------------------------
-Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(std::optional<Eigen::MatrixXd> correlation_matrix){
+std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(std::optional<Eigen::MatrixXd> correlation_matrix){
 
     int M = volatility_realised.rows();
     int D = volatility_realised.cols();
     int dimensions = volatility_realised.cols();
 
-    Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, dimensions, Time, std::nullopt);
+    Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, dimensions, Time, correlation_matrix);
 
     Eigen::VectorXd risk_premium = rate - risk_free_rate;
 
     Eigen::VectorXd mqt_price_of_risk = volatility_realised.completeOrthogonalDecomposition().solve(risk_premium);
-    Eigen::MatrixXd xxx(2, );
-    xxx.row(1) = mqt_price_of_risk.transpose();
-    xxx.row(2) = mqt_price_of_risk.transpose();
-    //brownian_mot.rowwise() += mqt_price_of_risk.transpose();
+    
+    brownian_mot.rowwise() += mqt_price_of_risk.transpose();
 
     /*
     for(int i = 0; i < D; i++){
@@ -55,13 +55,18 @@ Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(std::
         }
     }
     */
-    /*
+    
     Eigen::MatrixXd price(discretisation, price_today.size());
+    Eigen::MatrixXd price_variance_reduction(discretisation, price_today.size());
+
     price.row(0) = price_today.transpose();
+    price_variance_reduction.row(0) = price_today.transpose();
 
     Eigen::MatrixXd change_in_price = Eigen::MatrixXd::Zero(discretisation, price_today.size());
+    Eigen::MatrixXd change_in_price_vd = Eigen::MatrixXd::Zero(discretisation, price_today.size());
 
     Eigen::MatrixXd vol = Eigen::MatrixXd::Zero(discretisation, M);
+    Eigen::MatrixXd vol_vd = Eigen::MatrixXd::Zero(discretisation, M);
 
     double dt = Time / static_cast<double>(discretisation - 1);
 
@@ -72,28 +77,38 @@ Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(std::
             for (int i = 0; i < D; i++){
                 
                 vol(t, j) += volatility_realised(j, i) * (brownian_mot(t, i) - brownian_mot(t-1, i));
+                vol_vd(t, j) += volatility_realised(j, i) * -(brownian_mot(t, i) - brownian_mot(t-1, i));
             } 
         }
 
         change_in_price.row(t) = (risk_free_rate.transpose().array() * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
+        change_in_price_vd.row(t) = (risk_free_rate.transpose().array() * price_variance_reduction.row(t-1).array() * dt) + (price_variance_reduction.row(t-1).array() * vol_vd.row(t).array());
         
         price.row(t) = price.row(t-1) + change_in_price.row(t);
+        price_variance_reduction.row(t) = price_variance_reduction.row(t-1) + change_in_price_vd.row(t);
     }
-    */
-    return xxx;
+   
+    return {price, price_variance_reduction};
 }
 
 
 // Private Method 2 ---------------------------------------------------------
-Eigen::VectorXd Multidimensional_Risk_Neutral_Engine::Z_scores(bool calc){
+Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Terminal_prices(int no_simulations){
 
-    double tau;
+    /* Eigen::MatrixXd simulation;
 
-    Eigen::VectorXd asset_volatility = volatility_implied;//.array().square().rowwise();
+    for (int i = 0; i < no_simulations; i++){
+
+        simulation.row(i) = Multidimensional_GBM(correlation_matrix); 
+
+    } */
     
-    //d_2 = (1 / (volatility_implied * sqrt(tau))) * (log(price.array() / strike.array()) + (risk_free_rate - (0.5 * volatility_implied)))
+    Eigen::MatrixXd out(2, 2);
+    
+    out.setZero(); 
 
-    return asset_volatility;
+
+    return out;
 
 }
 
@@ -118,12 +133,13 @@ Eigen::VectorXd Multidimensional_Risk_Neutral_Engine::Z_scores(bool calc){
 // Public Method 1 ---------------------------------------------------------
 Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(bool call){
     
-    Eigen::VectorXd out = Z_scores(true);//Brownian_Mot(discretisation, Time, std::nullopt); 
+    /* Eigen::VectorXd out = Z_scores(true);//Brownian_Mot(discretisation, Time, std::nullopt); 
 
     Eigen::MatrixXd xxx(volatility_implied.rows(), volatility_implied.cols());
     xxx.col(0) = out;
-    xxx.col(1) = out;
+    xxx.col(1) = out; */
+    auto[A, B] = Multidimensional_GBM(std::nullopt);
 
-    return out; 
+    return B; 
 }
 

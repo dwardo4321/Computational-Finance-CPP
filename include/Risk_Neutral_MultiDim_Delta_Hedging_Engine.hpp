@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Eigen/Dense>
+#include <Eigen/Core>
 #include <iostream>
 #include <optional> 
 
@@ -20,9 +21,9 @@ class Multidimensional_Risk_Neutral_Engine{
         double Time;        // time duration
         int discretisation; // number of steps 
 
-        Eigen::MatrixXd Multidimensional_GBM(std::optional<Eigen::MatrixXd> correlation_matrix);
+        std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_GBM(std::optional<Eigen::MatrixXd> correlation_matrix);
 
-        Eigen::VectorXd Z_scores(bool calc);
+        Eigen::MatrixXd Terminal_prices(int no_simulations);
 
         // double Multidimensional_Risk_Neutral_Engine::Option_Calculation();
     
