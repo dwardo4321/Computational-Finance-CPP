@@ -22,9 +22,9 @@ class Multidimensional_Risk_Neutral_Engine{
 
         Eigen::MatrixXd Multidimensional_GBM(std::optional<Eigen::MatrixXd> correlation_matrix);
 
-        Eigen::VectorXd z_scores(bool calc);
+        Eigen::VectorXd Z_scores(bool calc);
 
-        double Multidimensional_Risk_Neutral_Engine::Option_Calculation();
+        // double Multidimensional_Risk_Neutral_Engine::Option_Calculation();
     
     public:
 
