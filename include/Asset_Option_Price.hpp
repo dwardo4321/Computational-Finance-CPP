@@ -17,6 +17,7 @@ class Asset_Option_Price{
 
         Eigen::VectorXd strike;     
         Eigen::VectorXd rate;         // fixed rate
+        Eigen::VectorXd risk_free_rate;
         Eigen::MatrixXd volatility;   // fixed volatility
         Eigen::VectorXd price_today;
         double Time;                  // time duration
@@ -25,45 +26,34 @@ class Asset_Option_Price{
 
         std::pair <Eigen::MatrixXd, Eigen::MatrixXd> GBM_price_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix);
 
-        enum class payoff{basket, maxim, worst_off};
-        
-        Eigen::MatrixXd  discounted_pay_off_calculator(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
-                                                        std::optional<payoff> payoff_calculation, Eigen::VectorXd weights, double strike_basket,
-                                                        std::optional<Eigen::MatrixXd> correlation_matrix, std::function < std::pair<Eigen::MatrixXd,
-                                                        Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator = nullptr);
-
     public:
 
         // Constructor 1: default constructor (homogeneous multi-assets)--------------------------------------------------------------------------------------------
         Asset_Option_Price(
                 double strike_constr,
-                double rate_constr,
-                double volatility_constr,
-                double price_today_constr,
-                double Time_constr,
-                int dimensions_constr,
-                int discretisation_brownian_motion_constr);
+        double rate_constr,
+        double risk_free_rate,
+        double volatility_constr,
+        double price_today_constr,
+        double Time_constr,
+        int dimensions_constr,
+        int discretisation_brownian_motion_constr);
 
         // Constructor 2: member initializer list (heterogeneous multi-assets) --------------------------------------------------------------------------------------------
-        template <typename Derived>
+        template <typename Scalar_Vector, typename Vector_Matrix>
         Asset_Option_Price(
-                const Eigen::VectorXd& strike_constr,
-                const Eigen::VectorXd& rate_constr,
-                const Eigen::MatrixBase<Derived>& volatility_constr,
+                const Scalar_Vector& strike_constr,
+                const Scalar_Vector& rate_constr,
+                const Scalar_Vector& risk_free_rate_constr,
+                const Eigen::MatrixBase<Vector_Matrix>& volatility_constr,
                 const Eigen::VectorXd& price_today_constr,
                 double Time_constr,
                 //int dimensions_constr,
                 int discretisation_brownian_motion_constr):
 
-            strike(strike_constr), rate(rate_constr), volatility(volatility_constr), price_today(price_today_constr),
+            strike(strike_constr), rate(rate_constr), risk_free_rate(risk_free_rate_constr), volatility(volatility_constr), price_today(price_today_constr),
             Time(Time_constr), dimensions(static_cast<int>(strike_constr.size())), discretisation_brownian_motion(discretisation_brownian_motion_constr) 
             {
-                if (rate_constr.size() != strike_constr.size() ||
-                    volatility_constr.rows() != strike_constr.size() ||
-                    price_today_constr.size() != strike_constr.size()){
-                        throw std::runtime_error("All input vectors must have the same size.");
-                    }
-
                 if (discretisation_brownian_motion_constr < 2){
                         throw std::runtime_error("There should be more than 2 steps");
                     }
@@ -88,7 +78,14 @@ class Asset_Option_Price{
             std::string confidence_intervals;
         };
 
-        Option_output Monte_Carlo_option_pricer(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
+        enum class payoff{basket, maxim, worst_off};
+        
+        Eigen::MatrixXd  discounted_pay_off_calculator(int number_of_iterations, Eigen::VectorXd risk_free_rate, double tau, bool variance_reduction,
+                                                        std::optional<payoff> payoff_calculation, Eigen::VectorXd weights, double strike_basket,
+                                                        std::optional<Eigen::MatrixXd> correlation_matrix, std::function < std::pair<Eigen::MatrixXd,
+                                                        Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator = nullptr);
+
+        Option_output Monte_Carlo_option_pricer(int number_of_iterations, Eigen::VectorXd risk_free_rate, double tau, bool variance_reduction,
                                                 std::optional<payoff> payoff_calculation, Eigen::VectorXd weights, double strike_basket,
                                                 std::optional<Eigen::MatrixXd> correlation_matrix, std::function < std::pair<Eigen::MatrixXd,
                                                 Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator = nullptr);

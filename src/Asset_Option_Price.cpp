@@ -16,7 +16,8 @@ using namespace Eigen::placeholders;
 namespace{std::random_device rd;
           std::mt19937_64 gen1(rd());} 
 
-
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
 // Private Method 1 -------------------------------------------------------------------------------------------
 std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Asset_Option_Price::GBM_price_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix){ 
     // Pass-by-Reference (additional matrix prices_paths_variance_reduction)
@@ -49,121 +50,13 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Asset_Option_Price::GBM_price_path_
     return {prices_paths, prices_paths_variance_reduction};
 }
 
-
-// Private Method 2 -------------------------------------------------------------------------------------------
-Eigen::MatrixXd  Asset_Option_Price::discounted_pay_off_calculator(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
-                                                                    std::optional<payoff> payoff_calculation, Eigen::VectorXd weights, double strike_basket,
-                                                                    std::optional<Eigen::MatrixXd> correlation_matrix, std::function < std::pair<Eigen::MatrixXd,
-                                                                    Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){
-                                                                 
-    Eigen::MatrixXd prices(number_of_iterations, dimensions);
-    Eigen::MatrixXd prices_variance_reduction(number_of_iterations, dimensions);
-
-    Eigen::MatrixXd pay_off(number_of_iterations, dimensions);
-    Eigen::MatrixXd pay_off_variance_reduction(number_of_iterations, dimensions);  
-
-    Eigen::MatrixXd discounted_pay_off(number_of_iterations, dimensions);
-
-    std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > price_generator;
-
-    if (custom_price_generator){ 
-
-        price_generator = custom_price_generator;
-    }else{
-        
-        price_generator = [this](std::optional <Eigen::MatrixXd> correlation_matrix){
-
-            return this -> GBM_price_path_generator(correlation_matrix);
-        };
-    }
-
-    if(variance_reduction){
-
-        for (int i = 0; i < number_of_iterations; i++){
-                        
-                        auto[A, B] = price_generator(correlation_matrix);
-                        prices.row(i) = A(last, all);
-                        prices_variance_reduction.row(i) = B(last, all);
-
-                        if(payoff_calculation){
-
-                            switch(*payoff_calculation){ // * means if(payoff_calculation) then use what is provided inside payoff_calculation
-                                
-                                case payoff::basket:
-                                    
-                                    weights.transpose() * prices.row(i).transpose() - strike_basket > 0? pay_off(i, 0) = (weights.transpose() * prices.row(i).transpose() - strike_basket) * exp(-risk_free_rate * tau):  pay_off(i, 0) = 0;  
-                                    weights.transpose() * prices_variance_reduction.row(i).transpose() - strike_basket > 0? pay_off_variance_reduction(i, 0) = (weights.transpose() * prices_variance_reduction.row(i).transpose() - strike_basket) * exp(-risk_free_rate * tau):  pay_off_variance_reduction(i, 0) = 0; 
-                                    discounted_pay_off(i, 0) = 0.5 * (pay_off(i, 0) + pay_off_variance_reduction(i, 0));  
-
-                                case payoff::maxim:
-
-                                    prices.row(i).maxCoeff() - strike_basket > 0? pay_off(i, 0) = (prices.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate * tau):  pay_off(i, 0) = 0;  
-                                    prices_variance_reduction.row(i).maxCoeff() - strike_basket > 0? pay_off_variance_reduction(i, 0) = (prices_variance_reduction.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate * tau):  pay_off_variance_reduction(i, 0) = 0; 
-                                    discounted_pay_off(i, 0) = 0.5 * (pay_off(i, 0) + pay_off_variance_reduction(i, 0)); 
-
-                                case payoff::worst_off:
-
-                                    prices.row(i).minCoeff() - strike_basket > 0? pay_off(i, 0) = (prices.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate * tau):  pay_off(i, 0) = 0;  
-                                    prices_variance_reduction.row(i).minCoeff() - strike_basket > 0? pay_off_variance_reduction(i, 0) = (prices_variance_reduction.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate * tau):  pay_off_variance_reduction(i, 0) = 0; 
-                                    discounted_pay_off(i, 0) = 0.5 * (pay_off(i, 0) + pay_off_variance_reduction(i, 0));
-                        
-                        }   
-
-                        }else{  
-
-                            for (int j = 0; j < dimensions; j++){ 
-                                prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
-                                prices_variance_reduction(i, j) - strike(j) > 0? pay_off_variance_reduction(i, j) = (prices_variance_reduction(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off_variance_reduction(i, j) = 0; 
-                                discounted_pay_off(i, j) = 0.5 * (pay_off(i, j) + pay_off_variance_reduction(i, j));
-                            }
-                        }
-                    }
-    }else{
-
-        for (int i = 0; i < number_of_iterations; i++){
-                    
-                    auto[A, B] = price_generator(correlation_matrix);
-                    prices.row(i) = A(last, all);
-
-                    if(payoff_calculation){
-
-                            switch(*payoff_calculation){ // * means if(payoff_calculation) then use what is provided inside payoff_calculation
-                                
-                                case payoff::basket:
-                                    
-                                    weights.transpose() * prices.row(i).transpose() - strike_basket > 0? pay_off(i, 0) = (weights.transpose() * prices.row(i).transpose() - strike_basket) * exp(-risk_free_rate * tau):  pay_off(i, 0) = 0;   
-                                    discounted_pay_off(i, 0) = pay_off(i, 0);  
-
-                                case payoff::maxim:
-
-                                    prices.row(i).maxCoeff() - strike_basket > 0? pay_off(i, 0) = (prices.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate * tau):  pay_off(i, 0) = 0;   
-                                    discounted_pay_off(i, 0) = pay_off(i, 0); 
-
-                                case payoff::worst_off:
-
-                                    prices.row(i).minCoeff() - strike_basket > 0? pay_off(i, 0) = (prices.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate * tau):  pay_off(i, 0) = 0;  
-                                    discounted_pay_off(i, 0) = pay_off(i, 0);
-                        
-                            }
-                    }else{ 
-                    
-                        for (int j = 0; j < dimensions; j++){ 
-                            prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
-                            discounted_pay_off(i, j) = pay_off(i, j);
-                        }  
-                    }
-        }
-    }
-
-    return discounted_pay_off;
-
-}
-
-
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
 // Constructor 1: default constructor (homogeneous multi-assets)--------------------------------------------------------------------------------------------
 Asset_Option_Price::Asset_Option_Price(
         double strike_constr,
         double rate_constr,
+        double risk_free_rate_constr,
         double volatility_constr,
         double price_today_constr,
         double Time_constr,
@@ -171,39 +64,13 @@ Asset_Option_Price::Asset_Option_Price(
         int discretisation_brownian_motion_constr):
 
         strike(Eigen::VectorXd::Constant(dimensions_constr, strike_constr)), rate(Eigen::VectorXd::Constant(dimensions_constr, rate_constr)),
-        volatility(Eigen::VectorXd::Constant(dimensions_constr, volatility_constr)), price_today(Eigen::VectorXd::Constant(dimensions_constr, price_today_constr)),
-        Time(Time_constr), dimensions(dimensions_constr), discretisation_brownian_motion(discretisation_brownian_motion_constr) {}
-
-// Constructor 2: member initializer list (heterogeneous multi-assets) --------------------------------------------------------------------------------------------
-/* Asset_Option_Price::Asset_Option_Price(
-        const Eigen::VectorXd& strike_constr,
-        const Eigen::VectorXd& rate_constr,
-        const Eigen::VectorXd& volatility_constr,
-        const Eigen::VectorXd& price_today_constr,
-        double Time_constr,
-        //int dimensions_constr,
-        int discretisation_brownian_motion_constr):
-
-        strike(strike_constr), rate(rate_constr), volatility(volatility_constr), price_today(price_today_constr),
-        Time(Time_constr), dimensions(static_cast<int>(strike_constr.size())), discretisation_brownian_motion(discretisation_brownian_motion_constr) 
-        {
-            if (rate_constr.size() != strike_constr.size() ||
-                volatility_constr.rows() != strike_constr.size() ||
-                price_today_constr.size() != strike_constr.size()){
-                    throw std::runtime_error("All input vectors must have the same size.");
-                }
-
-            if (discretisation_brownian_motion_constr < 2){
-                    throw std::runtime_error("There should be more than 2 steps");
-                }
-            
-            if (Time_constr < 0){
-                    throw std::runtime_error("Time should be greater than 0");
-                }
-        } */
-                
-
-// Class Method 1 -------------------------------------------------------------------------------------------
+        risk_free_rate(Eigen::VectorXd::Constant(dimensions_constr, risk_free_rate_constr)), volatility(Eigen::VectorXd::Constant(dimensions_constr, volatility_constr)),
+        price_today(Eigen::VectorXd::Constant(dimensions_constr, price_today_constr)), Time(Time_constr), dimensions(dimensions_constr), 
+        discretisation_brownian_motion(discretisation_brownian_motion_constr) {}
+ 
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// Class Method 1 ------------------------------------------------------------------------------------------------------------------------------------------
 Eigen::MatrixXd  Asset_Option_Price::Brownian_path_generator(std::optional<Eigen::MatrixXd> correlation_matrix){
     
     Eigen::MatrixXd paths(discretisation_brownian_motion, dimensions);
@@ -248,8 +115,10 @@ Eigen::MatrixXd  Asset_Option_Price::Brownian_path_generator(std::optional<Eigen
 
     return paths; 
 };
-        
-// Class Method 2 -------------------------------------------------------------------------------------------
+ 
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// Class Method 2 ------------------------------------------------------------------------------------------------------------------------------------------
 Eigen::MatrixXd  Asset_Option_Price::GBM_price_path(std::optional<Eigen::MatrixXd> correlation_matrix){
     Eigen::MatrixXd out(discretisation_brownian_motion, dimensions);
     if(correlation_matrix.has_value()){
@@ -261,8 +130,127 @@ Eigen::MatrixXd  Asset_Option_Price::GBM_price_path(std::optional<Eigen::MatrixX
     }    
 }
 
-// Class Method 3 -------------------------------------------------------------------------------------------
-Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// Class Method 3 ------------------------------------------------------------------------------------------------------------------------------------------
+Eigen::MatrixXd  Asset_Option_Price::discounted_pay_off_calculator(int number_of_iterations, Eigen::VectorXd risk_free_rate, double tau, bool variance_reduction,
+                                                                    std::optional<payoff> payoff_calculation, Eigen::VectorXd weights, double strike_basket,
+                                                                    std::optional<Eigen::MatrixXd> correlation_matrix, std::function < std::pair<Eigen::MatrixXd,
+                                                                    Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){
+                                                                 
+    Eigen::MatrixXd prices(number_of_iterations, dimensions);
+    Eigen::MatrixXd prices_variance_reduction(number_of_iterations, dimensions);
+
+    Eigen::MatrixXd pay_off(number_of_iterations, dimensions);
+    Eigen::MatrixXd pay_off_variance_reduction(number_of_iterations, dimensions);  
+
+    Eigen::MatrixXd discounted_pay_off(number_of_iterations, dimensions);
+
+    std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > price_generator;
+
+    if (custom_price_generator){ 
+
+        price_generator = custom_price_generator;
+    }else{
+        
+        price_generator = [this](std::optional <Eigen::MatrixXd> correlation_matrix){
+
+            return this -> GBM_price_path_generator(correlation_matrix);
+        };
+    }
+
+    if(variance_reduction){
+
+        for (int i = 0; i < number_of_iterations; i++){
+                        
+                        auto[A, B] = price_generator(correlation_matrix);
+                        prices.row(i) = A(last, all);
+                        prices_variance_reduction.row(i) = B(last, all);
+
+                        if(payoff_calculation){
+
+                            switch(*payoff_calculation){ // * means if(payoff_calculation) then use what is provided inside payoff_calculation
+                                
+                                case payoff::basket:
+                                    
+                                    weights.transpose() * prices.row(i).transpose() - strike_basket > 0? pay_off(i, 0) = (weights.transpose() * prices.row(i).transpose() - strike_basket) * exp(-risk_free_rate(0) * tau):  pay_off(i, 0) = 0;  
+                                    weights.transpose() * prices_variance_reduction.row(i).transpose() - strike_basket > 0? pay_off_variance_reduction(i, 0) = (weights.transpose() * prices_variance_reduction.row(i).transpose() - strike_basket) * exp(-risk_free_rate(0) * tau):  pay_off_variance_reduction(i, 0) = 0; 
+                                    discounted_pay_off(i, 0) = 0.5 * (pay_off(i, 0) + pay_off_variance_reduction(i, 0));
+                                    break;  
+
+                                case payoff::maxim:
+
+                                    prices.row(i).maxCoeff() - strike_basket > 0? pay_off(i, 0) = (prices.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate(0) * tau):  pay_off(i, 0) = 0;  
+                                    prices_variance_reduction.row(i).maxCoeff() - strike_basket > 0? pay_off_variance_reduction(i, 0) = (prices_variance_reduction.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate(0) * tau):  pay_off_variance_reduction(i, 0) = 0; 
+                                    discounted_pay_off(i, 0) = 0.5 * (pay_off(i, 0) + pay_off_variance_reduction(i, 0)); 
+                                    break;
+
+                                case payoff::worst_off:
+
+                                    prices.row(i).minCoeff() - strike_basket > 0? pay_off(i, 0) = (prices.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate(0) * tau):  pay_off(i, 0) = 0;  
+                                    prices_variance_reduction.row(i).minCoeff() - strike_basket > 0? pay_off_variance_reduction(i, 0) = (prices_variance_reduction.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate(0) * tau):  pay_off_variance_reduction(i, 0) = 0; 
+                                    discounted_pay_off(i, 0) = 0.5 * (pay_off(i, 0) + pay_off_variance_reduction(i, 0));
+                                    break;
+                        
+                        }   
+
+                        }else{  
+
+                            for (int j = 0; j < dimensions; j++){ 
+                                prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
+                                prices_variance_reduction(i, j) - strike(j) > 0? pay_off_variance_reduction(i, j) = (prices_variance_reduction(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off_variance_reduction(i, j) = 0; 
+                                discounted_pay_off(i, j) = 0.5 * (pay_off(i, j) + pay_off_variance_reduction(i, j));
+                            }
+                        }
+                    }
+    }else{
+
+        for (int i = 0; i < number_of_iterations; i++){
+                    
+                    auto[A, B] = price_generator(correlation_matrix);
+                    prices.row(i) = A(last, all);
+
+                    if(payoff_calculation){
+
+                            switch(*payoff_calculation){ // * means if(payoff_calculation) then use what is provided inside payoff_calculation
+                                
+                                case payoff::basket:
+                                    
+                                    weights.transpose() * prices.row(i).transpose() - strike_basket > 0? pay_off(i, 0) = (weights.transpose() * prices.row(i).transpose() - strike_basket) * exp(-risk_free_rate(0) * tau):  pay_off(i, 0) = 0;   
+                                    discounted_pay_off(i, 0) = pay_off(i, 0); 
+                                    break; 
+
+                                case payoff::maxim:
+
+                                    prices.row(i).maxCoeff() - strike_basket > 0? pay_off(i, 0) = (prices.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate(0) * tau):  pay_off(i, 0) = 0;   
+                                    discounted_pay_off(i, 0) = pay_off(i, 0);
+                                    break; 
+
+                                case payoff::worst_off:
+
+                                    prices.row(i).minCoeff() - strike_basket > 0? pay_off(i, 0) = (prices.row(i).maxCoeff() - strike_basket) * exp(-risk_free_rate(0) * tau):  pay_off(i, 0) = 0;  
+                                    discounted_pay_off(i, 0) = pay_off(i, 0);
+                                    break;
+                        
+                            }
+                    }else{ 
+                    
+                        for (int j = 0; j < dimensions; j++){ 
+                            prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
+                            discounted_pay_off(i, j) = pay_off(i, j);
+                        }  
+                    }
+        }
+    }
+
+    return discounted_pay_off;
+
+}
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// Class Method 4 ------------------------------------------------------------------------------------------------------------------------------------------
+Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer(int number_of_iterations, Eigen::VectorXd risk_free_rate, double tau, bool variance_reduction,
                                                                                 std::optional<payoff> payoff_calculation, Eigen::VectorXd weights, double strike_basket,
                                                                                 std::optional<Eigen::MatrixXd> correlation_matrix, std::function < std::pair<Eigen::MatrixXd,
                                                                                 Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){

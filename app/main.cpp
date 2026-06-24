@@ -50,14 +50,14 @@ int main(){
     int D = 4;   // number of Brownian drivers
     int M = 5;   // number of assets/options
 
-    Eigen::VectorXd strike(M);
-    strike << 90.0, 100.0, 110.0, 120.0, 130.0;
+    double strike = 100;
+    //strike << 90.0, 100.0, 110.0, 120.0, 130.0;
 
     Eigen::VectorXd rate(M);
     rate << 0.06, 0.055, 0.05, 0.052, 0.058;
 
-    Eigen::VectorXd risk_free_rate(M);
-    risk_free_rate << 0.04, 0.04, 0.04, 0.04, 0.04;
+    double risk_free_rate = 0.04;
+    //risk_free_rate << 0.04, 0.04, 0.04, 0.04, 0.04;
 
     Eigen::VectorXd price_today(M);
     price_today << 92.0, 104.0, 111.0, 118.0, 137.0;
