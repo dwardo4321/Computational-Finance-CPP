@@ -1,5 +1,6 @@
 #include "Risk_Neutral_MultiDim_Delta_Hedging_Engine.hpp"
 #include "utilities.hpp"
+#include "Asset_Option_Price.hpp"
 
 #include <Eigen/Dense>
 #include <Eigen/Core>
@@ -7,6 +8,8 @@
 #include <iostream>
 #include <cmath>
 #include <random>
+#include <optional>
+#include <functional>
 
 namespace{
     std::random_device rd;
@@ -34,13 +37,13 @@ Multidimensional_Risk_Neutral_Engine::Multidimensional_Risk_Neutral_Engine(Eigen
 
 
 // Private Method 1 ---------------------------------------------------------
-std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(std::optional<Eigen::MatrixXd> correlation_matrix){
+std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(double tau, int discretisation, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price){
 
     int M = volatility_realised.rows();
     int D = volatility_realised.cols();
     int dimensions = volatility_realised.cols();
 
-    Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, dimensions, Time, correlation_matrix);
+    Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, dimensions, tau, correlation_matrix);
 
     Eigen::VectorXd risk_premium = rate - risk_free_rate;
 
@@ -56,19 +59,19 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
     }
     */
     
-    Eigen::MatrixXd price(discretisation, price_today.size());
-    Eigen::MatrixXd price_variance_reduction(discretisation, price_today.size());
+    Eigen::MatrixXd price(discretisation, initial_price.size());
+    Eigen::MatrixXd price_variance_reduction(discretisation, initial_price.size());
 
-    price.row(0) = price_today.transpose();
-    price_variance_reduction.row(0) = price_today.transpose();
+    price.row(0) = initial_price.transpose();
+    price_variance_reduction.row(0) = initial_price.transpose();
 
-    Eigen::MatrixXd change_in_price = Eigen::MatrixXd::Zero(discretisation, price_today.size());
-    Eigen::MatrixXd change_in_price_vd = Eigen::MatrixXd::Zero(discretisation, price_today.size());
+    Eigen::MatrixXd change_in_price = Eigen::MatrixXd::Zero(discretisation, initial_price.size());
+    Eigen::MatrixXd change_in_price_vd = Eigen::MatrixXd::Zero(discretisation, initial_price.size());
 
     Eigen::MatrixXd vol = Eigen::MatrixXd::Zero(discretisation, M);
     Eigen::MatrixXd vol_vd = Eigen::MatrixXd::Zero(discretisation, M);
 
-    double dt = Time / static_cast<double>(discretisation - 1);
+    double dt = tau / static_cast<double>(discretisation - 1);
 
     for (int t = 1; t < discretisation; t++){
 
@@ -91,44 +94,43 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
     return {price, price_variance_reduction};
 }
 
+// Bump and Run Method
+Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(int MC_iterations, double tau, double price_change, bool variance_reduction, Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix){
 
-// Private Method 2 ---------------------------------------------------------
-Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Terminal_prices(int no_simulations){
-
-    /* Eigen::MatrixXd simulation;
-
-    for (int i = 0; i < no_simulations; i++){
-
-        simulation.row(i) = Multidimensional_GBM(correlation_matrix); 
-
-    } */
+    /* Eigen::VectorXd initial_price_up = initial_price.array() + price_change;
+    Eigen::VectorXd initial_price_down = initial_price.array() - price_change;
     
-    Eigen::MatrixXd out(2, 2);
-    
-    out.setZero(); 
+    Asset_Option_Price Option_value_up = Asset_Option_Price(strike, risk_free_rate, volatility_realised, initial_price_up, tau, discretisation);
+    Asset_Option_Price Option_value_down = Asset_Option_Price(strike, risk_free_rate, volatility_realised, initial_price_down, tau, discretisation); 
+    Asset_Option_Price Option_value = Asset_Option_Price(strike, risk_free_rate, volatility_realised, initial_price, tau, discretisation);
+
+    auto custom_func = [this, tau] (std::optional<Eigen::MatrixXd> correlation_matrix){return this-> Multidimensional_GBM(tau, this->discretisation, correlation_matrix, this->price_today);};
+
+    Eigen::VectorXd Option_up = Option_value_up.Monte_Carlo_option_pricer(MC_iterations, tau, variance_reduction, correlation_matrix, custom_func).sample_mean;
+    Eigen::VectorXd Option_down = Option_value_down.Monte_Carlo_option_pricer(MC_iterations, tau, variance_reduction, correlation_matrix, custom_func).sample_mean;
+    Eigen::VectorXd Option = Option_value.Monte_Carlo_option_pricer(MC_iterations, tau, variance_reduction, correlation_matrix, custom_func).sample_mean;
+
+    Eigen::VectorXd Delta = (Option_up - Option_down) / (2 * price_change);
+
+    Eigen::VectorXd Gamma = (Option_up - 2 * )
 
 
-    return out;
 
+
+
+    return {Delta, Gamma, Theta, Option_value}; */
 }
 
-// Private Method 3 ---------------------------------------------------------
-//double Multidimensional_Risk_Neutral_Engine::Option_Calculation(){
+/* Eigen::VectorXd Portfolio(int discretisation, double tau, Eigen::VectorXd initial_price){
 
-    /*
-    std::normal_distribution<double> standard_norm(0, 1);
+    Eigen::VectorXd portfolio_value;
 
-    int M = volatility_realised.rows(); // number of assets/options
-    int D = volatility_realised.cols(); // number of Brownian drivers
-    
+    auto[price, price_vd] = Multidimensional_GBM(tau, discretisation, correlation_matrix, initial_price);
 
-    Eigen::VectorXd price(M);
+    double portfolio_value = delta * price + bank;
 
-    d_2 = (1 / (volatility_implied * sqrt(tau))) * (log(price.array() / strike.array()) + (risk_free_rate - (0.5 * volatility_implied.array().square()).transpose().colwise()))
-    
-    double option = prices * stats::normal_cdf(d_1) - strike * exp(-risk_free_rate * tau) * stats::normal_cdf(d_2);
-    */
-//}
+} */
+
 
 // Public Method 1 ---------------------------------------------------------
 Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(bool call){
@@ -137,9 +139,26 @@ Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(
 
     Eigen::MatrixXd xxx(volatility_implied.rows(), volatility_implied.cols());
     xxx.col(0) = out;
-    xxx.col(1) = out; */
-    auto[A, B] = Multidimensional_GBM(std::nullopt);
+    xxx.col(1) = out;
+    auto[A, B] = Multidimensional_GBM(std::nullopt); */
 
-    return B; 
+    double dt = Time / (discretisation - 1);
+
+    double tau = Time - 10 * dt;
+
+    Asset_Option_Price Option_value = Asset_Option_Price(strike, risk_free_rate, volatility_realised, price_today, tau, discretisation);
+
+    auto custom_func = [this, tau] (std::optional<Eigen::MatrixXd> correlation_matrix){return this-> Multidimensional_GBM(tau, this->discretisation, correlation_matrix, this->price_today);};
+
+    Eigen::VectorXd weights;
+    weights << 0.3, 0.3, 0.2, 0.1, 0.05;
+    
+    Eigen::VectorXd out = Option_value.Monte_Carlo_option_pricer(1000, 0.15, tau, true, basket.value(), weights, strike_one_der, std::nullopt, custom_func).sample_mean; 
+
+    Eigen::MatrixXd xxx(out.size(), 2);
+    xxx.col(0) = out;
+    xxx.col(1) = out;
+
+    return xxx;
 }
 
