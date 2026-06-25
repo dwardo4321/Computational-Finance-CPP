@@ -9,25 +9,29 @@
 int main(){
     
     
-    /* std::cout << "---------------------------- Monte Carlo Pricer ----------------------------\n";
+    std::cout << "---------------------------- Monte Carlo Pricer ----------------------------\n";
 
     Eigen::VectorXd price_today(5); 
     price_today << 1000, 1652, 957, 1091, 1450;
+    Eigen::VectorXd risk_free_rate(5);
+    risk_free_rate << 0.04, 0.04, 0.04, 0.04, 0.04;
     Eigen::VectorXd rate(5); 
     rate << 0.1, 0.188, 0.05, 0.08, 0.213;
     Eigen::VectorXd strike(5); 
     strike << 1100, 1600, 1000, 1200, 1500;
     Eigen::VectorXd volatility(5); 
     volatility << 0.21, 0.25, 0.15, 0.18, 0.1; 
+    Eigen::VectorXd weights(5);
+    weights << 0.2, 0.2, 0.2, 0.2, 0.2;
     Eigen::MatrixXd correlation(5, 5);
-    correlation << 1.00, 0.35, 0.20, 0.10, 0.25,
+    /* correlation << 1.00, 0.35, 0.20, 0.10, 0.25,
                    0.35, 1.00, 0.40, 0.15, 0.30,
                    0.20, 0.40, 1.00, 0.50, 0.45,
                    0.10, 0.15, 0.50, 1.00, 0.55,
-                   0.25, 0.30, 0.45, 0.55, 1.00;
-    Asset_Option_Price asset_4 = Asset_Option_Price(strike, rate, volatility, price_today, 2, 1000);
-    std::cout << asset_4.Monte_Carlo_option_pricer(1000, 10, true, std::nullopt, nullptr).sample_mean << '\n';
-    std::cout << asset_4.Monte_Carlo_option_pricer(1000, 10, false, correlation, nullptr).confidence_intervals << '\n'; */
+                   0.25, 0.30, 0.45, 0.55, 1.00; */
+    Asset_Option_Price asset_4 = Asset_Option_Price(strike, rate, risk_free_rate, volatility, price_today, 2, 1000);
+    std::cout << asset_4.Monte_Carlo_option_pricer(1000, risk_free_rate, 10, true, Asset_Option_Price::payoff::maxim, std::nullopt, strike, std::nullopt, nullptr).sample_mean << '\n';
+    //std::cout << asset_4.discounted_pay_off_calculator(1000, risk_free_rate, 10, true, std::nullopt, std::nullopt, strike, correlation, nullptr) << '\n';
    
 
     // -------------------------------------------------------------------------
@@ -47,17 +51,17 @@ int main(){
     std::cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
     */
 
-    int D = 4;   // number of Brownian drivers
+    /* int D = 4;   // number of Brownian drivers
     int M = 5;   // number of assets/options
 
-    double strike = 100;
-    //strike << 90.0, 100.0, 110.0, 120.0, 130.0;
+    Eigen::VectorXd strike(M);
+    strike << 90.0, 100.0, 110.0, 120.0, 130.0;
 
     Eigen::VectorXd rate(M);
     rate << 0.06, 0.055, 0.05, 0.052, 0.058;
 
-    double risk_free_rate = 0.04;
-    //risk_free_rate << 0.04, 0.04, 0.04, 0.04, 0.04;
+    Eigen::VectorXd risk_free_rate(M);
+    risk_free_rate << 0.04, 0.04, 0.04, 0.04, 0.04;
 
     Eigen::VectorXd price_today(M);
     price_today << 92.0, 104.0, 111.0, 118.0, 137.0;
@@ -90,5 +94,5 @@ int main(){
     file << output.format(csv_format);
     file.close();
 
-    std::cout << output;
+    std::cout << output; */
 }                                                                                                                                        

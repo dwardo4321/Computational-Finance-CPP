@@ -133,7 +133,7 @@ Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(
     Eigen::VectorXd weights(5);
     weights << 0.3, 0.3, 0.2, 0.1, 0.05;
     
-    Eigen::VectorXd out = Option_value.Monte_Carlo_option_pricer(1000, risk_free_rate, tau, true, Asset_Option_Price::payoff::basket, weights, strike(0), std::nullopt, custom_func).sample_mean; 
+    Eigen::VectorXd out = Option_value.Monte_Carlo_option_pricer(1000, risk_free_rate, tau, true, Asset_Option_Price::payoff::basket, weights, strike, std::nullopt, custom_func).sample_mean; 
 
     Eigen::MatrixXd xxx(out.size(), 2);
     xxx.col(0) = out;
