@@ -38,13 +38,13 @@ class Asset_Option_Price{
                 double Time_constr,
                 int dimensions_constr,
                 int discretisation_brownian_motion_constr);
-
+        
         // Constructor 2: member initializer list (heterogeneous multi-assets) --------------------------------------------------------------------------------------------
-        template <typename Scalar_Vector, typename Vector_Matrix>
+        template <typename Scalar_Vector1, typename Scalar_Vector2, typename Vector_Matrix>
         Asset_Option_Price(
-                const Scalar_Vector& strike_constr,
-                const Scalar_Vector& rate_constr,
-                const Scalar_Vector& risk_free_rate_constr,
+                const Scalar_Vector1& strike_constr,
+                const Eigen::VectorXd& rate_constr,
+                const Scalar_Vector2& risk_free_rate_constr,
                 const Eigen::MatrixBase<Vector_Matrix>& volatility_constr,
                 const Eigen::VectorXd& price_today_constr,
                 double Time_constr,
@@ -52,7 +52,7 @@ class Asset_Option_Price{
                 int discretisation_brownian_motion_constr):
 
             strike(strike_constr), rate(rate_constr), risk_free_rate(risk_free_rate_constr), volatility(volatility_constr), price_today(price_today_constr),
-            Time(Time_constr), dimensions(static_cast<int>(strike_constr.size())), discretisation_brownian_motion(discretisation_brownian_motion_constr) 
+            Time(Time_constr), dimensions(static_cast<int>(rate_constr.size())), discretisation_brownian_motion(discretisation_brownian_motion_constr) 
             {
                 if (discretisation_brownian_motion_constr < 2){
                         throw std::runtime_error("There should be more than 2 steps");
@@ -61,23 +61,7 @@ class Asset_Option_Price{
                 if (Time_constr < 0){
                         throw std::runtime_error("Time should be greater than 0");
                     }
-            }
-        
-        // Constructor 2: member initializer list (heterogeneous multi-assets) --------------------------------------------------------------------------------------------
-        template <typename Scalar_Vector1, typename Scalar_Vector2, typename Scalar_Vector3, typename Vector_Matrix>
-        Asset_Option_Price(
-                const Scalar_Vector1& strike_constr,
-                const Scalar_Vector2& rate_constr,
-                const Scalar_Vector3& risk_free_rate_constr,
-                const Eigen::MatrixBase<Vector_Matrix>& volatility_constr,
-                const Eigen::VectorXd& price_today_constr,
-                double Time_constr,
-                //int dimensions_constr,
-                int discretisation_brownian_motion_constr):
 
-            strike(strike_constr), rate(rate_constr), risk_free_rate(risk_free_rate_constr), volatility(volatility_constr), price_today(price_today_constr),
-            Time(Time_constr), dimensions(static_cast<int>(strike_constr.size())), discretisation_brownian_motion(discretisation_brownian_motion_constr) 
-            {
                 if (discretisation_brownian_motion_constr < 2){
                         throw std::runtime_error("There should be more than 2 steps");
                     }
