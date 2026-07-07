@@ -11,16 +11,16 @@ int main(){
     
     std::cout << "---------------------------- Monte Carlo Pricer ----------------------------\n";
 
-    /* Eigen::VectorXd price_today(5); 
+    Eigen::VectorXd price_today(5); 
     price_today << 1000, 1652, 957, 1091, 1450;
     //Eigen::VectorXd risk_free_rate(5);
     //risk_free_rate << 0.04, 0.04, 0.04, 0.04, 0.04;
-    double risk_free_rate = 0.04;
+    double risk_free_rate_1 = 0.04;
 
     Eigen::VectorXd rate(5); 
     rate << 0.1, 0.188, 0.05, 0.08, 0.213;
     //Eigen::VectorXd strike(5); 
-    strike << 1100, 1600, 1000, 1200, 1500;
+    //strike << 1100, 1600, 1000, 1200, 1500;
     double strike = 1000; 
 
     Eigen::VectorXd volatility(5); 
@@ -32,18 +32,21 @@ int main(){
                    0.35, 1.00, 0.40, 0.15, 0.30,
                    0.20, 0.40, 1.00, 0.50, 0.45,
                    0.10, 0.15, 0.50, 1.00, 0.55,
-                   0.25, 0.30, 0.45, 0.55, 1.00; */
+                   0.25, 0.30, 0.45, 0.55, 1.00;
 
-    double price_today = 958; 
+    double Time = 2.00;
+    int discretisation = 1000;
+
+    /* double price_today = 958; 
     double risk_free_rate = 0.04;
 
     double rate = 0.05; 
     double strike = 1000; 
 
-    double volatility = 0.15; 
+    double volatility = 0.15; */ 
 
-    Asset_Option_Price asset_4 = Asset_Option_Price(strike, rate, risk_free_rate, volatility, price_today, 2, 1, 1000);
-    std::cout << asset_4.Monte_Carlo_option_pricer(1000, risk_free_rate, 10, false, Asset_Option_Price::payoff::maxim, std::nullopt, strike, correlation, nullptr).sample_mean << '\n';
+    Asset_Option_Price asset_4 = Asset_Option_Price(strike, rate, risk_free_rate_1, volatility, price_today, Time, discretisation);
+    std::cout << asset_4.Monte_Carlo_option_pricer(1000, risk_free_rate_1, 10, false, Asset_Option_Price::payoff::maxim, std::nullopt, strike, std::nullopt, nullptr).sample_mean << '\n';
     //std::cout << asset_4.discounted_pay_off_calculator(1000, risk_free_rate, 999, true, Asset_Option_Price::payoff::maxim, weights, strike, correlation, nullptr) << '\n';
    
 
