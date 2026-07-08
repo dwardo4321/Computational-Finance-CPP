@@ -8,11 +8,11 @@
 
 class Multidimensional_Risk_Neutral_Engine{
     
-    private:
+    protected:
         
-        Eigen::VectorXd strike; 
+        double strike; 
         Eigen::VectorXd rate;         // fixed rates
-        Eigen::VectorXd risk_free_rate;
+        double risk_free_rate;
         Eigen::VectorXd price_today;
 
         Eigen::MatrixXd volatility_realised;   // assets volatility
@@ -31,10 +31,9 @@ class Multidimensional_Risk_Neutral_Engine{
     public:
 
         // Constructor ----------------------------------------------------------------------------
-        template <typename Scalar_Vector1, typename Scalar_Vector2>
-        Multidimensional_Risk_Neutral_Engine(const Scalar_Vector1& strike_const, 
+        Multidimensional_Risk_Neutral_Engine(const double& strike_const, 
                                             const Eigen::VectorXd& rate_const, 
-                                            const Scalar_Vector2& risk_free_rate_const, 
+                                            const double& risk_free_rate_const, 
                                             const Eigen::VectorXd& price_today_const,
                                                                                                                                                    
                                             const Eigen::MatrixXd& volatility_realised_const, 
@@ -43,9 +42,9 @@ class Multidimensional_Risk_Neutral_Engine{
                                             const double& Time_const,
                                             const int& discretisation_const):
 
-                                                                            strike(to_vector(strike_const, price_today_const.size())),  
+                                                                            strike(strike_const),  
                                                                             rate(rate_const),         // fixed rates
-                                                                            risk_free_rate(to_vector(risk_free_rate_const, price_today_const.size())),
+                                                                            risk_free_rate(risk_free_rate_const),
                                                                             price_today(price_today_const),
 
                                                                             volatility_realised(volatility_realised_const),   // assets volatility

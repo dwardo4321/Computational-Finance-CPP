@@ -27,7 +27,7 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
 
     Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, dimensions, tau, correlation_matrix);
 
-    Eigen::VectorXd risk_premium = rate - risk_free_rate;
+    Eigen::VectorXd risk_premium = rate.array() - risk_free_rate;
 
     Eigen::VectorXd mqt_price_of_risk = volatility_realised.completeOrthogonalDecomposition().solve(risk_premium);
     
@@ -66,8 +66,8 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
             } 
         }
 
-        change_in_price.row(t) = (risk_free_rate.transpose().array() * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
-        change_in_price_vd.row(t) = (risk_free_rate.transpose().array() * price_variance_reduction.row(t-1).array() * dt) + (price_variance_reduction.row(t-1).array() * vol_vd.row(t).array());
+        change_in_price.row(t) = (risk_free_rate * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
+        change_in_price_vd.row(t) = (risk_free_rate * price_variance_reduction.row(t-1).array() * dt) + (price_variance_reduction.row(t-1).array() * vol_vd.row(t).array());
         
         price.row(t) = price.row(t-1) + change_in_price.row(t);
         price_variance_reduction.row(t) = price_variance_reduction.row(t-1) + change_in_price_vd.row(t);
@@ -132,12 +132,14 @@ Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(
 
     Eigen::VectorXd weights(5);
     weights << 0.3, 0.3, 0.2, 0.1, 0.05;
-    
-    Eigen::VectorXd out = Option_value.Monte_Carlo_option_pricer(1000, risk_free_rate, tau, true, Asset_Option_Price::payoff::basket, weights, strike, std::nullopt, custom_func).sample_mean; 
 
-    Eigen::MatrixXd xxx(out.size(), 2);
-    xxx.col(0) = out;
-    xxx.col(1) = out;
+    Basket_Assets payoff_object(strike, weights);
+    
+    double out = Option_value.Monte_Carlo_option_pricer(1000, risk_free_rate, tau, true, std::nullopt, payoff_object, custom_func).sample_mean; 
+
+    Eigen::MatrixXd xxx(1, 2);
+    xxx(0, 0) = out;
+    xxx(0, 1) = out;
 
     return xxx;
 }

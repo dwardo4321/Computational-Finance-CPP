@@ -34,3 +34,125 @@
                                 discounted_pay_off(i, j) = 0.5 * (pay_off(i, j) + pay_off_variance_reduction(i, j));
                             }
                         } */
+
+
+/* // Constructor 2: member initializer list (heterogeneous multi-assets) -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+Asset_Option_Price::Asset_Option_Price(
+            const Eigen::VectorXd& strike_constr,
+            const Eigen::VectorXd& rate_constr,
+            const Eigen::VectorXd& risk_free_rate_constr,
+            const Eigen::MatrixXd& volatility_constr,
+            const Eigen::VectorXd& price_today_constr,
+            double Time_constr,
+            //int dimensions_constr,
+            int discretisation_brownian_motion_constr):
+
+        strike(strike_constr), rate(rate_constr), risk_free_rate(risk_free_rate_constr), volatility(volatility_constr), price_today(price_today_constr),
+        Time(Time_constr), dimensions(static_cast<int>(rate_constr.size())), discretisation_brownian_motion(discretisation_brownian_motion_constr) 
+        {
+            if (discretisation_brownian_motion_constr < 2){
+                    throw std::runtime_error("There should be more than 2 steps");
+                }
+            
+            if (Time_constr < 0){
+                    throw std::runtime_error("Time should be greater than 0");
+                }
+        } */
+
+
+
+/* // Constructor 5: member initializer list (heterogeneous multi-assets) -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+Asset_Option_Price::Asset_Option_Price(
+            const Eigen::VectorXd& strike_constr,
+            const Eigen::VectorXd& rate_constr,
+            const Eigen::VectorXd& risk_free_rate_constr,
+            const Eigen::VectorXd& volatility_constr,
+            const Eigen::VectorXd& price_today_constr,
+            double Time_constr,
+            //int dimensions_constr,
+            int discretisation_brownian_motion_constr):
+
+        strike(strike_constr), rate(rate_constr), risk_free_rate(risk_free_rate_constr), volatility(volatility_constr), price_today(price_today_constr),
+        Time(Time_constr), dimensions(static_cast<int>(rate_constr.size())), discretisation_brownian_motion(discretisation_brownian_motion_constr) 
+        {
+            if (discretisation_brownian_motion_constr < 2){
+                    throw std::runtime_error("There should be more than 2 steps");
+                }
+            
+            if (Time_constr < 0){
+                    throw std::runtime_error("Time should be greater than 0");
+                }
+        } */
+
+// Class Method 3 -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
+                                                                                std::optional<Eigen::MatrixXd> correlation_matrix,
+                                                                                const Payoff& payoff_object,
+                                                                                std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){
+        
+    std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > price_generator;
+
+    if (custom_price_generator){ 
+
+        price_generator = custom_price_generator;
+    }else{
+        
+        price_generator = [this](std::optional <Eigen::MatrixXd> correlation_matrix){
+
+            return this -> GBM_price_path_generator(correlation_matrix);
+        };
+    }
+    
+    Option_output output{};
+
+    Eigen::MatrixXd discounted_pay_off(number_of_iterations, dimensions);
+        
+    if (variance_reduction){
+        correlation_matrix.has_value()? discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, risk_free_rate, tau, true,
+                                                                                            *correlation_matrix, payoff_object, price_generator):
+                                        discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, risk_free_rate, tau, true,
+                                                                                            std::nullopt, payoff_object, price_generator);
+    }else{
+        correlation_matrix.has_value()? discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, risk_free_rate, tau, false,
+                                                                                            *correlation_matrix, payoff_object, price_generator):    
+                                        discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, risk_free_rate, tau, false,
+                                                                                            std::nullopt, payoff_object, price_generator);
+    }
+    
+    Eigen::VectorXd sample_mean(dimensions); sample_mean.setZero();
+    Eigen::VectorXd sample_variance(dimensions); sample_variance.setZero();
+    Eigen::VectorXd sample_standard_error(dimensions); sample_standard_error.setZero();
+    Eigen::VectorXd ci_lower_bound(dimensions); ci_lower_bound.setZero();
+    Eigen::VectorXd ci_upper_bound(dimensions); ci_upper_bound.setZero();
+    
+    
+    // SAMPLE MEAN -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+    sample_mean = discounted_pay_off.colwise().mean();
+    output.sample_mean = sample_mean;  
+    
+    // SAMPLE VARIANCE -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+    for (int j = 0; j < dimensions; j++){
+        for (int i = 0; i < number_of_iterations; i++){
+            sample_variance(j) += pow((discounted_pay_off(i, j) - sample_mean(j)), 2);    
+        }
+        sample_variance(j) = sample_variance(j) / static_cast<double>(number_of_iterations - 1);
+    }
+    output.sample_variance = sample_variance;
+    
+    // STANDARD ERROR -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+    for (int i = 0; i < dimensions; i++){
+        sample_standard_error(i) = sqrt(sample_variance(i) / static_cast<double>(number_of_iterations));
+    }
+    output.sample_standard_error = sample_standard_error;
+
+    // CONFIDENCE INTERVALS -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+    std::stringstream confidence_intervals;
+
+    for(int i = 0; i < dimensions; i++){
+        ci_lower_bound(i) = sample_mean(i) - 1.96 * sample_standard_error(i);   
+        ci_upper_bound(i) = sample_mean(i) + 1.96 * sample_standard_error(i);
+        confidence_intervals << "[" << ci_lower_bound(i) << ": " << ci_upper_bound(i) << "]\n";
+    }
+    output.confidence_intervals = confidence_intervals.str();
+    return output;
+}
