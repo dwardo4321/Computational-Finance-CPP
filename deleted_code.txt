@@ -1,0 +1,36 @@
+                        /* if(payoff_calculation){
+
+                            switch(*payoff_calculation){ // * means if(payoff_calculation) then use what is provided inside payoff_calculation
+                                
+                                case payoff::basket:
+                                    
+                                    if(weights.has_value()){
+                                        pay_off(i) = Payoff::operator(prices.row(i));  
+                                        pay_off_variance_reduction(i) = Payoff::operator()(prices_variance_reduction.row(i)); 
+                                    discounted_pay_off(i, 0) = 0.5 * (pay_off(i, 0) + pay_off_variance_reduction(i, 0));}
+                                    break;  
+
+                                case payoff::maxim:
+
+                                    prices.row(i).maxCoeff() - strike(0) > 0? pay_off(i, 0) = (prices.row(i).maxCoeff() - strike(0)) * exp(-risk_free_rate(0) * tau):  pay_off(i, 0) = 0;  
+                                    prices_variance_reduction.row(i).maxCoeff() - strike(0) > 0? pay_off_variance_reduction(i, 0) = (prices_variance_reduction.row(i).maxCoeff() - strike(0)) * exp(-risk_free_rate(0) * tau):  pay_off_variance_reduction(i, 0) = 0; 
+                                    discounted_pay_off(i, 0) = 0.5 * (pay_off(i, 0) + pay_off_variance_reduction(i, 0)); 
+                                    break;
+
+                                case payoff::worst_off:
+
+                                    prices.row(i).minCoeff() - strike(0) > 0? pay_off(i, 0) = (prices.row(i).maxCoeff() - strike(0)) * exp(-risk_free_rate(0) * tau):  pay_off(i, 0) = 0;  
+                                    prices_variance_reduction.row(i).minCoeff() - strike(0) > 0? pay_off_variance_reduction(i, 0) = (prices_variance_reduction.row(i).maxCoeff() - strike(0)) * exp(-risk_free_rate(0) * tau):  pay_off_variance_reduction(i, 0) = 0; 
+                                    discounted_pay_off(i, 0) = 0.5 * (pay_off(i, 0) + pay_off_variance_reduction(i, 0));
+                                    break;
+                        
+                        }   
+
+                        }else{  
+
+                            for (int j = 0; j < dimensions; j++){ 
+                                prices(i, j) - strike(j) > 0? pay_off(i, j) = (prices(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off(i, j) = 0;  
+                                prices_variance_reduction(i, j) - strike(j) > 0? pay_off_variance_reduction(i, j) = (prices_variance_reduction(i, j) - strike(j)) * exp(-rate(j) * Time):  pay_off_variance_reduction(i, j) = 0; 
+                                discounted_pay_off(i, j) = 0.5 * (pay_off(i, j) + pay_off_variance_reduction(i, j));
+                            }
+                        } */
