@@ -1,14 +1,14 @@
 #include "utilities.hpp"
-
 #include <iostream>
 #include <Eigen/Dense>
 #include <boost/math/distributions.hpp>
+#include <cmath>
 #include <optional>
 #include <random>
 
-namespace{std::random_device rd;
+/* namespace{std::random_device rd;
           std::mt19937_64 gen(rd());
-        }
+        } */
 namespace stats{
 
     double normal_cdf(double x){
@@ -22,25 +22,32 @@ namespace stats{
     }
 }
 
+// Method 0 -----------------------------------------------------------------
+Eigen::MatrixXd utility::Normal_RV_generator(int discretisation_brownian_motion, int dimensions, std::mt19937_64& generator){
+
+    std::normal_distribution<double> standard_norm(0, 1);
+    
+    Eigen::MatrixXd standard_normal_rv(discretisation_brownian_motion, dimensions);
+    
+    for (int i = 0; i < dimensions; i++)
+    {
+        for(int j = 0; j < discretisation_brownian_motion; j++)
+        {
+            standard_normal_rv(j, i) = standard_norm(generator);
+        }                 
+    }
+
+    return standard_normal_rv;
+}
+
 // Method 1 -----------------------------------------------------------------
-Eigen::MatrixXd utility::Brownian_path_generator(int discretisation_brownian_motion, int dimensions, double Time, std::optional<Eigen::MatrixXd> correlation_matrix){
+Eigen::MatrixXd utility::Brownian_path_generator(int discretisation_brownian_motion, int dimensions, double Time, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix){
     
     Eigen::MatrixXd paths(discretisation_brownian_motion, dimensions);
     paths.row(0).setZero();
 
     double delta_time = static_cast<double>(Time) / (discretisation_brownian_motion - 1);
     
-    // Generate Z ~ N(0, I_(nxn))   
-    std::normal_distribution<double> standard_norm(0, 1);
-    Eigen::MatrixXd standard_normal_rv(discretisation_brownian_motion, dimensions);
-    for (int i = 0; i < dimensions; i++)
-    {
-        for(int j = 0; j < discretisation_brownian_motion; j++)
-        {
-            standard_normal_rv(j, i) = standard_norm(gen);
-        }                 
-    }
-
     if(correlation_matrix.has_value()){
 
         // Cholesky Decomposition
@@ -52,7 +59,7 @@ Eigen::MatrixXd utility::Brownian_path_generator(int discretisation_brownian_mot
     
         for(int i = 1; i < discretisation_brownian_motion; i++)
         {
-            delta_BM = sqrt(delta_time) * (lower_triangular * standard_normal_rv.row(i).transpose());
+            delta_BM = sqrt(delta_time) * (lower_triangular * standard_normal_rv.row(i - 1).transpose());
             paths.row(i) = paths.row(i - 1) + delta_BM.transpose();
         }
 
@@ -61,7 +68,7 @@ Eigen::MatrixXd utility::Brownian_path_generator(int discretisation_brownian_mot
     {
         for(int i = 1; i < discretisation_brownian_motion; i++)
         {
-            paths.row(i) = paths.row(i - 1) + standard_normal_rv.row(i) * sqrt(delta_time);
+            paths.row(i) = paths.row(i - 1) + standard_normal_rv.row(i - 1) * sqrt(delta_time);
         }
     }
 
@@ -75,12 +82,13 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> utility::GBM_price_path_generator(E
                                                                                  Eigen::VectorXd price_today,
                                                                                  double Time,                  // time duration
                                                                                  int dimensions,               // number of assets
-                                                                                 int discretisation_brownian_motion, // number of steps 
+                                                                                 int discretisation_brownian_motion, // number of steps
+                                                                                 const Eigen::MatrixXd& standard_normal_rv, 
                                                                                  std::optional<Eigen::MatrixXd> correlation_matrix){ 
     
     // Pass-by-Reference (additional matrix prices_paths_variance_reduction)
     Eigen::MatrixXd brownian_paths(discretisation_brownian_motion, dimensions);
-    brownian_paths = Brownian_path_generator(discretisation_brownian_motion, dimensions, Time, correlation_matrix);
+    brownian_paths = Brownian_path_generator(discretisation_brownian_motion, dimensions, Time, standard_normal_rv, correlation_matrix);
     
     Eigen::MatrixXd prices_paths(discretisation_brownian_motion, dimensions);
     Eigen::MatrixXd prices_paths_variance_reduction(discretisation_brownian_motion, dimensions);

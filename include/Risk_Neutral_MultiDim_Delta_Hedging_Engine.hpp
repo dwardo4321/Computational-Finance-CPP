@@ -23,7 +23,7 @@ class Multidimensional_Risk_Neutral_Engine{
         double Time;        // time duration
         int discretisation; // number of steps 
 
-        std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_GBM(double tau, int discretisation, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price);
+        std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_GBM(double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price);
 
         static Eigen::VectorXd to_vector(double x, int n){return Eigen::VectorXd::Constant(n, x);}
 

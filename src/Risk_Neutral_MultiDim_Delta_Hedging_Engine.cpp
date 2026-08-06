@@ -51,13 +51,13 @@ Eigen::VectorXd indicator(Eigen::VectorXd x) {
 } */
 
 // Private Method 2 ---------------------------------------------------------
-std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(double tau, int discretisation, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price){
+std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price){
 
     int M = volatility_realised.rows();
     int D = volatility_realised.cols();
     int dimensions = volatility_realised.cols();
 
-    Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, dimensions, tau, correlation_matrix);
+    Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, dimensions, tau, standard_normal_rv, correlation_matrix);
 
     Eigen::VectorXd risk_premium = rate.array() - risk_free_rate;
 
