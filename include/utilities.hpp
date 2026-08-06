@@ -3,6 +3,7 @@
 #include <iostream>
 #include <Eigen/Dense>
 #include <optional>
+#include <random>
 
 namespace stats{
     double normal_cdf(double x);

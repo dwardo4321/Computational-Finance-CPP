@@ -10,6 +10,7 @@
 #include <random>
 #include <optional>
 #include <functional>
+#include <vector>
 
 namespace{
     std::random_device rd;
@@ -109,8 +110,9 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
 }
 
 // Adjoint Algorithmic Differentiation and Likelihood Ratio Estimation
-Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(int MC_iterations, double time, bool variance_reduction,
+Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(int path_index, int MC_iterations, double time, bool variance_reduction,
                                                                                                     Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
+                                                                                                    const std::vector<Eigen::MatrixXd>& standard_normal_rv_bank,
                                                                                                     const Payoff& payoff_object,
                                                                                                     std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){
 
@@ -137,11 +139,20 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
 
     double tau = Time - time * dt;
 
-    Asset_Option_Price Option_value = Asset_Option_Price(strike, rate, risk_free_rate, volatility_realised, price_today, tau, discretisation);
+    if(standard_normal_rv_bank.size() < MC_iterations){
+        throw std::invalid_argument("The Standard Normal Bank contains fewer matrices than the number of iterations MC_iterations");
+    }
 
-    auto custom_func = [this, tau] (std::optional<Eigen::MatrixXd> correlation_matrix){return this-> Multidimensional_GBM(tau, this->discretisation, correlation_matrix, this->price_today);};
+    Asset_Option_Price Option_value = Asset_Option_Price(strike, rate, risk_free_rate, volatility_realised, initial_price, tau, discretisation);
+
+    auto custom_func = [this, tau, &standard_normal_rv_bank, &initial_price, &path_index] (std::optional<Eigen::MatrixXd> correlation_matrix){
+
+        const Eigen::MatrixXd& standard_normal_rv = standard_normal_rv_bank.at(path_index);
+
+        return this-> Multidimensional_GBM(tau, this->discretisation, standard_normal_rv, correlation_matrix, initial_price);
+    };
     
-    double Option = Option_value.Monte_Carlo_option_pricer(MC_iterations, risk_free_rate, tau, true, std::nullopt, payoff_object, custom_func).sample_mean; 
+    double Option = Option_value.Monte_Carlo_option_pricer(MC_iterations, risk_free_rate, tau, variance_reduction, correlation_matrix, payoff_object, custom_func).sample_mean; 
 
 
     // DELTA ---------------------------------------------------------

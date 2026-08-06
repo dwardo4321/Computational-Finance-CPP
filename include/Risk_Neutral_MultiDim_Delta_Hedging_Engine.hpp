@@ -5,6 +5,7 @@
 #include <iostream>
 #include <optional> 
 #include <functional>
+#include <vector>
 
 class Payoff;
 class Multidimensional_Risk_Neutral_Engine{
@@ -47,8 +48,9 @@ class Multidimensional_Risk_Neutral_Engine{
 
         struct quad{Eigen::VectorXd Delta; Eigen::MatrixXd Gamma; Eigen::VectorXd Theta; double Option;};
         
-        quad Greeks_and_Option(int MC_iterations, double time, bool variance_reduction,
+        quad Greeks_and_Option(int path_index, int MC_iterations, double time, bool variance_reduction,
                                 Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
+                                const std::vector<Eigen::MatrixXd>& standard_normal_rv_bank,
                                 const Payoff& payoff_object,
                                 std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator);
              
