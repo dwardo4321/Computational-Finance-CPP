@@ -9,49 +9,39 @@
 int main(){
     
     
-    std::cout << "---------------------------- Monte Carlo Pricer ----------------------------\n";
+    //std::cout << "---------------------------- Monte Carlo Pricer ----------------------------\n";
 
-    Eigen::VectorXd price_today(5); 
-    price_today << 1000, 1652, 3557, 1091, 1405;
+    /* double strike = 1000;
+    double rate = 0.08;
+    double risk_free_rate = 0.05;
+    double volatility = 0.20;
+    double price_today = 1230;
+    double Time = 1;
+    int discretisation = 252; */
 
-    double risk_free_rate = 0.04;
+    /* double strike = 1000;
+    Eigen::VectorXd rate(3); rate << 0.08, 0.07, 0.09;
+    double risk_free_rate = 0.05;
+    Eigen::MatrixXd volatility(3, 1); volatility << 0.20, 0.25, 0.30;
+    Eigen::VectorXd price_today(3); price_today << 1000, 950, 1050;
+    double Time = 1;
+    int discretisation = 252; */
 
-    Eigen::VectorXd rate(5); 
-    rate << 0.1, 0.188, 0.05, 0.08, 0.213;
-
-    double strike = 1000; 
-
-    Eigen::VectorXd volatility(5); 
-    volatility << 0.21, 0.25, 0.15, 0.18, 0.1; 
-
-    Eigen::VectorXd weights(5);
-    weights << 0.2, 0.2, 0.2, 0.2, 0.2;
-
-    Eigen::MatrixXd correlation(5, 5);
-    correlation << 1.00, 0.35, 0.20, 0.10, 0.25,
-                   0.35, 1.00, 0.40, 0.15, 0.30,
-                   0.20, 0.40, 1.00, 0.50, 0.45,
-                   0.10, 0.15, 0.50, 1.00, 0.55,
-                   0.25, 0.30, 0.45, 0.55, 1.00;
-
-    double Time = 2.00;
-    int discretisation = 1000;
-
-    /* double price_today = 958; 
-    double risk_free_rate = 0.04;
-
-    double rate = 0.05; 
-     
-
-    double volatility = 0.15; */
+    /* double strike = 900;
+    Eigen::VectorXd rate(4); rate << 0.08, 0.075, 0.09, 0.065;
+    double risk_free_rate = 0.05;
+    Eigen::VectorXd volatility(4); volatility << 0.20, 0.25, 0.30, 0.18;
+    Eigen::VectorXd price_today(4); price_today << 1000, 950, 1050, 980;
+    double Time = 1;
+    int discretisation = 252; */
     
-    //Minimum_Asset payoff_object(strike);
+    /* Minimum_Asset payoff_object(strike);
 
-    //Asset_Option_Price asset_4 = Asset_Option_Price(strike, rate, risk_free_rate, volatility, price_today, Time, discretisation);
-    //std::cout << asset_4.Monte_Carlo_option_pricer(1000, risk_free_rate, 300, false, std::nullopt, payoff_object, nullptr).sample_mean << '\n';
+    Asset_Option_Price asset_4 = Asset_Option_Price(strike, rate, risk_free_rate, volatility, price_today, Time, discretisation);
+    std::cout << asset_4.Monte_Carlo_option_pricer(1000, risk_free_rate, 30, false, std::nullopt, payoff_object, nullptr).sample_mean << '\n';
     //std::cout << asset_4.discounted_pay_off_calculator(1000, risk_free_rate, 50, true, correlation, payoff_object, nullptr) << '\n';
-    //std::cout << asset_4.GBM_price_path(correlation)<< '\n';
-   
+    std::cout << asset_4.discounted_pay_off_calculator(1000, risk_free_rate, 50, true, std::nullopt, payoff_object, nullptr) << '\n';
+    //std::cout << asset_4.GBM_price_path(correlation)<< '\n'; */
 
     // -------------------------------------------------------------------------
 
@@ -70,17 +60,15 @@ int main(){
     std::cout << "--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n";
     */
 
-    /* int D = 4;   // number of Brownian drivers
+    int D = 4;   // number of Brownian drivers
     int M = 5;   // number of assets/options
 
-    Eigen::VectorXd strike(M);
-    strike << 90.0, 100.0, 110.0, 120.0, 130.0;
+    double strike = 90.0;
 
     Eigen::VectorXd rate(M);
     rate << 0.06, 0.055, 0.05, 0.052, 0.058;
 
-    Eigen::VectorXd risk_free_rate(M);
-    risk_free_rate << 0.04, 0.04, 0.04, 0.04, 0.04;
+    double risk_free_rate = 0.09;
 
     Eigen::VectorXd price_today(M);
     price_today << 92.0, 104.0, 111.0, 118.0, 137.0;
@@ -107,7 +95,16 @@ int main(){
     Multidimensional_Risk_Neutral_Engine test_1 = Multidimensional_Risk_Neutral_Engine(strike, rate, risk_free_rate, price_today, volatility_realised, volatility_implied, Time, discretisation);
     Eigen::MatrixXd output = test_1.Risk_Neutral_MultiDim_DHE(true);
 
-    std::ofstream file("C:/Users/Tapson/Downloads/output.csv");
+    Eigen::VectorXd weights(5);
+    weights << 0.3, 0.3, 0.2, 0.1, 0.05;
+
+    Basket_Assets payoff_object(strike, weights);  
+
+    Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(1000, 990, false, price_today, std::nullopt, payoff_object, nullptr);
+
+    std::cout << output123.Delta;
+
+    /* std::ofstream file("C:/Users/Tapson/Downloads/output.csv");
     Eigen::IOFormat csv_format(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");
 
     file << output.format(csv_format);

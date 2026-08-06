@@ -59,6 +59,17 @@ Asset_Option_Price::Asset_Option_Price(
                 }
         } */
 
+// Constructor 2: member initializer list (heterogeneous multi-assets) -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+        Asset_Option_Price(
+                const Eigen::VectorXd& strike_constr,
+                const Eigen::VectorXd& rate_constr,
+                const Eigen::VectorXd& risk_free_rate_constr,
+                const Eigen::MatrixXd& volatility_constr,
+                const Eigen::VectorXd& price_today_constr,
+                double Time_constr,
+                //int dimensions_constr,
+                int discretisation_brownian_motion_constr);
+
 
 
 /* // Constructor 5: member initializer list (heterogeneous multi-assets) -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -83,6 +94,17 @@ Asset_Option_Price::Asset_Option_Price(
                     throw std::runtime_error("Time should be greater than 0");
                 }
         } */
+
+// Constructor 5: member initializer list (heterogeneous multi-assets) -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+        Asset_Option_Price(
+            const Eigen::VectorXd& strike_constr,
+            const Eigen::VectorXd& rate_constr,
+            const Eigen::VectorXd& risk_free_rate_constr,
+            const Eigen::VectorXd& volatility_constr,
+            const Eigen::VectorXd& price_today_constr,
+            double Time_constr,
+            //int dimensions_constr,
+            int discretisation_brownian_motion_constr);
 
 // Class Method 3 -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
@@ -156,3 +178,5 @@ Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer
     output.confidence_intervals = confidence_intervals.str();
     return output;
 }
+
+

@@ -94,21 +94,9 @@ class Asset_Option_Price{ //----------------------------------------------------
                 double volatility_constr,
                 double price_today_constr,
                 double Time_constr,
-                int dimensions_constr,
                 int discretisation_brownian_motion_constr);
         
         // Constructor 2: member initializer list (heterogeneous multi-assets) -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-        Asset_Option_Price(
-                const Eigen::VectorXd& strike_constr,
-                const Eigen::VectorXd& rate_constr,
-                const Eigen::VectorXd& risk_free_rate_constr,
-                const Eigen::MatrixXd& volatility_constr,
-                const Eigen::VectorXd& price_today_constr,
-                double Time_constr,
-                //int dimensions_constr,
-                int discretisation_brownian_motion_constr);
-
-        // Constructor 3: member initializer list (heterogeneous multi-assets) -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
         Asset_Option_Price(
             const double& strike_constr,
             const Eigen::VectorXd& rate_constr,
@@ -119,22 +107,11 @@ class Asset_Option_Price{ //----------------------------------------------------
             //int dimensions_constr,
             int discretisation_brownian_motion_constr);
 
-        // Constructor 4: member initializer list (heterogeneous multi-assets) -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+        // Constructor 3: member initializer list (heterogeneous multi-assets) -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
         Asset_Option_Price(
             const double& strike_constr,
             const Eigen::VectorXd& rate_constr,
             const double& risk_free_rate_constr,
-            const Eigen::VectorXd& volatility_constr,
-            const Eigen::VectorXd& price_today_constr,
-            double Time_constr,
-            //int dimensions_constr,
-            int discretisation_brownian_motion_constr);
-            
-        // Constructor 5: member initializer list (heterogeneous multi-assets) -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-        Asset_Option_Price(
-            const Eigen::VectorXd& strike_constr,
-            const Eigen::VectorXd& rate_constr,
-            const Eigen::VectorXd& risk_free_rate_constr,
             const Eigen::VectorXd& volatility_constr,
             const Eigen::VectorXd& price_today_constr,
             double Time_constr,
@@ -145,7 +122,7 @@ class Asset_Option_Price{ //----------------------------------------------------
         Eigen::MatrixXd GBM_price_path(std::optional<Eigen::MatrixXd> correlation_matrix);
 
         // Class Method 2 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*    
-        Eigen::MatrixXd discounted_pay_off_calculator(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
+        Eigen::VectorXd discounted_pay_off_calculator(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
                                                     std::optional<Eigen::MatrixXd> correlation_matrix,
                                                     const Payoff& payoff_object,
                                                     std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator);
@@ -159,9 +136,9 @@ class Asset_Option_Price{ //----------------------------------------------------
         };
 
         Option_output Monte_Carlo_option_pricer(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
-                                                                                std::optional<Eigen::MatrixXd> correlation_matrix,
-                                                                                const Payoff& payoff_object,
-                                                                                std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator);
+                                                std::optional<Eigen::MatrixXd> correlation_matrix,
+                                                const Payoff& payoff_object,
+                                                std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator);
 
 };
 

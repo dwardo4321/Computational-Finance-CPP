@@ -6,6 +6,7 @@
 #include <optional> 
 #include <functional>
 
+class Payoff;
 class Multidimensional_Risk_Neutral_Engine{
     
     protected:
@@ -27,6 +28,8 @@ class Multidimensional_Risk_Neutral_Engine{
         static Eigen::VectorXd to_vector(double x, int n){return Eigen::VectorXd::Constant(n, x);}
 
         static Eigen::VectorXd to_vector(const Eigen::VectorXd& x, int n){return x;}
+
+        //Eigen::VectorXd indicator(Eigen::VectorXd x);
     
     public:
 
@@ -40,23 +43,14 @@ class Multidimensional_Risk_Neutral_Engine{
                                             const Eigen::MatrixXd& volatility_implied_const, 
                                                                                                                                                     
                                             const double& Time_const,
-                                            const int& discretisation_const):
+                                            const int& discretisation_const);
 
-                                                                            strike(strike_const),  
-                                                                            rate(rate_const),         // fixed rates
-                                                                            risk_free_rate(risk_free_rate_const),
-                                                                            price_today(price_today_const),
-
-                                                                            volatility_realised(volatility_realised_const),   // assets volatility
-                                                                            volatility_implied(volatility_implied_const),  // option volatilities
-                                                                            
-                                                                            Time(Time_const),                  // time duration
-                                                                            discretisation(discretisation_const)
-                                                                            {} // number of steps 
-
-        struct quad{Eigen::VectorXd Delta; Eigen::MatrixXd Gamma; Eigen::VectorXd Theta; Eigen::MatrixXd Option;};
+        struct quad{Eigen::VectorXd Delta; Eigen::MatrixXd Gamma; Eigen::VectorXd Theta; double Option;};
         
-        //quad Greeks_and_Option(int MC_iterations, double tau, double price_change, bool variance_reduction, Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix);
+        quad Greeks_and_Option(int MC_iterations, double time, bool variance_reduction,
+                                Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
+                                const Payoff& payoff_object,
+                                std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator);
              
         //Eigen::VectorXd Portfolio(int discretisation, double tau, Eigen::VectorXd initial_price); 
         
