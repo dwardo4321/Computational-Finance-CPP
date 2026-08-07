@@ -180,3 +180,27 @@ Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer
 }
 
 
+
+/* Eigen::VectorXd initial_price_up = initial_price.array() + price_change;
+    Eigen::VectorXd initial_price_down = initial_price.array() - price_change;
+    
+    Asset_Option_Price Option_value_up = Asset_Option_Price(strike, risk_free_rate, volatility_realised, initial_price_up, tau, discretisation);
+    Asset_Option_Price Option_value_down = Asset_Option_Price(strike, risk_free_rate, volatility_realised, initial_price_down, tau, discretisation); 
+    Asset_Option_Price Option_value = Asset_Option_Price(strike, risk_free_rate, volatility_realised, initial_price, tau, discretisation);
+
+    auto custom_func = [this, tau] (std::optional<Eigen::MatrixXd> correlation_matrix){return this-> Multidimensional_GBM(tau, this->discretisation, correlation_matrix, this->price_today);};
+
+    Eigen::VectorXd Option_up = Option_value_up.Monte_Carlo_option_pricer(MC_iterations, tau, variance_reduction, correlation_matrix, custom_func).sample_mean;
+    Eigen::VectorXd Option_down = Option_value_down.Monte_Carlo_option_pricer(MC_iterations, tau, variance_reduction, correlation_matrix, custom_func).sample_mean;
+    Eigen::VectorXd Option = Option_value.Monte_Carlo_option_pricer(MC_iterations, tau, variance_reduction, correlation_matrix, custom_func).sample_mean;
+
+    Eigen::VectorXd Delta = (Option_up - Option_down) / (2 * price_change);
+
+    Eigen::VectorXd Gamma = (Option_up - 2 * ) */
+    
+    // OPTION ---------------------------------------------------------
+
+    /* double dt = Time / (discretisation - 1);
+
+    double tau = Time - time * dt; */
+

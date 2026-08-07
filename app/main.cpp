@@ -109,9 +109,9 @@ int main(){
     std::random_device rd;
     std::mt19937_64 generator(rd());
 
-    for(int i = 0; i < iterations; i++){std_normal_rv_bank[i] = utility::Normal_RV_generator(discretisation, price_today.size(), generator);}
+    for(int i = 0; i < iterations; i++){std_normal_rv_bank[i] = utility::Normal_RV_generator(discretisation, volatility_realised.cols(), generator);}
 
-    Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(iterations, 990, false, initial_price, std::nullopt, std_normal_rv_bank, payoff_object, nullptr);
+    Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(iterations, 999, false, initial_price, std::nullopt, std_normal_rv_bank, payoff_object, nullptr);
 
     std::cout << output123.Option;
 

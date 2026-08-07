@@ -103,34 +103,13 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
 }
 
 // // Private Method 2 (Adjoint Algorithmic Differentiation and Likelihood Ratio Estimation) ---------------------------------------------------------
-Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(int MC_iterations, double time, bool variance_reduction,
+Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(int MC_iterations, double tau, bool variance_reduction,
                                                                                                     Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
                                                                                                     const std::vector<Eigen::MatrixXd>& standard_normal_rv_bank,
                                                                                                     const Payoff& payoff_object,
                                                                                                     std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){
 
-    /* Eigen::VectorXd initial_price_up = initial_price.array() + price_change;
-    Eigen::VectorXd initial_price_down = initial_price.array() - price_change;
     
-    Asset_Option_Price Option_value_up = Asset_Option_Price(strike, risk_free_rate, volatility_realised, initial_price_up, tau, discretisation);
-    Asset_Option_Price Option_value_down = Asset_Option_Price(strike, risk_free_rate, volatility_realised, initial_price_down, tau, discretisation); 
-    Asset_Option_Price Option_value = Asset_Option_Price(strike, risk_free_rate, volatility_realised, initial_price, tau, discretisation);
-
-    auto custom_func = [this, tau] (std::optional<Eigen::MatrixXd> correlation_matrix){return this-> Multidimensional_GBM(tau, this->discretisation, correlation_matrix, this->price_today);};
-
-    Eigen::VectorXd Option_up = Option_value_up.Monte_Carlo_option_pricer(MC_iterations, tau, variance_reduction, correlation_matrix, custom_func).sample_mean;
-    Eigen::VectorXd Option_down = Option_value_down.Monte_Carlo_option_pricer(MC_iterations, tau, variance_reduction, correlation_matrix, custom_func).sample_mean;
-    Eigen::VectorXd Option = Option_value.Monte_Carlo_option_pricer(MC_iterations, tau, variance_reduction, correlation_matrix, custom_func).sample_mean;
-
-    Eigen::VectorXd Delta = (Option_up - Option_down) / (2 * price_change);
-
-    Eigen::VectorXd Gamma = (Option_up - 2 * ) */
-    
-    // OPTION ---------------------------------------------------------
-
-    double dt = Time / (discretisation - 1);
-
-    double tau = Time - time * dt;
 
     if(standard_normal_rv_bank.size() < MC_iterations){
         throw std::invalid_argument("The Standard Normal Bank contains fewer matrices than the number of iterations MC_iterations");
@@ -151,23 +130,42 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
     
     double Option = Option_value.Monte_Carlo_option_pricer(MC_iterations, risk_free_rate, tau, variance_reduction, correlation_matrix, payoff_object, custom_func).sample_mean; 
 
+    // GREEKS -------------------------------------------------------
+    Eigen::VectorXd iter_price;
+    
+    Eigen::VectorXd iter_delta;
+    Eigen::VectorXd Delta = Eigen::VectorXd::Zero(price_today.size());
+    Eigen::VectorXd iter_theta;
+    Eigen::VectorXd Theta = Eigen::VectorXd::Zero(price_today.size());
 
-    // DELTA ---------------------------------------------------------
+    for(int i = 0; i < MC_iterations; i++){
 
-    Eigen::VectorXd Delta;
+        auto iter_gbm = Multidimensional_GBM(tau, discretisation, standard_normal_rv_bank[i], correlation_matrix, initial_price);
+
+        variance_reduction? (iter_price = iter_gbm.second): (iter_price = iter_gbm.first);
+        
+        // DELTA ---------------------------------------------------------
+        iter_delta = (1 / MC_iterations) * exp(- risk_free_rate * tau) * (iter_price.array() /  price_today.array());
+
+        Delta += iter_delta;
+
+        // THETA ---------------------------------------------------------
+        Eigen::VectorXd theta_calc = risk_free_rate * payoff_object(iter_price.transpose()) - iter_price.array() * (risk_free_rate - (0.5 * volatility_implied * volatility_implied).array() + (volatility_implied * standard_normal_rv_bank[i]).array() / (2 * sqrt(tau))).array();
+
+        iter_theta = (1 / MC_iterations) * exp(- risk_free_rate * tau) * theta_calc;
+
+        Theta += iter_theta;
+
+        // GAMMA ---------------------------------------------------------
+
+    }
+
+    Eigen::MatrixXd Gamma;
+    
 
     payoff_object(initial_price.transpose()) > 0? Delta = exp(- risk_free_rate * tau) * initial_price.array() / price_today.array(): Delta = Eigen::VectorXd::Zero(initial_price.size()); // (risk_free_rate * payoff_object(initial_price.transpose()));  //(1 / MC_iterations) * 
 
-    // GAMMA ---------------------------------------------------------
-
-    Eigen::MatrixXd Gamma;
-
-    //payoff_object(initial_price.transpose()) > 0? Gamma = exp(- risk_free_rate * tau) * payoff_object(initial_price.transpose()) * ;
-
-    // THETA ---------------------------------------------------------
-    Eigen::VectorXd Theta(5);
-    Theta << -2.10, -1.75, -1.30, -0.95, -0.60;
-    //Eigen::VectorXd Theta = - exp(risk_free_rate * tau) * (- risk_free_rate * (initial_price.array() - strike));
+    
 
     return {Delta, Gamma, Theta, Option};
 }
@@ -186,6 +184,12 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
 
 // Public Method 1 ---------------------------------------------------------
 Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(bool call){
+
+    int time;
+    
+    double dt = Time / (discretisation - 1);
+
+    double tau = Time - time * dt;
     
     /* Eigen::VectorXd out = Z_scores(true);//Brownian_Mot(discretisation, Time, std::nullopt); 
 
