@@ -110,7 +110,7 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
 }
 
 // Adjoint Algorithmic Differentiation and Likelihood Ratio Estimation
-Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(int path_index, int MC_iterations, double time, bool variance_reduction,
+Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(int MC_iterations, double time, bool variance_reduction,
                                                                                                     Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
                                                                                                     const std::vector<Eigen::MatrixXd>& standard_normal_rv_bank,
                                                                                                     const Payoff& payoff_object,
@@ -145,6 +145,8 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
 
     Asset_Option_Price Option_value = Asset_Option_Price(strike, rate, risk_free_rate, volatility_realised, initial_price, tau, discretisation);
 
+    int path_index;
+
     auto custom_func = [this, tau, &standard_normal_rv_bank, &initial_price, &path_index] (std::optional<Eigen::MatrixXd> correlation_matrix){
 
         const Eigen::MatrixXd& standard_normal_rv = standard_normal_rv_bank.at(path_index);
@@ -165,7 +167,7 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
 
     Eigen::MatrixXd Gamma;
 
-    payoff_object(initial_price.transpose()) > 0? Gamma = exp(- risk_free_rate * tau) * payoff_object(initial_price.transpose()) * 
+    //payoff_object(initial_price.transpose()) > 0? Gamma = exp(- risk_free_rate * tau) * payoff_object(initial_price.transpose()) * ;
 
     // THETA ---------------------------------------------------------
     Eigen::VectorXd Theta(5);
