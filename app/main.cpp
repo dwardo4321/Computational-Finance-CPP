@@ -73,6 +73,9 @@ int main(){
     Eigen::VectorXd price_today(M);
     price_today << 92.0, 104.0, 111.0, 118.0, 137.0;
 
+    Eigen::VectorXd initial_price(M);
+    initial_price << 102.05, 114.98, 95.0, 101.90, 125.85;
+
     Eigen::MatrixXd volatility_realised(M, D);
     volatility_realised <<
         0.22,  0.10, -0.05,  0.18,
@@ -90,7 +93,8 @@ int main(){
         0.13,  0.25, -0.07,  0.37;
 
     double Time = 1.0;              
-    int discretisation = 1000;       
+    int discretisation = 1000;   
+    int iterations = 1000;     
 
     Multidimensional_Risk_Neutral_Engine test_1 = Multidimensional_Risk_Neutral_Engine(strike, rate, risk_free_rate, price_today, volatility_realised, volatility_implied, Time, discretisation);
     Eigen::MatrixXd output = test_1.Risk_Neutral_MultiDim_DHE(true);
@@ -100,9 +104,16 @@ int main(){
 
     Basket_Assets payoff_object(strike, weights);  
 
-    Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(1000, 990, false, price_today, std::nullopt, payoff_object, nullptr);
+    std::vector<Eigen::MatrixXd> std_normal_rv_bank(iterations);
+    
+    std::random_device rd;
+    std::mt19937_64 generator(rd());
 
-    std::cout << output123.Delta;
+    for(int i = 0; i < iterations; i++){std_normal_rv_bank[i] = utility::Normal_RV_generator(discretisation, price_today.size(), generator);}
+
+    Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(iterations, 990, false, initial_price, std::nullopt, std_normal_rv_bank, payoff_object, nullptr);
+
+    std::cout << output123.Option;
 
     /* std::ofstream file("C:/Users/Tapson/Downloads/output.csv");
     Eigen::IOFormat csv_format(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");

@@ -43,15 +43,8 @@ Multidimensional_Risk_Neutral_Engine::Multidimensional_Risk_Neutral_Engine(const
                                                     discretisation(discretisation_const)
                                                     {} // number of steps 
 
-/* // Private Method 1 ---------------------------------------------------------
-Eigen::VectorXd indicator(Eigen::VectorXd x) {
-    Eigen::VectorXd out;
-    x.array() > strike? out = x.array() - strike: ou; // Returns 1 if true, 0 if false
 
-    
-} */
-
-// Private Method 2 ---------------------------------------------------------
+// Private Method 1 ---------------------------------------------------------
 std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price){
 
     int M = volatility_realised.rows();
@@ -109,7 +102,7 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
     return {price, price_variance_reduction};
 }
 
-// Adjoint Algorithmic Differentiation and Likelihood Ratio Estimation
+// // Private Method 2 (Adjoint Algorithmic Differentiation and Likelihood Ratio Estimation) ---------------------------------------------------------
 Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(int MC_iterations, double time, bool variance_reduction,
                                                                                                     Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
                                                                                                     const std::vector<Eigen::MatrixXd>& standard_normal_rv_bank,
@@ -145,11 +138,13 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
 
     Asset_Option_Price Option_value = Asset_Option_Price(strike, rate, risk_free_rate, volatility_realised, initial_price, tau, discretisation);
 
-    int path_index;
+    int path_index = 0;
 
     auto custom_func = [this, tau, &standard_normal_rv_bank, &initial_price, &path_index] (std::optional<Eigen::MatrixXd> correlation_matrix){
 
         const Eigen::MatrixXd& standard_normal_rv = standard_normal_rv_bank.at(path_index);
+
+        path_index++;
 
         return this-> Multidimensional_GBM(tau, this->discretisation, standard_normal_rv, correlation_matrix, initial_price);
     };
@@ -199,7 +194,7 @@ Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(
     xxx.col(1) = out;
     auto[A, B] = Multidimensional_GBM(std::nullopt); */
 
-    double dt = Time / (discretisation - 1);
+    /* double dt = Time / (discretisation - 1);
 
     double tau = Time - 999 * dt;
 
@@ -212,11 +207,11 @@ Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(
 
     Basket_Assets payoff_object(strike, weights);
     
-    double out = Option_value.Monte_Carlo_option_pricer(1000, risk_free_rate, tau, true, std::nullopt, payoff_object, custom_func).sample_mean; 
+    double out = Option_value.Monte_Carlo_option_pricer(1000, risk_free_rate, tau, true, std::nullopt, payoff_object, custom_func).sample_mean;  */
 
     Eigen::MatrixXd xxx(1, 2);
-    xxx(0, 0) = out;
-    xxx(0, 1) = out;
+    xxx(0, 0) = 10;
+    xxx(0, 1) = 20;
 
     return xxx;
 }
