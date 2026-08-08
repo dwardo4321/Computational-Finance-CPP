@@ -30,11 +30,10 @@ class Multidimensional_Risk_Neutral_Engine{
 
         static Eigen::VectorXd to_vector(const Eigen::VectorXd& x, int n){return x;}
 
-        //Eigen::VectorXd indicator(Eigen::VectorXd x);
     
     public:
 
-        // Constructor ----------------------------------------------------------------------------
+        // Constructor //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
         Multidimensional_Risk_Neutral_Engine(const double& strike_const, 
                                             const Eigen::VectorXd& rate_const, 
                                             const double& risk_free_rate_const, 
@@ -46,6 +45,7 @@ class Multidimensional_Risk_Neutral_Engine{
                                             const double& Time_const,
                                             const int& discretisation_const);
 
+        // Class Method 1 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*        
         struct quad{Eigen::VectorXd Delta; Eigen::MatrixXd Gamma; Eigen::VectorXd Theta; double Option;};
         
         quad Greeks_and_Option(int MC_iterations, double time, bool variance_reduction,
@@ -54,8 +54,7 @@ class Multidimensional_Risk_Neutral_Engine{
                                 const Payoff& payoff_object,
                                 std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator);
              
-        //Eigen::VectorXd Portfolio(int discretisation, double tau, Eigen::VectorXd initial_price); 
-        
+        // Class Method 2 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*      
         Eigen::MatrixXd Risk_Neutral_MultiDim_DHE(bool call);
 };
 

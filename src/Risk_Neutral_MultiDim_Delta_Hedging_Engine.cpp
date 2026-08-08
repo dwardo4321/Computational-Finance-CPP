@@ -133,39 +133,51 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
     // GREEKS -------------------------------------------------------
     Eigen::VectorXd iter_price;
     
-    Eigen::VectorXd iter_delta;
+    //Eigen::VectorXd iter_delta;
     Eigen::VectorXd Delta = Eigen::VectorXd::Zero(price_today.size());
+
+    Eigen::VectorXd theta_calc;
     Eigen::VectorXd iter_theta;
     Eigen::VectorXd Theta = Eigen::VectorXd::Zero(price_today.size());
+
+    Eigen::VectorXd gamma_calc_num;
+    Eigen::VectorXd gamma_calc_den;
+    Eigen::MatrixXd iter_gamma;
+    Eigen::MatrixXd Gamma = Eigen::MatrixXd::Zero(volatility_implied.rows(), volatility_implied.rows());
+
+    //Eigen::VectorXd iter_norm_rv(volatility_implied.cols());
+
+    double dt = tau / (MC_iterations - 1);
 
     for(int i = 0; i < MC_iterations; i++){
 
         auto iter_gbm = Multidimensional_GBM(tau, discretisation, standard_normal_rv_bank[i], correlation_matrix, initial_price);
 
-        variance_reduction? (iter_price = iter_gbm.second): (iter_price = iter_gbm.first);
-        
+        variance_reduction? (iter_price = iter_gbm.second(last, all)): (iter_price = iter_gbm.first(last, all));
+
+        auto iter_norm_rv = ((sqrt(dt) * standard_normal_rv_bank[i].colwise().sum()).array() / sqrt(tau)).matrix();
+   
         // DELTA ---------------------------------------------------------
-        iter_delta = (1 / MC_iterations) * exp(- risk_free_rate * tau) * (iter_price.array() /  price_today.array());
+        auto iter_delta = (1.0 / MC_iterations) * exp(- risk_free_rate * tau) * (iter_price.array() /  price_today.array()).matrix();
 
         Delta += iter_delta;
 
-        // THETA ---------------------------------------------------------
-        Eigen::VectorXd theta_calc = risk_free_rate * payoff_object(iter_price.transpose()) - iter_price.array() * (risk_free_rate - (0.5 * volatility_implied * volatility_implied).array() + (volatility_implied * standard_normal_rv_bank[i]).array() / (2 * sqrt(tau))).array();
+        /* // THETA ---------------------------------------------------------
+        theta_calc = risk_free_rate * payoff_object(iter_price.transpose()) - iter_price.array() * (risk_free_rate - (0.5 * volatility_implied * volatility_implied).array() + (volatility_implied * iter_norm_rv).array() / (2 * sqrt(tau))).array();
 
         iter_theta = (1 / MC_iterations) * exp(- risk_free_rate * tau) * theta_calc;
 
-        Theta += iter_theta;
+        Theta += iter_theta; */
 
         // GAMMA ---------------------------------------------------------
+        gamma_calc_num = (iter_norm_rv * iter_norm_rv).array() - 1 - iter_norm_rv.array() * volatility_implied.array() * sqrt(tau); 
+        //gamma_calc_den = (price_today * price_today) * (volatility_implied * volatility_implied) * tau;
+
+        //iter_gamma = (1 / MC_iterations) * exp(- risk_free_rate * tau) * payoff_object(iter_price.transpose()) * (gamma_calc_num.array() / gamma_calc_den.array());
+
+        //Gamma += iter_gamma;
 
     }
-
-    Eigen::MatrixXd Gamma;
-    
-
-    payoff_object(initial_price.transpose()) > 0? Delta = exp(- risk_free_rate * tau) * initial_price.array() / price_today.array(): Delta = Eigen::VectorXd::Zero(initial_price.size()); // (risk_free_rate * payoff_object(initial_price.transpose()));  //(1 / MC_iterations) * 
-
-    
 
     return {Delta, Gamma, Theta, Option};
 }

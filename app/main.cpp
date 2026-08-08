@@ -113,7 +113,7 @@ int main(){
 
     Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(iterations, 999, false, initial_price, std::nullopt, std_normal_rv_bank, payoff_object, nullptr);
 
-    std::cout << output123.Option;
+    std::cout << output123.Delta;
 
     /* std::ofstream file("C:/Users/Tapson/Downloads/output.csv");
     Eigen::IOFormat csv_format(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");
