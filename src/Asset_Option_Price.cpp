@@ -24,6 +24,13 @@ double Basket_Assets::operator()(const Eigen::VectorXd& terminal_prices) const {
                         return pay_off;
                     };
 
+Eigen::VectorXd Basket_Assets::gradient(const Eigen::VectorXd& terminal_prices) const {
+                        Eigen::VectorXd grad;
+                        double weighted_prices = weights.dot(terminal_prices);
+                        weighted_prices > strike? grad = weights: grad = Eigen::VectorXd::Zero(weights.size()); 
+                        return grad;
+                    };
+
 // No_2: constructor and method -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 Maximum_Asset::Maximum_Asset(double strike_const): strike(strike_const){};
 
@@ -33,6 +40,13 @@ double Maximum_Asset::operator()(const Eigen::VectorXd& terminal_prices) const {
                         return pay_off;
                     };
 
+Eigen::VectorXd Maximum_Asset::gradient(const Eigen::VectorXd& terminal_prices) const {
+                        Eigen::VectorXd grad;
+                        double most_price = terminal_prices.maxCoeff();
+                        most_price > strike? grad = Eigen::VectorXd::Ones(terminal_prices.size()): grad = Eigen::VectorXd::Zero(terminal_prices.size()); 
+                        return grad;
+                    };                    
+
 // No_3: constructor and method -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 Minimum_Asset::Minimum_Asset(double strike_const): strike(strike_const){};
 
@@ -41,6 +55,13 @@ double Minimum_Asset::operator()(const Eigen::VectorXd& terminal_prices) const {
                         double pay_off = std::max(0.0, least_price - strike);
                         return pay_off;
                     };
+
+Eigen::VectorXd Minimum_Asset::gradient(const Eigen::VectorXd& terminal_prices) const {
+                        Eigen::VectorXd grad;
+                        double least_price = terminal_prices.minCoeff();
+                        least_price > strike? grad = Eigen::VectorXd::Ones(terminal_prices.size()): grad = Eigen::VectorXd::Zero(terminal_prices.size()); 
+                        return grad;
+                    }; 
 
 
 

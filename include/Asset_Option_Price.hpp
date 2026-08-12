@@ -20,6 +20,8 @@ class Payoff{ //----------------------------------------------------------------
 
         virtual double operator()(const Eigen::VectorXd& terminal_prices) const = 0;
 
+        virtual Eigen::VectorXd gradient(const Eigen::VectorXd& terminal_prices) const = 0;
+
 };
 
     class Basket_Assets: public Payoff{ //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -34,6 +36,8 @@ class Payoff{ //----------------------------------------------------------------
             Basket_Assets(double strike_const, Eigen::VectorXd weights_const);
             // Method_1: Payoff
             double operator()(const Eigen::VectorXd& terminal_prices) const override;
+            // Method_2: Gradient
+            Eigen::VectorXd gradient(const Eigen::VectorXd& terminal_prices) const override;
     };
 
     class Maximum_Asset: public Payoff{ //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -47,6 +51,8 @@ class Payoff{ //----------------------------------------------------------------
             Maximum_Asset(double strike_const);
             // Method_1: Payoff
             double operator()(const Eigen::VectorXd& terminal_prices) const override;
+            // Method_2: Gradient
+            Eigen::VectorXd gradient(const Eigen::VectorXd& terminal_prices) const override;
     };
 
     class Minimum_Asset: public Payoff{ //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -60,6 +66,8 @@ class Payoff{ //----------------------------------------------------------------
             Minimum_Asset(double strike_const);
             // Method_1: Payoff
             double operator()(const Eigen::VectorXd& terminal_prices) const override;
+            // Method_2: Gradient
+            Eigen::VectorXd gradient(const Eigen::VectorXd& terminal_prices) const override;
     }; 
 
 class Asset_Option_Price{ //-------------------------------------------------------------------------------------------------------------

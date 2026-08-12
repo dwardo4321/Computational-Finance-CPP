@@ -24,7 +24,7 @@ class Multidimensional_Risk_Neutral_Engine{
         double Time;        // time duration
         int discretisation; // number of steps 
 
-        std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_GBM(double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price);
+        //std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_GBM(bool exact_gbm, double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price);
 
         static Eigen::VectorXd to_vector(double x, int n){return Eigen::VectorXd::Constant(n, x);}
 
@@ -46,9 +46,10 @@ class Multidimensional_Risk_Neutral_Engine{
                                             const int& discretisation_const);
 
         // Class Method 1 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*        
-        struct quad{Eigen::VectorXd Delta; Eigen::MatrixXd Gamma; Eigen::VectorXd Theta; double Option;};
-        
-        quad Greeks_and_Option(int MC_iterations, double time, bool variance_reduction,
+        struct quad{Eigen::VectorXd Delta; Eigen::MatrixXd Gamma; double Theta; double Option;};
+        std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_GBM(bool exact_gbm, double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price);
+
+        quad Greeks_and_Option(bool exact_gbm, int MC_iterations, double time, bool variance_reduction,
                                 Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
                                 const std::vector<Eigen::MatrixXd>& standard_normal_rv_bank,
                                 const Payoff& payoff_object,

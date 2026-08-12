@@ -92,9 +92,12 @@ int main(){
         0.29, -0.04,  0.17,  0.27,
         0.13,  0.25, -0.07,  0.37;
 
-    double Time = 1.0;              
     int discretisation = 1000;   
-    int iterations = 1000;     
+    int iterations = 1000; 
+    double Time = 1.0;  
+    double dt = Time / (discretisation - 1);
+    double tau = Time - 500 * dt;            
+        
 
     Multidimensional_Risk_Neutral_Engine test_1 = Multidimensional_Risk_Neutral_Engine(strike, rate, risk_free_rate, price_today, volatility_realised, volatility_implied, Time, discretisation);
     Eigen::MatrixXd output = test_1.Risk_Neutral_MultiDim_DHE(true);
@@ -111,9 +114,10 @@ int main(){
 
     for(int i = 0; i < iterations; i++){std_normal_rv_bank[i] = utility::Normal_RV_generator(discretisation, volatility_realised.cols(), generator);}
 
-    Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(iterations, 999, false, initial_price, std::nullopt, std_normal_rv_bank, payoff_object, nullptr);
-
-    std::cout << output123.Delta;
+    Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(true, iterations, tau, false, initial_price, std::nullopt, std_normal_rv_bank, payoff_object, nullptr);
+    //std::pair <Eigen::MatrixXd, Eigen::MatrixXd> abc = test_1.Multidimensional_GBM(true, 10, 1000, std_normal_rv_bank[1], std::nullopt, price_today);
+    std::cout << output123.Theta;
+    //std::cout << abc.first;
 
     /* std::ofstream file("C:/Users/Tapson/Downloads/output.csv");
     Eigen::IOFormat csv_format(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");
