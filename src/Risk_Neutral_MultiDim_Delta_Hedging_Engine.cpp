@@ -112,6 +112,8 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
                                                                                                     std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){
 
     // OPTION & GREEKS -------------------------------------------------------
+    std::pair <Eigen::MatrixXd, Eigen::MatrixXd> iter_gbm;
+    
     Eigen::VectorXd iter_price = Eigen::VectorXd::Zero(M);
     Eigen::VectorXd iter_price_vr = Eigen::VectorXd::Zero(M);
 
@@ -145,7 +147,8 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
 
         auto standard_normal_rv = utility::Normal_RV_generator(func_specific_discretisation - 1, D, generator);       
         
-        auto iter_gbm = Multidimensional_GBM(exact_gbm, tau, func_specific_discretisation, standard_normal_rv, correlation_matrix, initial_price);
+        if(exact_gbm){iter_gbm = Multidimensional_GBM(true, tau, func_specific_discretisation, standard_normal_rv, correlation_matrix, initial_price);
+        }else{iter_gbm = Multidimensional_GBM(false, tau, discretisation, standard_normal_rv, correlation_matrix, initial_price);}
 
         iter_price = iter_gbm.first(last, all).transpose();
         if(variance_reduction){iter_price_vr = iter_gbm.second(last, all).transpose();}
