@@ -97,8 +97,8 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
                 } 
             }   
 
-            change_in_price.row(t) = (drift * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
-            change_in_price_vd.row(t) = (drift * price_variance_reduction.row(t-1).array() * dt) + (price_variance_reduction.row(t-1).array() * vol_vd.row(t).array());
+            change_in_price.row(t) = (drift.array() * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
+            change_in_price_vd.row(t) = (drift.array() * price_variance_reduction.row(t-1).array() * dt) + (price_variance_reduction.row(t-1).array() * vol_vd.row(t).array());
             
             price.row(t) = price.row(t-1) + change_in_price.row(t);
             price_variance_reduction.row(t) = price_variance_reduction.row(t-1) + change_in_price_vd.row(t);
