@@ -66,9 +66,8 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
     Eigen::MatrixXd vol_vd = Eigen::MatrixXd::Zero(discretisation, M);
 
     double dt = tau / static_cast<double>(discretisation - 1);
-    Eigen::VectorXd risk_free_rate_vector = Eigen::VectorXd::Constant(M, risk_free_rate); 
     
-    Eigen::VectorXd drift = risk_neutral? drift = Eigen::VectorXd::Constant(M, risk_free_rate): drift = rate;
+    Eigen::VectorXd drift = risk_neutral? Eigen::VectorXd::Constant(M, risk_free_rate): rate;
 
     if(exact_gbm){
         // Exact Multidimensional GBM
