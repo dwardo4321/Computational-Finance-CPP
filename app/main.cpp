@@ -118,12 +118,12 @@ int main(){
     auto standard_normal_rv = utility::Normal_RV_generator(discretisation, D, generator);
 
     auto start = std::chrono::steady_clock::now();
-    //Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(true, iterations, tau, true, initial_price, std::nullopt, payoff_object);
-    std::pair <Eigen::MatrixXd, Eigen::MatrixXd> output124 = test_1.Multidimensional_GBM(true, false, tau, discretisation, standard_normal_rv, std::nullopt, price_today);
+    Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(true, iterations, tau, true, initial_price, std::nullopt, payoff_object);
+    //std::pair <Eigen::MatrixXd, Eigen::MatrixXd> output124 = test_1.Multidimensional_GBM(true, false, tau, discretisation, standard_normal_rv, std::nullopt, price_today);
     auto end = std::chrono::steady_clock::now();
     double runtime = std::chrono::duration<double>(end - start).count();
-    std::cout << output124.first << '\n';
-    //std::cout << output123.Delta << '\n';
+    //std::cout << output124.first << '\n';
+    std::cout << output123.Gamma << '\n';
     std::cout << "--------------------------------\n";
     std::cout << "Runtime: " << runtime << " sec" << "\n";
     std::cout << "--------------------------------\n";

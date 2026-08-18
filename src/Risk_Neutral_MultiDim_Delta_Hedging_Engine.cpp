@@ -67,7 +67,9 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
 
     double dt = tau / static_cast<double>(discretisation - 1);
     
-    Eigen::VectorXd drift = risk_neutral? Eigen::VectorXd::Constant(M, risk_free_rate): rate;
+    Eigen::VectorXd drift;
+    if(risk_neutral){drift = Eigen::VectorXd::Constant(M, risk_free_rate);
+    }else{drift = rate;}
 
     if(exact_gbm){
         // Exact Multidimensional GBM
@@ -91,8 +93,8 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
                 } 
             }   
 
-            change_in_price.row(t) = (drift.array() * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
-            change_in_price_vd.row(t) = (drift.array() * price_variance_reduction.row(t-1).array() * dt) + (price_variance_reduction.row(t-1).array() * vol_vd.row(t).array());
+            change_in_price.row(t) = (drift.transpose().array() * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
+            change_in_price_vd.row(t) = (drift.transpose().array() * price_variance_reduction.row(t-1).array() * dt) + (price_variance_reduction.row(t-1).array() * vol_vd.row(t).array());
             
             price.row(t) = price.row(t-1) + change_in_price.row(t);
             price_variance_reduction.row(t) = price_variance_reduction.row(t-1) + change_in_price_vd.row(t);
