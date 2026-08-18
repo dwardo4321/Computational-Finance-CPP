@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream> //csv ouput
 #include <Eigen/Dense>
+#include <chrono> // timing functions
 #include "utilities.hpp"
 #include "Asset_Option_Price.hpp"
 #include "Delta_Hedging_Engine.hpp"
@@ -92,11 +93,17 @@ int main(){
         0.29, -0.04,  0.17,  0.27,
         0.13,  0.25, -0.07,  0.37;
 
-    int discretisation = 1000;   
+    int discretisation = 2;   
     int iterations = 1000; 
     double Time = 1.0;  
     double dt = Time / (discretisation - 1);
-    double tau = Time - 500 * dt;            
+    double tau = 0.1;  
+    
+    /* std::random_device rd;
+    std::mt19937_64 generator(rd());
+    auto standard_normal_rv = utility::Normal_RV_generator(discretisation, 4, generator);
+    auto abc = utility::Brownian_path_generator(discretisation, 4, Time, standard_normal_rv, std::nullopt);
+    std::cout << abc; */
         
 
     Multidimensional_Risk_Neutral_Engine test_1 = Multidimensional_Risk_Neutral_Engine(strike, rate, risk_free_rate, price_today, volatility_realised, volatility_implied, Time, discretisation);
@@ -106,18 +113,20 @@ int main(){
     weights << 0.3, 0.3, 0.2, 0.1, 0.05;
 
     Basket_Assets payoff_object(strike, weights);  
-
-    std::vector<Eigen::MatrixXd> std_normal_rv_bank(iterations);
-    
     std::random_device rd;
     std::mt19937_64 generator(rd());
+    auto standard_normal_rv = utility::Normal_RV_generator(discretisation, D, generator);
 
-    for(int i = 0; i < iterations; i++){std_normal_rv_bank[i] = utility::Normal_RV_generator(discretisation, volatility_realised.cols(), generator);}
-
-    Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(true, iterations, tau, false, initial_price, std::nullopt, std_normal_rv_bank, payoff_object, nullptr);
-    //std::pair <Eigen::MatrixXd, Eigen::MatrixXd> abc = test_1.Multidimensional_GBM(true, 10, 1000, std_normal_rv_bank[1], std::nullopt, price_today);
-    std::cout << output123.Theta;
-    //std::cout << abc.first;
+    auto start = std::chrono::steady_clock::now();
+    //Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(true, iterations, tau, true, initial_price, std::nullopt, payoff_object, nullptr);
+    std::pair <Eigen::MatrixXd, Eigen::MatrixXd> output124 = test_1.Multidimensional_GBM(false, tau, discretisation, standard_normal_rv, std::nullopt, price_today);
+    auto end = std::chrono::steady_clock::now();
+    double runtime = std::chrono::duration<double>(end - start).count();
+    std::cout << output124.first << '\n';
+    //std::cout << output123.Delta << '\n';
+    std::cout << "--------------------------------\n";
+    std::cout << "Runtime: " << runtime << " sec" << "\n";
+    std::cout << "--------------------------------\n";
 
     /* std::ofstream file("C:/Users/Tapson/Downloads/output.csv");
     Eigen::IOFormat csv_format(Eigen::StreamPrecision, Eigen::DontAlignCols, ",", "\n");

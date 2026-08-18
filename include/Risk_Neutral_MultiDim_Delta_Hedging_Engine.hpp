@@ -23,14 +23,14 @@ class Multidimensional_Risk_Neutral_Engine{
         
         double Time;        // time duration
         int discretisation; // number of steps 
-
-        //std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_GBM(bool exact_gbm, double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price);
-
+        
         static Eigen::VectorXd to_vector(double x, int n){return Eigen::VectorXd::Constant(n, x);}
 
         static Eigen::VectorXd to_vector(const Eigen::VectorXd& x, int n){return x;}
 
-    
+        const Eigen::Index M; // no of assets
+        const Eigen::Index D; // no of brownian drivers
+
     public:
 
         // Constructor //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -51,7 +51,6 @@ class Multidimensional_Risk_Neutral_Engine{
 
         quad Greeks_and_Option(bool exact_gbm, int MC_iterations, double time, bool variance_reduction,
                                 Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
-                                const std::vector<Eigen::MatrixXd>& standard_normal_rv_bank,
                                 const Payoff& payoff_object,
                                 std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator);
              

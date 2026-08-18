@@ -204,3 +204,55 @@ Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer
 
     double tau = Time - time * dt; */
 
+
+    /* Asset_Option_Price Option_value = Asset_Option_Price(strike, rate, risk_free_rate, volatility_realised, initial_price, tau, discretisation);
+
+    int path_index = 0;
+
+    auto custom_func = [this, tau, &exact_gbm, &standard_normal_rv_bank, &initial_price, &path_index] (std::optional<Eigen::MatrixXd> correlation_matrix){
+
+        const Eigen::MatrixXd& standard_normal_rv = standard_normal_rv_bank.at(path_index);
+
+        path_index++;
+
+        return this-> Multidimensional_GBM(exact_gbm , tau, this->discretisation, standard_normal_rv, correlation_matrix, initial_price);
+    };
+    
+    double Option = Option_value.Monte_Carlo_option_pricer(MC_iterations, risk_free_rate, tau, variance_reduction, correlation_matrix, payoff_object, custom_func).sample_mean; */ 
+
+//&MC_iterations, &exact_gbm, &tau, &standard_normal_rv_bank, &variance_reduction, &correlation_matrix, &payoff_object
+//this, &exact_gbm, &tau, &opening_price, &standard_normal_rv_bank, &path_index
+
+
+    
+    // OPTION -------------------------------------------------------
+    /* if(standard_normal_rv_bank.size() < MC_iterations){
+        throw std::invalid_argument("The Standard Normal Bank contains fewer matrices than the number of iterations MC_iterations");
+    }
+
+    auto calculate_option = [&](Eigen::VectorXd opening_price){
+            
+        Asset_Option_Price Option_value = Asset_Option_Price(strike, rate, risk_free_rate, volatility_realised, opening_price, tau, discretisation);
+
+        int path_index = 0;
+
+            auto custom_func = [&] (std::optional<Eigen::MatrixXd> correlation_matrix){
+
+                const Eigen::MatrixXd& standard_normal_rv = standard_normal_rv_bank.at(path_index);
+
+                path_index++;
+
+                return this-> Multidimensional_GBM(exact_gbm , tau, this->discretisation, standard_normal_rv, correlation_matrix, opening_price);
+            };
+        
+        double Option = Option_value.Monte_Carlo_option_pricer(MC_iterations, risk_free_rate, tau, variance_reduction, correlation_matrix, payoff_object, custom_func).sample_mean;
+
+        return Option;
+    };
+
+    double Option = calculate_option(initial_price); */
+
+    /* std::random_device rd;
+    std::mt19937_64 generator(rd());
+
+    for(int i = 0; i < iterations; i++){std_normal_rv_bank[i] = utility::Normal_RV_generator(discretisation, volatility_realised.cols(), generator);} */
