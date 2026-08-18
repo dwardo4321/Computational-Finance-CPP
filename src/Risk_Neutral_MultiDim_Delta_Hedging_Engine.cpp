@@ -52,9 +52,6 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
     if (tau <= 0.0){throw std::invalid_argument("Tau must be greater than 0");}
     
     Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, D, tau, standard_normal_rv, correlation_matrix);
-    Eigen::VectorXd risk_premium = rate.array() - risk_free_rate;
-    Eigen::VectorXd mqt_price_of_risk = volatility_realised.completeOrthogonalDecomposition().solve(risk_premium);
-    brownian_mot.rowwise() += mqt_price_of_risk.transpose();
     
     Eigen::MatrixXd price = Eigen::MatrixXd::Zero(discretisation, M);
     Eigen::MatrixXd price_variance_reduction = Eigen::MatrixXd::Zero(discretisation, M);
@@ -71,9 +68,7 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
     double dt = tau / static_cast<double>(discretisation - 1);
     Eigen::VectorXd risk_free_rate_vector = Eigen::VectorXd::Constant(M, risk_free_rate); 
     
-    Eigen::VectorXd drift;
-    if(risk_neutral){drift = Eigen::VectorXd::Constant(M, risk_free_rate);
-    }else{drift = rate;}
+    Eigen::VectorXd drift = risk_neutral? drift = Eigen::VectorXd::Constant(M, risk_free_rate): drift = rate;
 
     if(exact_gbm){
         // Exact Multidimensional GBM
@@ -152,7 +147,7 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
         auto func_specific_discretisation = exact_gbm? 2: discretisation;
 
         auto standard_normal_rv = utility::Normal_RV_generator(func_specific_discretisation, D, generator);
-        iter_gbm = Multidimensional_GBM(risk_neutral, exact_gbm, tau, func_specific_discretisation, standard_normal_rv, correlation_matrix, initial_price);       
+        iter_gbm = Multidimensional_GBM(true, exact_gbm, tau, func_specific_discretisation, standard_normal_rv, correlation_matrix, initial_price);       
 
         iter_price = iter_gbm.first(last, all).transpose();
         if(variance_reduction){iter_price_vr = iter_gbm.second(last, all).transpose();}

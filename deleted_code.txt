@@ -256,3 +256,7 @@ Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer
     std::mt19937_64 generator(rd());
 
     for(int i = 0; i < iterations; i++){std_normal_rv_bank[i] = utility::Normal_RV_generator(discretisation, volatility_realised.cols(), generator);} */
+
+Eigen::VectorXd risk_premium = rate.array() - risk_free_rate;
+Eigen::VectorXd mqt_price_of_risk = volatility_realised.completeOrthogonalDecomposition().solve(risk_premium);
+brownian_mot.rowwise() += mqt_price_of_risk.transpose();
