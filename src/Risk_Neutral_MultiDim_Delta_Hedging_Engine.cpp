@@ -47,14 +47,13 @@ Multidimensional_Risk_Neutral_Engine::Multidimensional_Risk_Neutral_Engine(const
 
 
 // Public Method 1 ---------------------------------------------------------
-std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(bool exact_gbm, double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price){
+std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(bool risk_neutral, bool exact_gbm, double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price){
 
-    Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, D, tau, standard_normal_rv, correlation_matrix);
-
-    Eigen::VectorXd risk_premium = rate.array() - risk_free_rate;
-
-    Eigen::VectorXd mqt_price_of_risk = volatility_realised.completeOrthogonalDecomposition().solve(risk_premium);
+    if (tau <= 0.0){throw std::invalid_argument("Tau must be greater than 0");}
     
+    Eigen::MatrixXd brownian_mot = utility::Brownian_path_generator(discretisation, D, tau, standard_normal_rv, correlation_matrix);
+    Eigen::VectorXd risk_premium = rate.array() - risk_free_rate;
+    Eigen::VectorXd mqt_price_of_risk = volatility_realised.completeOrthogonalDecomposition().solve(risk_premium);
     brownian_mot.rowwise() += mqt_price_of_risk.transpose();
     
     Eigen::MatrixXd price = Eigen::MatrixXd::Zero(discretisation, M);
@@ -71,46 +70,51 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
 
     double dt = tau / static_cast<double>(discretisation - 1);
     Eigen::VectorXd risk_free_rate_vector = Eigen::VectorXd::Constant(M, risk_free_rate); 
+    
+    Eigen::VectorXd drift;
+    if(risk_neutral){drift = Eigen::VectorXd::Constant(M, risk_free_rate);
+    }else{drift = rate;}
 
-        if(exact_gbm){
-            // Exact Multidimensional GBM
-            for (int t = 1; t < discretisation; t++){
-            
-            auto step_covariance = volatility_realised * correlation_matrix.value_or(Eigen::MatrixXd::Identity(D, D)) * volatility_realised.transpose();
-            price.row(t) = initial_price.array() * ((risk_free_rate_vector - (0.5 * step_covariance).diagonal()) * (t * dt) + volatility_realised * brownian_mot.row(t).transpose()).array().exp();
-            price_variance_reduction.row(t) = initial_price.array() * ((risk_free_rate_vector - (0.5 * step_covariance).diagonal()) * (t * dt) - volatility_realised * brownian_mot.row(t).transpose()).array().exp();
-            }
-
-        }else{
-            // Euler-Maruyama Multidimensional GBM
-            for (int t = 1; t < discretisation; t++){
+    if(exact_gbm){
+        // Exact Multidimensional GBM
+        for (int t = 1; t < discretisation; t++){
         
-                for(int j = 0; j < M; j++){
-
-                    for (int i = 0; i < D; i++){
-                        
-                        vol(t, j) += volatility_realised(j, i) * (brownian_mot(t, i) - brownian_mot(t-1, i));
-                        vol_vd(t, j) += volatility_realised(j, i) * -(brownian_mot(t, i) - brownian_mot(t-1, i));
-                    } 
-                }   
-
-                change_in_price.row(t) = (risk_free_rate * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
-                change_in_price_vd.row(t) = (risk_free_rate * price_variance_reduction.row(t-1).array() * dt) + (price_variance_reduction.row(t-1).array() * vol_vd.row(t).array());
-                
-                price.row(t) = price.row(t-1) + change_in_price.row(t);
-                price_variance_reduction.row(t) = price_variance_reduction.row(t-1) + change_in_price_vd.row(t);
-
-            }
+        auto step_covariance = volatility_realised * correlation_matrix.value_or(Eigen::MatrixXd::Identity(D, D)) * volatility_realised.transpose();
+        price.row(t) = initial_price.array() * ((drift - (0.5 * step_covariance).diagonal()) * (t * dt) + volatility_realised * brownian_mot.row(t).transpose()).array().exp();
+        price_variance_reduction.row(t) = initial_price.array() * ((drift - (0.5 * step_covariance).diagonal()) * (t * dt) - volatility_realised * brownian_mot.row(t).transpose()).array().exp();
         }
+
+    }else{
+        // Euler-Maruyama Multidimensional GBM
+        for (int t = 1; t < discretisation; t++){
+    
+            for(int j = 0; j < M; j++){
+
+                for (int i = 0; i < D; i++){
+                    
+                    vol(t, j) += volatility_realised(j, i) * (brownian_mot(t, i) - brownian_mot(t-1, i));
+                    vol_vd(t, j) += volatility_realised(j, i) * -(brownian_mot(t, i) - brownian_mot(t-1, i));
+                } 
+            }   
+
+            change_in_price.row(t) = (drift * price.row(t-1).array() * dt) + (price.row(t-1).array() * vol.row(t).array());
+            change_in_price_vd.row(t) = (drift * price_variance_reduction.row(t-1).array() * dt) + (price_variance_reduction.row(t-1).array() * vol_vd.row(t).array());
+            
+            price.row(t) = price.row(t-1) + change_in_price.row(t);
+            price_variance_reduction.row(t) = price_variance_reduction.row(t-1) + change_in_price_vd.row(t);
+
+        }
+    }
     return {price, price_variance_reduction};
 }
 
 // Public Method 2 (Adjoint Algorithmic Differentiation and Finite Difference Method) ---------------------------------------------------------
 Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(bool exact_gbm, int MC_iterations, double tau, bool variance_reduction,
                                                                                                     Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
-                                                                                                    const Payoff& payoff_object,
-                                                                                                    std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){
+                                                                                                    const Payoff& payoff_object){
 
+    if (tau <= 0.0){throw std::invalid_argument("Tau must be greater than 0");}
+    
     // OPTION & GREEKS -------------------------------------------------------
     std::pair <Eigen::MatrixXd, Eigen::MatrixXd> iter_gbm;
     
@@ -141,14 +145,14 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
     auto e = Eigen::MatrixXd::Identity(M, M);
     auto h = Eigen::VectorXd::Constant(M, 0.5);
 
-    auto func_specific_discretisation = 2;
+    //auto func_specific_discretisation = 2;
 
     for(int i = 0; i < MC_iterations; i++){
 
-        auto standard_normal_rv = utility::Normal_RV_generator(func_specific_discretisation - 1, D, generator);       
-        
-        if(exact_gbm){iter_gbm = Multidimensional_GBM(true, tau, func_specific_discretisation, standard_normal_rv, correlation_matrix, initial_price);
-        }else{iter_gbm = Multidimensional_GBM(false, tau, discretisation, standard_normal_rv, correlation_matrix, initial_price);}
+        auto func_specific_discretisation = exact_gbm? 2: discretisation;
+
+        auto standard_normal_rv = utility::Normal_RV_generator(func_specific_discretisation, D, generator);
+        iter_gbm = Multidimensional_GBM(risk_neutral, exact_gbm, tau, func_specific_discretisation, standard_normal_rv, correlation_matrix, initial_price);       
 
         iter_price = iter_gbm.first(last, all).transpose();
         if(variance_reduction){iter_price_vr = iter_gbm.second(last, all).transpose();}

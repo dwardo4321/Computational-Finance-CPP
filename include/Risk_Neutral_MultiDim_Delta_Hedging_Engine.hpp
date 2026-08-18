@@ -47,12 +47,11 @@ class Multidimensional_Risk_Neutral_Engine{
 
         // Class Method 1 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*        
         struct quad{Eigen::VectorXd Delta; Eigen::MatrixXd Gamma; double Theta; double Option;};
-        std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_GBM(bool exact_gbm, double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price);
+        std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_GBM(bool risk_neutral, bool exact_gbm, double tau, int discretisation, const Eigen::MatrixXd& standard_normal_rv, std::optional<Eigen::MatrixXd> correlation_matrix, Eigen::VectorXd initial_price);
 
         quad Greeks_and_Option(bool exact_gbm, int MC_iterations, double time, bool variance_reduction,
                                 Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
-                                const Payoff& payoff_object,
-                                std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator);
+                                const Payoff& payoff_object);
              
         // Class Method 2 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*      
         Eigen::MatrixXd Risk_Neutral_MultiDim_DHE(bool call);
