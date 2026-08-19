@@ -105,7 +105,7 @@ std::pair <Eigen::MatrixXd, Eigen::MatrixXd> Multidimensional_Risk_Neutral_Engin
 }
 
 // Public Method 2 (Adjoint Algorithmic Differentiation and Finite Difference Method) ---------------------------------------------------------
-Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(bool exact_gbm, int MC_iterations, double tau, bool variance_reduction,
+Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(bool call, bool exact_gbm, int MC_iterations, double tau, bool variance_reduction,
                                                                                                     Eigen::VectorXd initial_price, std::optional<Eigen::MatrixXd> correlation_matrix,
                                                                                                     const Payoff& payoff_object){
 
@@ -156,10 +156,10 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
         
         // OPTION ---------------------------------------------------------
 
-        iter_option = (1.0 / MC_iterations) * exp(- risk_free_rate * tau) * payoff_object(iter_price);
+        iter_option = (1.0 / MC_iterations) * exp(- risk_free_rate * tau) * payoff_object(call, iter_price);
 
         if(variance_reduction){
-            iter_option_vr = (1.0 / MC_iterations) * exp(- risk_free_rate * tau) * payoff_object(iter_price_vr);
+            iter_option_vr = (1.0 / MC_iterations) * exp(- risk_free_rate * tau) * payoff_object(call, iter_price_vr);
 
             Option += 0.5 * (iter_option + iter_option_vr);
 
@@ -168,10 +168,10 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
    
         // DELTA (Adjoint Algorithmic Differentiation) ---------------------------------------------------------
 
-        iter_delta = (1.0 / MC_iterations) * exp(- risk_free_rate * tau) * (payoff_object.gradient(iter_price).cwiseProduct(iter_price.cwiseQuotient(initial_price)));
+        iter_delta = (1.0 / MC_iterations) * exp(- risk_free_rate * tau) * (payoff_object.gradient(call, iter_price).cwiseProduct(iter_price.cwiseQuotient(initial_price)));
 
         if(variance_reduction){
-            iter_delta_vr = (1.0 / MC_iterations) * exp(- risk_free_rate * tau) * (payoff_object.gradient(iter_price_vr).cwiseProduct(iter_price_vr.cwiseQuotient(initial_price)));
+            iter_delta_vr = (1.0 / MC_iterations) * exp(- risk_free_rate * tau) * (payoff_object.gradient(call, iter_price_vr).cwiseProduct(iter_price_vr.cwiseQuotient(initial_price)));
 
             Delta += 0.5 * (iter_delta + iter_delta_vr);
 
@@ -180,9 +180,9 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
 
         // THETA (Adjoint Algorithmic Differentiation) ---------------------------------------------------------
 
-        auto theta_valuation = risk_free_rate * payoff_object(iter_price); 
+        auto theta_valuation = risk_free_rate * payoff_object(call, iter_price); 
 
-        auto theta_gradient = payoff_object.gradient(iter_price).transpose();
+        auto theta_gradient = payoff_object.gradient(call, iter_price).transpose();
 
             auto theta_drift = risk_free_rate_vector - 0.5 * asset_covariance.diagonal(); 
 
@@ -195,9 +195,9 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
         iter_theta = (1.0 / MC_iterations) * exp(- risk_free_rate * tau) * (theta_valuation - theta_gradient * theta_price_time_sensitivity);
 
         if(variance_reduction){
-            auto theta_valuation_vr = risk_free_rate * payoff_object(iter_price_vr);
+            auto theta_valuation_vr = risk_free_rate * payoff_object(call, iter_price_vr);
 
-            auto theta_gradient_vr = payoff_object.gradient(iter_price_vr).transpose();
+            auto theta_gradient_vr = payoff_object.gradient(call, iter_price_vr).transpose();
 
                 auto theta_corr_brownian_shock_vr = (iter_price_vr.cwiseQuotient(initial_price)).array().log() - theta_drift.array() * tau;
 
@@ -214,8 +214,8 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
         
         // GAMMA (Finite Differences with Common Random Numbers)---------------------------------------------------------  
         
-        auto V_0 = payoff_object(iter_price);
-        auto V_0_vr = payoff_object(iter_price_vr);
+        auto V_0 = payoff_object(call, iter_price);
+        auto V_0_vr = payoff_object(call, iter_price_vr);
         
         for(int i = 0; i < M; i++){
 
@@ -224,14 +224,14 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
             auto price_bump_m = (initial_price - e.col(i) * h(i)).cwiseQuotient(initial_price);
             
             
-            auto V_p = payoff_object(iter_price.cwiseProduct(price_bump_p));            
-            auto V_m = payoff_object(iter_price.cwiseProduct(price_bump_m));
+            auto V_p = payoff_object(call, iter_price.cwiseProduct(price_bump_p));            
+            auto V_m = payoff_object(call, iter_price.cwiseProduct(price_bump_m));
 
             iter_gamma(i, i) = (V_p - (2 * V_0) + V_m) / static_cast<double>(h(i) * h(i));
 
             if(variance_reduction){
-                auto V_p_vr = payoff_object(iter_price_vr.cwiseProduct(price_bump_p));            
-                auto V_m_vr = payoff_object(iter_price_vr.cwiseProduct(price_bump_m));
+                auto V_p_vr = payoff_object(call, iter_price_vr.cwiseProduct(price_bump_p));            
+                auto V_m_vr = payoff_object(call, iter_price_vr.cwiseProduct(price_bump_m));
 
                 iter_gamma_vr(i, i) = (V_p_vr - (2 * V_0_vr) + V_m_vr) / static_cast<double>(h(i) * h(i));
             }
@@ -244,19 +244,19 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
                 auto price_bump_mp = (initial_price - e.col(i) * h(i) + e.col(j) * h(j)).cwiseQuotient(initial_price);
                 auto price_bump_mm = (initial_price - e.col(i) * h(i) - e.col(j) * h(j)).cwiseQuotient(initial_price);
 
-                auto V_pp = payoff_object(iter_price.cwiseProduct(price_bump_pp));
-                auto V_pm = payoff_object(iter_price.cwiseProduct(price_bump_pm));
-                auto V_mp = payoff_object(iter_price.cwiseProduct(price_bump_mp));
-                auto V_mm = payoff_object(iter_price.cwiseProduct(price_bump_mm));
+                auto V_pp = payoff_object(call, iter_price.cwiseProduct(price_bump_pp));
+                auto V_pm = payoff_object(call, iter_price.cwiseProduct(price_bump_pm));
+                auto V_mp = payoff_object(call, iter_price.cwiseProduct(price_bump_mp));
+                auto V_mm = payoff_object(call, iter_price.cwiseProduct(price_bump_mm));
 
                 iter_gamma(i, j) = (V_pp - V_pm - V_mp + V_mm) / static_cast<double>(4 * h(i) * h(j));            
                 iter_gamma(j, i) = iter_gamma(i, j);
 
                 if(variance_reduction){
-                    auto V_pp_vr = payoff_object(iter_price_vr.cwiseProduct(price_bump_pp));
-                    auto V_pm_vr = payoff_object(iter_price_vr.cwiseProduct(price_bump_pm));
-                    auto V_mp_vr = payoff_object(iter_price_vr.cwiseProduct(price_bump_mp));
-                    auto V_mm_vr = payoff_object(iter_price_vr.cwiseProduct(price_bump_mm));
+                    auto V_pp_vr = payoff_object(call, iter_price_vr.cwiseProduct(price_bump_pp));
+                    auto V_pm_vr = payoff_object(call, iter_price_vr.cwiseProduct(price_bump_pm));
+                    auto V_mp_vr = payoff_object(call, iter_price_vr.cwiseProduct(price_bump_mp));
+                    auto V_mm_vr = payoff_object(call, iter_price_vr.cwiseProduct(price_bump_mm));
 
                     iter_gamma_vr(i, j) = (V_pp_vr - V_pm_vr - V_mp_vr + V_mm_vr) / static_cast<double>(4 * h(i) * h(j));                
                     iter_gamma_vr(j, i) = iter_gamma_vr(i, j);
@@ -276,18 +276,7 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
 }
 
 
-/* Eigen::VectorXd Portfolio(int discretisation, double tau, Eigen::VectorXd initial_price){
-
-    Eigen::VectorXd portfolio_value;
-
-    auto[price, price_vd] = Multidimensional_GBM(tau, discretisation, correlation_matrix, initial_price);
-
-    double portfolio_value = delta * price + bank;
-
-} */
-
-
-// Public Method 1 ---------------------------------------------------------
+// Public Method 3 ---------------------------------------------------------
 Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(bool call){
 
     int time;

@@ -18,9 +18,9 @@ class Payoff{ //----------------------------------------------------------------
 
         virtual ~Payoff() = default;
 
-        virtual double operator()(const Eigen::VectorXd& terminal_prices) const = 0;
+        virtual double operator()(bool call, const Eigen::VectorXd& terminal_prices) const = 0;
 
-        virtual Eigen::VectorXd gradient(const Eigen::VectorXd& terminal_prices) const = 0;
+        virtual Eigen::VectorXd gradient(bool call, const Eigen::VectorXd& terminal_prices) const = 0;
 
 };
 
@@ -35,9 +35,9 @@ class Payoff{ //----------------------------------------------------------------
             // Construstor_1: Payoff
             Basket_Assets(double strike_const, Eigen::VectorXd weights_const);
             // Method_1: Payoff
-            double operator()(const Eigen::VectorXd& terminal_prices) const override;
+            double operator()(bool call, const Eigen::VectorXd& terminal_prices) const override;
             // Method_2: Gradient
-            Eigen::VectorXd gradient(const Eigen::VectorXd& terminal_prices) const override;
+            Eigen::VectorXd gradient(bool call, const Eigen::VectorXd& terminal_prices) const override;
     };
 
     class Maximum_Asset: public Payoff{ //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -50,9 +50,9 @@ class Payoff{ //----------------------------------------------------------------
             // Construstor_1: Payoff
             Maximum_Asset(double strike_const);
             // Method_1: Payoff
-            double operator()(const Eigen::VectorXd& terminal_prices) const override;
+            double operator()(bool call, const Eigen::VectorXd& terminal_prices) const override;
             // Method_2: Gradient
-            Eigen::VectorXd gradient(const Eigen::VectorXd& terminal_prices) const override;
+            Eigen::VectorXd gradient(bool call, const Eigen::VectorXd& terminal_prices) const override;
     };
 
     class Minimum_Asset: public Payoff{ //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
@@ -65,9 +65,9 @@ class Payoff{ //----------------------------------------------------------------
             // Construstor_1: Payoff
             Minimum_Asset(double strike_const);
             // Method_1: Payoff
-            double operator()(const Eigen::VectorXd& terminal_prices) const override;
+            double operator()(bool call, const Eigen::VectorXd& terminal_prices) const override;
             // Method_2: Gradient
-            Eigen::VectorXd gradient(const Eigen::VectorXd& terminal_prices) const override;
+            Eigen::VectorXd gradient(bool call, const Eigen::VectorXd& terminal_prices) const override;
     }; 
 
 class Asset_Option_Price{ //-------------------------------------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ class Asset_Option_Price{ //----------------------------------------------------
         Eigen::MatrixXd GBM_price_path(std::optional<Eigen::MatrixXd> correlation_matrix);
 
         // Class Method 2 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*    
-        Eigen::VectorXd discounted_pay_off_calculator(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
+        Eigen::VectorXd discounted_pay_off_calculator(bool call, int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
                                                     std::optional<Eigen::MatrixXd> correlation_matrix,
                                                     const Payoff& payoff_object,
                                                     std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator);
@@ -143,7 +143,7 @@ class Asset_Option_Price{ //----------------------------------------------------
             std::string confidence_intervals;
         };
 
-        Option_output Monte_Carlo_option_pricer(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
+        Option_output Monte_Carlo_option_pricer(bool call, int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
                                                 std::optional<Eigen::MatrixXd> correlation_matrix,
                                                 const Payoff& payoff_object,
                                                 std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator);

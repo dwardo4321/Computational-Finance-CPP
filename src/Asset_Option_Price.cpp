@@ -18,53 +18,63 @@
 Basket_Assets::Basket_Assets(double strike_const, Eigen::VectorXd weights_const): 
                             strike(strike_const), weights(weights_const){};
 
-double Basket_Assets::operator()(const Eigen::VectorXd& terminal_prices) const {
+double Basket_Assets::operator()(bool call, const Eigen::VectorXd& terminal_prices) const {
                         double weighted_prices = weights.dot(terminal_prices);
-                        double pay_off = std::max(0.0, weighted_prices - strike);
+                        double pay_off = call? std::max(0.0, weighted_prices - strike): std::max(0.0, strike - weighted_prices);
                         return pay_off;
                     };
 
-Eigen::VectorXd Basket_Assets::gradient(const Eigen::VectorXd& terminal_prices) const {
+Eigen::VectorXd Basket_Assets::gradient(bool call, const Eigen::VectorXd& terminal_prices) const {
                         Eigen::VectorXd grad;
                         double weighted_prices = weights.dot(terminal_prices);
-                        weighted_prices > strike? grad = weights: grad = Eigen::VectorXd::Zero(weights.size()); 
+                        if(call){weighted_prices > strike? grad = weights: grad = Eigen::VectorXd::Zero(weights.size());
+                        }else{weighted_prices > strike? grad = Eigen::VectorXd::Zero(weights.size()): grad = - weights;} 
                         return grad;
                     };
 
 // No_2: constructor and method -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 Maximum_Asset::Maximum_Asset(double strike_const): strike(strike_const){};
 
-double Maximum_Asset::operator()(const Eigen::VectorXd& terminal_prices) const {
+double Maximum_Asset::operator()(bool call, const Eigen::VectorXd& terminal_prices) const {
                         double most_price = terminal_prices.maxCoeff();
-                        double pay_off = std::max(0.0, most_price - strike);
+                        double pay_off = call? std::max(0.0, most_price - strike): std::max(0.0, strike - most_price);
                         return pay_off;
                     };
 
-Eigen::VectorXd Maximum_Asset::gradient(const Eigen::VectorXd& terminal_prices) const {
-                        Eigen::VectorXd grad;
-                        double most_price = terminal_prices.maxCoeff();
-                        most_price > strike? grad = Eigen::VectorXd::Ones(terminal_prices.size()): grad = Eigen::VectorXd::Zero(terminal_prices.size()); 
+Eigen::VectorXd Maximum_Asset::gradient(bool call, const Eigen::VectorXd& terminal_prices) const {
+                        Eigen::Index max_index;
+                        double most_price = terminal_prices.maxCoeff(&max_index);
+                        Eigen::VectorXd grad = Eigen::VectorXd::Zero(terminal_prices.size());
+
+                        if(call){
+                            if(most_price > strike){grad[max_index] = 1.0;}else{grad = grad;};
+                        }else{
+                            if(most_price > strike){grad = grad;}else{grad[max_index] = -1.0;}
+                        }
                         return grad;
                     };                    
 
 // No_3: constructor and method -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 Minimum_Asset::Minimum_Asset(double strike_const): strike(strike_const){};
 
-double Minimum_Asset::operator()(const Eigen::VectorXd& terminal_prices) const {
+double Minimum_Asset::operator()(bool call, const Eigen::VectorXd& terminal_prices) const {
                         double least_price = terminal_prices.minCoeff();
-                        double pay_off = std::max(0.0, least_price - strike);
+                        double pay_off = call? std::max(0.0, least_price - strike): std::max(0.0, strike - least_price);
                         return pay_off;
                     };
 
-Eigen::VectorXd Minimum_Asset::gradient(const Eigen::VectorXd& terminal_prices) const {
-                        Eigen::VectorXd grad;
-                        double least_price = terminal_prices.minCoeff();
-                        least_price > strike? grad = Eigen::VectorXd::Ones(terminal_prices.size()): grad = Eigen::VectorXd::Zero(terminal_prices.size()); 
+Eigen::VectorXd Minimum_Asset::gradient(bool call, const Eigen::VectorXd& terminal_prices) const {
+                        Eigen::Index min_index;
+                        double least_price = terminal_prices.minCoeff(&min_index);
+                        Eigen::VectorXd grad = Eigen::VectorXd::Zero(terminal_prices.size());
+
+                        if(call){
+                            if(least_price > strike){grad[min_index] = 1.0;}else{grad = grad;};
+                        }else{
+                            if(least_price > strike){grad = grad;}else{grad[min_index] = -1.0;}
+                        } 
                         return grad;
                     }; 
-
-
-
 
 
                     
@@ -225,7 +235,7 @@ Eigen::MatrixXd  Asset_Option_Price::GBM_price_path(std::optional<Eigen::MatrixX
 }
 
 // Class Method 2 -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-Eigen::VectorXd  Asset_Option_Price::discounted_pay_off_calculator(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
+Eigen::VectorXd  Asset_Option_Price::discounted_pay_off_calculator(bool call, int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
                                                                     std::optional<Eigen::MatrixXd> correlation_matrix,
                                                                     const Payoff& payoff_object,
                                                                     std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){
@@ -258,8 +268,8 @@ Eigen::VectorXd  Asset_Option_Price::discounted_pay_off_calculator(int number_of
                     prices.row(i) = A(last, all);
                     prices_variance_reduction.row(i) = B(last, all);
 
-                    pay_off(i) = payoff_object(prices.row(i).transpose()) * exp(-risk_free_rate * tau);
-                    pay_off_variance_reduction(i) = 0.5 * (pay_off(i) + (payoff_object(prices_variance_reduction.row(i).transpose()) * exp(-risk_free_rate * tau)));
+                    pay_off(i) = payoff_object(call, prices.row(i).transpose()) * exp(-risk_free_rate * tau);
+                    pay_off_variance_reduction(i) = 0.5 * (pay_off(i) + (payoff_object(call, prices_variance_reduction.row(i).transpose()) * exp(-risk_free_rate * tau)));
     }
 
     variance_reduction? discounted_pay_off = pay_off_variance_reduction: discounted_pay_off = pay_off;
@@ -268,7 +278,7 @@ Eigen::VectorXd  Asset_Option_Price::discounted_pay_off_calculator(int number_of
 }
 
 // Class Method 3 -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer(int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
+Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer(bool call, int number_of_iterations, double risk_free_rate, double tau, bool variance_reduction,
                                                                                 std::optional<Eigen::MatrixXd> correlation_matrix,
                                                                                 const Payoff& payoff_object,
                                                                                 std::function < std::pair<Eigen::MatrixXd, Eigen::MatrixXd>(std::optional<Eigen::MatrixXd>) > custom_price_generator){
@@ -291,14 +301,14 @@ Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer
     Eigen::MatrixXd discounted_pay_off(number_of_iterations, dimensions);
         
     if (variance_reduction){
-        correlation_matrix.has_value()? discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, risk_free_rate, tau, true,
+        correlation_matrix.has_value()? discounted_pay_off = discounted_pay_off_calculator(call, number_of_iterations, risk_free_rate, tau, true,
                                                                                             *correlation_matrix, payoff_object, price_generator):
-                                        discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, risk_free_rate, tau, true,
+                                        discounted_pay_off = discounted_pay_off_calculator(call, number_of_iterations, risk_free_rate, tau, true,
                                                                                             std::nullopt, payoff_object, price_generator);
     }else{
-        correlation_matrix.has_value()? discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, risk_free_rate, tau, false,
+        correlation_matrix.has_value()? discounted_pay_off = discounted_pay_off_calculator(call, number_of_iterations, risk_free_rate, tau, false,
                                                                                             *correlation_matrix, payoff_object, price_generator):    
-                                        discounted_pay_off = discounted_pay_off_calculator(number_of_iterations, risk_free_rate, tau, false,
+                                        discounted_pay_off = discounted_pay_off_calculator(call, number_of_iterations, risk_free_rate, tau, false,
                                                                                             std::nullopt, payoff_object, price_generator);
     }
     
