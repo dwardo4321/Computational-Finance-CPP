@@ -104,10 +104,6 @@ int main(){
     auto standard_normal_rv = utility::Normal_RV_generator(discretisation, 4, generator);
     auto abc = utility::Brownian_path_generator(discretisation, 4, Time, standard_normal_rv, std::nullopt);
     std::cout << abc; */
-        
-
-    Multidimensional_Risk_Neutral_Engine test_1 = Multidimensional_Risk_Neutral_Engine(strike, rate, risk_free_rate, price_today, volatility_realised, volatility_implied, Time, discretisation);
-    Eigen::MatrixXd output = test_1.Risk_Neutral_MultiDim_DHE(true);
 
     Eigen::VectorXd weights(5);
     weights << 0.3, 0.3, 0.2, 0.1, 0.05;
@@ -115,7 +111,10 @@ int main(){
     Basket_Assets payoff_object(strike, weights);  
     std::random_device rd;
     std::mt19937_64 generator(rd());
-    auto standard_normal_rv = utility::Normal_RV_generator(discretisation, D, generator);
+    auto standard_normal_rv = utility::Normal_RV_generator(discretisation, D, generator);        
+
+    Multidimensional_Risk_Neutral_Engine test_1 = Multidimensional_Risk_Neutral_Engine(strike, rate, risk_free_rate, price_today, volatility_realised, volatility_implied, Time, discretisation);
+    Eigen::MatrixXd output = test_1.Risk_Neutral_MultiDim_DHE(true, true, true, true, 500, std::nullopt, payoff_object);
 
     auto start = std::chrono::steady_clock::now();
     Multidimensional_Risk_Neutral_Engine::quad output123 = test_1.Greeks_and_Option(true, true, iterations, tau, true, initial_price, std::nullopt, payoff_object);

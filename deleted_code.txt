@@ -260,3 +260,25 @@ Asset_Option_Price::Option_output  Asset_Option_Price::Monte_Carlo_option_pricer
 Eigen::VectorXd risk_premium = rate.array() - risk_free_rate;
 Eigen::VectorXd mqt_price_of_risk = volatility_realised.completeOrthogonalDecomposition().solve(risk_premium);
 brownian_mot.rowwise() += mqt_price_of_risk.transpose();
+
+/* Eigen::VectorXd out = Z_scores(true);//Brownian_Mot(discretisation, Time, std::nullopt); 
+
+    Eigen::MatrixXd xxx(M, D);
+    xxx.col(0) = out;
+    xxx.col(1) = out;
+    auto[A, B] = Multidimensional_GBM(std::nullopt); */
+
+    /* double dt = Time / (discretisation - 1);
+
+    double tau = Time - 999 * dt;
+
+    Asset_Option_Price Option_value = Asset_Option_Price(strike, rate, risk_free_rate, volatility_realised, price_today, tau, discretisation);
+
+    auto custom_func = [this, tau] (std::optional<Eigen::MatrixXd> correlation_matrix){return this-> Multidimensional_GBM(tau, this->discretisation, correlation_matrix, this->price_today);};
+
+    Eigen::VectorXd weights(5);
+    weights << 0.3, 0.3, 0.2, 0.1, 0.05;
+
+    Basket_Assets payoff_object(strike, weights);
+    
+    double out = Option_value.Monte_Carlo_option_pricer(1000, risk_free_rate, tau, true, std::nullopt, payoff_object, custom_func).sample_mean;  */

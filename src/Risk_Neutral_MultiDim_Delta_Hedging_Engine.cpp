@@ -275,42 +275,66 @@ Multidimensional_Risk_Neutral_Engine::quad Multidimensional_Risk_Neutral_Engine:
     return {Delta, Gamma, Theta, Option};
 }
 
-
 // Public Method 3 ---------------------------------------------------------
-Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(bool call){
+Eigen::MatrixXd Multidimensional_Risk_Neutral_Engine::Risk_Neutral_MultiDim_DHE(bool call, bool go_long, bool exact_gbm, bool variance_reduction, int engine_discretisation, std::optional<Eigen::MatrixXd> correlation_matrix, const Payoff& payoff_object){
 
-    int time;
-    
-    double dt = Time / (discretisation - 1);
+    Eigen::MatrixXd output = Eigen::MatrixXd::Zero(engine_discretisation, M);
+    double dt = Time / (discretisation - 1); 
 
-    double tau = Time - time * dt;
-    
-    /* Eigen::VectorXd out = Z_scores(true);//Brownian_Mot(discretisation, Time, std::nullopt); 
+    // Initialisation ------------------------------------------------------
+    Eigen::VectorXd tau_step_i(engine_discretisation);                                  
+    tau_step_i(0) = Time;
+    Eigen::MatrixXd delta_step_i(engine_discretisation, M);                             
+    delta_step_i.row(0) = Eigen::RowVectorXd::Zero(M);
+    Eigen::MatrixXd GBM_price_step_i(engine_discretisation, price_today.size());        
+    GBM_price_step_i.row(0) = price_today.transpose();
+    Eigen::VectorXd hedging_error_step_i(engine_discretisation);                        
+    hedging_error_step_i(0) = 0;
+    Eigen::VectorXd bank_step_i(engine_discretisation);                                 
+    bank_step_i(0) = 0;
+    Eigen::VectorXd option_step_i(engine_discretisation);                               
+    option_step_i(0) = 0;
+    Eigen::VectorXd portfolio_step_i(engine_discretisation);                           
+    portfolio_step_i(0) = 0;
+   
+    // Engine ------------------------------------------------------
+    for (int i = 1; i < engine_discretisation; i++){
 
-    Eigen::MatrixXd xxx(M, D);
-    xxx.col(0) = out;
-    xxx.col(1) = out;
-    auto[A, B] = Multidimensional_GBM(std::nullopt); */
+        double tau = Time - i * dt;
 
-    /* double dt = Time / (discretisation - 1);
+        tau_step_i(i) = tau;
 
-    double tau = Time - 999 * dt;
+        // Terminal ------------------------------------------------------
 
-    Asset_Option_Price Option_value = Asset_Option_Price(strike, rate, risk_free_rate, volatility_realised, price_today, tau, discretisation);
+        auto standard_normal_rv = utility::Normal_RV_generator(engine_discretisation, price_today.size(), generator);
 
-    auto custom_func = [this, tau] (std::optional<Eigen::MatrixXd> correlation_matrix){return this-> Multidimensional_GBM(tau, this->discretisation, correlation_matrix, this->price_today);};
+        std::pair <Eigen::MatrixXd, Eigen::MatrixXd> GBM_price = Multidimensional_Risk_Neutral_Engine::Multidimensional_GBM(true, exact_gbm, tau, 2, standard_normal_rv, correlation_matrix, GBM_price_step_i.row(i - 1));
 
-    Eigen::VectorXd weights(5);
-    weights << 0.3, 0.3, 0.2, 0.1, 0.05;
+        GBM_price_step_i.row(i) = variance_reduction? GBM_price.first(last, all): GBM_price.second(last, all);
 
-    Basket_Assets payoff_object(strike, weights);
-    
-    double out = Option_value.Monte_Carlo_option_pricer(1000, risk_free_rate, tau, true, std::nullopt, payoff_object, custom_func).sample_mean;  */
+        Multidimensional_Risk_Neutral_Engine::quad option_greeks_step_i = Multidimensional_Risk_Neutral_Engine::Greeks_and_Option(call, exact_gbm, 1000.0, tau, variance_reduction,
+                                                                                                        GBM_price_step_i.row(i - 1), correlation_matrix, payoff_object);
 
-    Eigen::MatrixXd xxx(1, 2);
-    xxx(0, 0) = 10;
-    xxx(0, 1) = 20;
+        option_step_i(i) = option_greeks_step_i.Option;
+        delta_step_i.row(i) = option_greeks_step_i.Delta.transpose();
 
-    return xxx;
+        bank_step_i(i) = go_long?  (bank_step_i(i - 1) * exp(risk_free_rate * dt)) - (delta_step_i.row(i) - delta_step_i.row(i - 1).transpose()).dot(GBM_price_step_i.row(i).transpose()): 
+                                    (bank_step_i(i - 1) * exp(risk_free_rate * dt)) + (delta_step_i.row(i) - delta_step_i.row(i - 1).transpose()).dot(GBM_price_step_i.row(i).transpose()); 
+
+        portfolio_step_i(i) = go_long? option_greeks_step_i.Delta.dot(GBM_price_step_i.row(i).transpose()) + bank_step_i(i):
+                                        -option_greeks_step_i.Delta.dot(GBM_price_step_i.row(i).transpose()) + bank_step_i(i);
+
+        hedging_error_step_i(i) = option_step_i(i) - portfolio_step_i(i);
+                            
+    }
+
+    output.col(0) = tau_step_i;
+    output.col(1) = hedging_error_step_i;
+    output.col(2) = bank_step_i;
+    output.col(3) = option_step_i;
+    output.col(4) = portfolio_step_i;
+
+
+    return output;
 }
 

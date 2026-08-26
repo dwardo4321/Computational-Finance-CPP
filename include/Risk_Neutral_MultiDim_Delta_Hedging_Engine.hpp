@@ -54,6 +54,7 @@ class Multidimensional_Risk_Neutral_Engine{
                                 const Payoff& payoff_object);
              
         // Class Method 2 //-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*      
-        Eigen::MatrixXd Risk_Neutral_MultiDim_DHE(bool call);
+        Eigen::MatrixXd Risk_Neutral_MultiDim_DHE(bool call, bool go_long, bool exact_gbm, bool variance_reduction, int engine_discretisation, std::optional<Eigen::MatrixXd> correlation_matrix, const Payoff& payoff_object);
+
 };
 
